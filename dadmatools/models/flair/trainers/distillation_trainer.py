@@ -1,11 +1,11 @@
 from .trainer import *
-from models.flair.training_utils import store_teacher_predictions
-from models.flair.list_data import ListCorpus
+from dadmatools.models.flair.training_utils import store_teacher_predictions
+from dadmatools.models.flair.list_data import ListCorpus
 import math
 import random
 import pdb
 import copy
-from models.flair.datasets import CoupleDataset
+from dadmatools.models.flair.datasets import CoupleDataset
 from ..custom_data_loader import ColumnDataLoader
 from torch.optim.adam import Adam
 import torch.nn.functional as F

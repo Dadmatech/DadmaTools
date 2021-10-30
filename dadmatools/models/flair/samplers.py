@@ -4,7 +4,7 @@ from collections import defaultdict
 from torch.utils.data.sampler import Sampler
 import random, torch
 
-from flair.data import FlairDataset
+from dadmatools.flair.data import FlairDataset
 
 log = logging.getLogger("flair")
 

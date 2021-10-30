@@ -10,7 +10,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pdb
 from .linear_functions import *
-import models.flair.nn
 
 class MFVI(nn.Module):
 	def __init__(self,

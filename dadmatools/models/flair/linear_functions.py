@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.sparse as sparse
 import math
-import models.flair.nn
+import dadmatools.models.flair.nn
 import pdb
 
 class QuadriLinearScore(nn.Module):

@@ -1,8 +1,8 @@
 from collections import Counter
 import re
 
-from models.common.vocab import BaseVocab
-from models.common.vocab import UNK, PAD
+from dadmatools.models.common.vocab import BaseVocab
+from dadmatools.models.common.vocab import UNK, PAD
 
 SPACE_RE = re.compile(r'\s')
 

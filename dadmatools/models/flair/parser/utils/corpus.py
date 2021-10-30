@@ -2,8 +2,8 @@
 
 from collections import namedtuple
 from collections.abc import Iterable
-from models.flair.parser.utils.field import Field
-from models.flair.parser.utils.fn import isprojective
+from dadmatools.models.flair.parser.utils.field import Field
+from dadmatools.models.flair.parser.utils.fn import isprojective
 
 CoNLL = namedtuple(typename='CoNLL',
                    field_names=['ID', 'FORM', 'LEMMA', 'CPOS', 'POS',

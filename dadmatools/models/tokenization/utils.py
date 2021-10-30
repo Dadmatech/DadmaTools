@@ -5,9 +5,9 @@ import numpy as np
 import re
 import logging
 
-from models.common.utils import ud_scores, harmonic_mean
-from utils.conll import CoNLL
-from models.common.doc import *
+from dadmatools.models.common.utils import ud_scores, harmonic_mean
+from dadmatools.utils.conll import CoNLL
+from dadmatools.models.common.doc import *
 
 logger = logging.getLogger('stanza')
 

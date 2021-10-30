@@ -12,7 +12,7 @@ else:
     device = torch.device("cpu")
 
 from . import data
-from models.flair import models
+from dadmatools.models.flair import models
 from . import visual
 from . import trainers
 from . import nn

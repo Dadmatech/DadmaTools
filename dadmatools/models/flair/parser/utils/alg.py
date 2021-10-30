@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from models.flair.parser.utils.fn import pad, stripe
+from dadmatools.models.flair.parser.utils.fn import pad, stripe
 
 import torch
 import torch.autograd as autograd

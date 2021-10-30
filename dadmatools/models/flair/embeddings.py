@@ -46,8 +46,8 @@ lg2.set_verbosity_error()
 
 from torch.nn.utils.rnn import pack_padded_sequence, pad_packed_sequence
 
-import models.flair as flair
-from models.flair.data import Corpus
+import dadmatools.models.flair as flair
+from dadmatools.models.flair.data import Corpus
 from .nn import LockedDropout, WordDropout
 from .data import Dictionary, Token, Sentence
 from .file_utils import cached_path, open_inside_zip

@@ -1,13 +1,13 @@
-from models.flair import embeddings as Embeddings
+from dadmatools.models.flair import embeddings as Embeddings
 import copy
-from models.flair.data import Dictionary
-from models.flair import models as model
+from dadmatools.models.flair.data import Dictionary
+from dadmatools.models.flair import models as model
 from pathlib import Path
-import models.flair
-from models.flair.list_data import ListCorpus
+from dadmatools.models.flair.list_data import ListCorpus
 import torch
+from pathlib import Path
 
-import pipeline.download as dl
+import dadmatools.pipeline.download as dl
 
 config = {
   "Controller": {
@@ -131,6 +131,10 @@ def load_model():
     ## donwload models
     dl.download_model('parsbert', process_func=dl._unzip_process_func)
     dl.download_model('postagger')
+    
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    config['target_dir'] = prefix + config['target_dir']
+    config['embeddings']['BertEmbeddings-0']['bert_model_or_path'] = prefix + config['embeddings']['BertEmbeddings-0']['bert_model_or_path']
     
     student=create_model(config)
     base_path=Path(config['target_dir'])/config['model_name']

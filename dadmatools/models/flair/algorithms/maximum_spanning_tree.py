@@ -1,7 +1,7 @@
 from typing import List, Set, Tuple, Dict
 import numpy
 
-from flair.utils.checks import ConfigurationError
+from dadmatools.flair.utils.checks import ConfigurationError
 
 def decode_mst(energy: numpy.ndarray,
                length: int,

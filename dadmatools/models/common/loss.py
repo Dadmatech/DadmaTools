@@ -7,7 +7,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-import models.common.seq2seq_constant as constant
+import dadmatools.models.common.seq2seq_constant as constant
 
 logger = logging.getLogger('stanza')
 

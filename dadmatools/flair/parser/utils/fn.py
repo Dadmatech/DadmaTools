@@ -90,4 +90,4 @@ def pad(tensors, padding_value=0, total_length=None):
 def numericalize_arcs(sequence):
     return [int(i) for i in sequence]
 
-from flair.parser.utils.alg import tarjan
+from dadmatools.flair.parser.utils.alg import tarjan

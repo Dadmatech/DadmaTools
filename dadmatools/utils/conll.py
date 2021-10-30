@@ -22,7 +22,7 @@ START_CHAR = 'start_char'
 END_CHAR = 'end_char'
 FIELD_TO_IDX = {ID: 0, TEXT: 1, LEMMA: 2, UPOS: 3, XPOS: 4, FEATS: 5, HEAD: 6, DEPREL: 7, DEPS: 8, MISC: 9}
 
-from models.common.doc import Document
+from dadmatools.models.common.doc import Document
 
 class CoNLL:
 

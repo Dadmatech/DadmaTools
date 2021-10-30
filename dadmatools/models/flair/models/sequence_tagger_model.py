@@ -6,18 +6,18 @@ import torch.nn
 from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 import torch.autograd as autograd
-import models.flair.nn
-import models.flair as flair
+# import dadmatools.models.flair.nn
+import dadmatools.models.flair as flair
 import torch
 
-from models.flair.data import Dictionary, Sentence, Token, Label
-from models.flair.datasets import DataLoader
-from models.flair.embeddings import TokenEmbeddings
-from models.flair.file_utils import cached_path
+from dadmatools.models.flair.data import Dictionary, Sentence, Token, Label
+from dadmatools.models.flair.datasets import DataLoader
+from dadmatools.models.flair.embeddings import TokenEmbeddings
+from dadmatools.models.flair.file_utils import cached_path
 
 from typing import List, Tuple, Union
 
-from models.flair.training_utils import Metric, Result, store_embeddings
+from dadmatools.models.flair.training_utils import Metric, Result, store_embeddings
 from .biaffine_attention import BiaffineAttention
 
 from tqdm import tqdm

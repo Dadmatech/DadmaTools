@@ -10,9 +10,9 @@ from pathlib import Path
 import torch.utils.data.dataloader
 from torch.utils.data.dataset import Subset, ConcatDataset
 
-import models.flair
-from models.flair.data import Sentence, Corpus, Token, FlairDataset
-from models.flair.file_utils import cached_path
+import dadmatools.models.flair
+from dadmatools.models.flair.data import Sentence, Corpus, Token, FlairDataset
+from dadmatools.models.flair.file_utils import cached_path
 import pdb
 
 log = logging.getLogger("flair")

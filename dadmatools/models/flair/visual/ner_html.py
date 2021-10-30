@@ -1,7 +1,7 @@
 import html
 from typing import Union, List
 
-from flair.data import Sentence
+from dadmatools.flair.data import Sentence
 
 TAGGED_ENTITY = """
 <mark class="entity" style="background: {color}; padding: 0.45em 0.6em; margin: 0 0.25em; line-height: 3; border-radius: 0.35em; box-decoration-break: clone; -webkit-box-decoration-break: clone">

@@ -9,11 +9,11 @@ from transformers import (
 	AdamW,
 	get_linear_schedule_with_warmup,
 )
-from models.flair.models.biaffine_attention import BiaffineAttention, BiaffineFunction
+from dadmatools.models.flair.models.biaffine_attention import BiaffineAttention, BiaffineFunction
 from torch.optim.lr_scheduler import ExponentialLR, LambdaLR
 import random
 import copy
-from models.flair.parser.utils.alg import crf
+from dadmatools.models.flair.parser.utils.alg import crf
 import h5py
 import numpy as np
 START_TAG: str = "<START>"
