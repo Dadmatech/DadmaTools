@@ -7,13 +7,13 @@ from typing import List, Union
 import torch
 import torch.nn as nn
 
-import models.flair.nn
-import models.flair as flair
-import models.flair.embeddings
-from models.flair.data import Dictionary, Sentence, Label
-from models.flair.datasets import DataLoader
-from models.flair.file_utils import cached_path
-from models.flair.training_utils import (
+import dadmatools.models.flair.nn
+import dadmatools.models.flair as flair
+import dadmatools.models.flair.embeddings
+from dadmatools.models.flair.data import Dictionary, Sentence, Label
+from dadmatools.models.flair.datasets import DataLoader
+from dadmatools.models.flair.file_utils import cached_path
+from dadmatools.models.flair.training_utils import (
     convert_labels_to_one_hot,
     Metric,
     Result,

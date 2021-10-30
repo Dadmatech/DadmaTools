@@ -13,13 +13,14 @@ import random
 import numpy as np
 import os
 import torch
+from pathlib import Path
 
-from models.common import utils
-from models.tokenization.trainer import Trainer
-from models.tokenization.data import DataLoader
-from models.tokenization.utils import load_mwt_dict, eval_model, output_predictions
+from dadmatools.models.common import utils
+from dadmatools.models.tokenization.trainer import Trainer
+from dadmatools.models.tokenization.data import DataLoader
+from dadmatools.models.tokenization.utils import load_mwt_dict, eval_model, output_predictions
 # from models import _training_logging
-import pipeline.download as dl
+import dadmatools.pipeline.download as dl
 
 logger = logging.getLogger('stanza')
 
@@ -116,6 +117,9 @@ def load_model():
     dl.download_model('fa_tokenizer')
     
     args = parse_args()
+    
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    args.save_dir = prefix + args.save_dir
 
     if args.cpu:
         args.cuda = False

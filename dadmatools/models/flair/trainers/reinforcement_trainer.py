@@ -9,14 +9,14 @@ from transformers import (
 	AdamW,
 	get_linear_schedule_with_warmup,
 )
-from models.flair.models.biaffine_attention import BiaffineAttention, BiaffineFunction
+from dadmatools.models.flair.models.biaffine_attention import BiaffineAttention, BiaffineFunction
 # from flair.models.dependency_model import generate_tree, convert_score_back
 from torch.optim.lr_scheduler import ExponentialLR, LambdaLR
 import random
 import copy
-from models.flair.parser.utils.alg import crf
+from dadmatools.models.flair.parser.utils.alg import crf
 import h5py
-from models.flair.models.controller import EmbedController
+from dadmatools.models.flair.models.controller import EmbedController
 import numpy as np 
 import json
 

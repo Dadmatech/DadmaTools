@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections.abc import Iterable
-from models.flair.parser.utils.common import unk
+from dadmatools.models.flair.parser.utils.common import unk
 
 
 class Vocab(object):

@@ -8,7 +8,7 @@ AllenNLP and its models are configured correctly.
 
 from torch import cuda
 
-from flair.utils import logging
+from dadmatools.flair.utils import logging
 
 logger = logging.init_logger()  # pylint: disable=invalid-name
 

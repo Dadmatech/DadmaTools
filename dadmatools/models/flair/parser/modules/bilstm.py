@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from models.flair.parser.modules.dropout import SharedDropout
+from dadmatools.models.flair.parser.modules.dropout import SharedDropout
 
 import torch
 import torch.nn as nn

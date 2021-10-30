@@ -16,22 +16,23 @@ import argparse
 import numpy as np
 import random
 import torch
+from pathlib import Path
 # from torch import nn, optim
 
-from models.lemma.data import DataLoader
+from dadmatools.models.lemma.data import DataLoader
 # from models.lemma.vocab import Vocab
-from models.lemma.trainer import Trainer
-from models.lemma import edit
+from dadmatools.models.lemma.trainer import Trainer
+from dadmatools.models.lemma import edit
 # from models.lemma import scorer
 # from models.common import utils
 # import models.common.seq2seq_constant as constant
-from models.common.doc import *
+from dadmatools.models.common.doc import *
 # from utils.conll import CoNLL
 # from models import _training_logging
 
-from models.common.doc import Document
+from dadmatools.models.common.doc import Document
 
-import pipeline.download as dl
+import dadmatools.pipeline.download as dl
 
 logger = logging.getLogger('stanza')
 
@@ -148,6 +149,9 @@ def load_model():
     dl.download_model('fa_lemmatizer')
     
     args = parse_args()
+
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    args.save_dir = prefix + args.save_dir
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)

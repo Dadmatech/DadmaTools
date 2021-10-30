@@ -4,8 +4,8 @@ import argparse
 import yaml
 import copy
 
-from flair.utils import logging
-from flair.algorithms import dict_merge
+from dadmatools.flair.utils import logging
+from dadmatools.flair.algorithms import dict_merge
 
 logger = logging.init_logger()
 

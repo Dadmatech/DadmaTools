@@ -5,17 +5,16 @@ from tqdm import tqdm
 from typing import Callable
 import shutil
 
-DEFAULT_DESTINATION = os.path.join(str(os.getcwd()), 'saved_models')
+# DEFAULT_DESTINATION = os.path.join(str(os.getcwd()), 'saved_models')
+DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.pernlp')
 
 MODELS = {
     'fa_lemmatizer':{
-#         'url': 'https://ds.kplab.ir/s/Q3dm5nf87MRXKWF/download/fa_ewt_lemmatizer.pt',
         'url': 'https://www.dropbox.com/s/r2fkn8xeee0vb7c/fa_ewt_lemmatizer.pt?dl=1',
         'file_extension': '.pt'
     },
     'fa_tokenizer':{
-#         'url': 'https://ds.kplab.ir/s/CZAP4jwSqGSsHPi/download/fa_ewt_tokenizer.pt',
         'url': 'https://www.dropbox.com/s/bapff5mu2myugpz/fa_ewt_tokenizer.pt?dl=1',
         'file_extension': '.pt'
     },
@@ -25,7 +24,6 @@ MODELS = {
     },
     'dependencyparser':{
         'url': 'https://www.dropbox.com/s/o6jc1fy977frkfz/dep-best-model.pt?dl=1',
-#         'url': 'https://www.dropbox.com/s/brxzovuugdqr574/dep-best-model2.tar.gz?dl=1',
         'file_extension': '.pt'
     },
     'parsbert':{

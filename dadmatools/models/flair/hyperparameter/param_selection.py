@@ -7,19 +7,19 @@ import numpy as np
 
 from hyperopt import hp, fmin, tpe
 
-import flair.nn
-from flair.data import Corpus
-from flair.embeddings import DocumentPoolEmbeddings, DocumentRNNEmbeddings
-from flair.hyperparameter import Parameter
-from flair.hyperparameter.parameter import (
+import dadmatools.flair.nn
+from dadmatools.flair.data import Corpus
+from dadmatools.flair.embeddings import DocumentPoolEmbeddings, DocumentRNNEmbeddings
+from dadmatools.flair.hyperparameter import Parameter
+from dadmatools.flair.hyperparameter.parameter import (
     SEQUENCE_TAGGER_PARAMETERS,
     TRAINING_PARAMETERS,
     DOCUMENT_EMBEDDING_PARAMETERS,
     MODEL_TRAINER_PARAMETERS,
 )
-from flair.models import SequenceTagger, TextClassifier
-from flair.trainers import ModelTrainer
-from flair.training_utils import (
+from dadmatools.flair.models import SequenceTagger, TextClassifier
+from dadmatools.flair.trainers import ModelTrainer
+from dadmatools.flair.training_utils import (
     EvaluationMetric,
     log_line,
     init_output_file,

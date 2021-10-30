@@ -4,10 +4,10 @@ from spacy.language import Language
 from spacy.tokens import Doc, Token, Span
 from spacy.pipeline import Sentencizer
 
-import models.tokenizer as tokenizer
-import models.lemmatizer as lemmatizer
-import models.postagger as tagger
-import models.dependancy_parser as dp
+import dadmatools.models.tokenizer as tokenizer
+import dadmatools.models.lemmatizer as lemmatizer
+import dadmatools.models.postagger as tagger
+import dadmatools.models.dependancy_parser as dp
 
 
 nlp = spacy.blank('fa')

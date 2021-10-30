@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from models.flair.parser.modules import CHAR_LSTM, MLP, BertEmbedding, Biaffine, BiLSTM, TrilinearScorer
-from models.flair.parser.modules.dropout import IndependentDropout, SharedDropout
+from dadmatools.models.flair.parser.modules import CHAR_LSTM, MLP, BertEmbedding, Biaffine, BiLSTM, TrilinearScorer
+from dadmatools.models.flair.parser.modules.dropout import IndependentDropout, SharedDropout
 
 import torch
 import torch.nn as nn

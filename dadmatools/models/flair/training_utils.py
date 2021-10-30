@@ -5,7 +5,7 @@ from collections import defaultdict
 from enum import Enum
 from pathlib import Path
 from typing import List
-from models.flair.data import Dictionary, Sentence
+from dadmatools.models.flair.data import Dictionary, Sentence
 from functools import reduce
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from scipy.stats import pearsonr, spearmanr

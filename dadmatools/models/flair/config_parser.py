@@ -9,9 +9,9 @@ from .training_utils import EvaluationMetric
 from .visual.training_curves import Plotter
 import torch
 from torch.utils.data.dataset import ConcatDataset
-from flair.datasets import CoupleDataset
+from dadmatools.flair.datasets import CoupleDataset
 from .custom_data_loader import ColumnDataLoader
-from flair.training_utils import store_embeddings
+from dadmatools.flair.training_utils import store_embeddings
 # initialize sequence tagger
 from . import models as models
 from pathlib import Path

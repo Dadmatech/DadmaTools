@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import Counter
-from models.flair.parser.utils.vocab import Vocab
+from dadmatools.models.flair.parser.utils.vocab import Vocab
 
 import torch
 

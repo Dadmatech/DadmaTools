@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-from models.common.trainer import Trainer as BaseTrainer
+from dadmatools.models.common.trainer import Trainer as BaseTrainer
 
 from .model import Tokenizer
 from .vocab import Vocab

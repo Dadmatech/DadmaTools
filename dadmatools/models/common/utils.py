@@ -10,9 +10,9 @@ import unicodedata
 import torch
 import numpy as np
 
-from models.common.constant import lcode2lang
-import models.common.seq2seq_constant as constant
-import utils.conll18_ud_eval as ud_eval
+from dadmatools.models.common.constant import lcode2lang
+import dadmatools.models.common.seq2seq_constant as constant
+import dadmatools.utils.conll18_ud_eval as ud_eval
 
 logger = logging.getLogger('stanza')
 

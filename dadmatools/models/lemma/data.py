@@ -5,11 +5,11 @@ from collections import Counter
 import logging
 import torch
 
-import models.common.seq2seq_constant as constant
-from models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
-from models.lemma.vocab import Vocab, MultiVocab
-from models.lemma import edit
-from models.common.doc import *
+import dadmatools.models.common.seq2seq_constant as constant
+from dadmatools.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
+from dadmatools.models.lemma.vocab import Vocab, MultiVocab
+from dadmatools.models.lemma import edit
+from dadmatools.models.common.doc import *
 
 logger = logging.getLogger('stanza')
 

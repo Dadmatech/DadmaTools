@@ -6,13 +6,13 @@ import torch.nn
 from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 import torch.autograd as autograd
-import flair.nn
+import dadmatools.flair.nn
 import torch
 
-from flair.data import Dictionary, Sentence, Token, Label
-from flair.datasets import DataLoader
-from flair.embeddings import TokenEmbeddings
-from flair.file_utils import cached_path
+from dadmatools.flair.data import Dictionary, Sentence, Token, Label
+from dadmatools.flair.datasets import DataLoader
+from dadmatools.flair.embeddings import TokenEmbeddings
+from dadmatools.flair.file_utils import cached_path
 
 from typing import List, Tuple, Union
 

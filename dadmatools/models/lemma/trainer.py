@@ -10,11 +10,11 @@ import torch
 from torch import nn
 import torch.nn.init as init
 
-import models.common.seq2seq_constant as constant
-from models.common.seq2seq_model import Seq2SeqModel
-from models.common import utils, loss
-from models.lemma import edit
-from models.lemma.vocab import MultiVocab
+import dadmatools.models.common.seq2seq_constant as constant
+from dadmatools.models.common.seq2seq_model import Seq2SeqModel
+from dadmatools.models.common import utils, loss
+from dadmatools.models.lemma import edit
+from dadmatools.models.lemma.vocab import MultiVocab
 
 logger = logging.getLogger('stanza')
 

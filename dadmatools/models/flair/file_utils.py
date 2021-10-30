@@ -17,7 +17,7 @@ import zipfile
 import io
 
 # from allennlp.common.tqdm import Tqdm
-import models.flair
+import dadmatools.models.flair as flair
 
 logger = logging.getLogger("flair")
 

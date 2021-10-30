@@ -6,9 +6,9 @@ import torch
 import torch.nn as nn
 from typing import List, Union
 
-from flair.datasets import DataLoader
-from flair.training_utils import MetricRegression, Result, store_embeddings
-from flair.data import Sentence, Label
+from dadmatools.flair.datasets import DataLoader
+from dadmatools.flair.training_utils import MetricRegression, Result, store_embeddings
+from dadmatools.flair.data import Sentence, Label
 import logging
 
 log = logging.getLogger("flair")

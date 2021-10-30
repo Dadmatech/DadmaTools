@@ -14,11 +14,11 @@ try:
 except ImportError:
     amp = None
 
-import models.flair as flair
-from models.flair.data import Dictionary
-from models.flair.models import LanguageModel
-from models.flair.optim import *
-from models.flair.training_utils import add_file_handler
+import dadmatools.models.flair as flair
+from dadmatools.models.flair.data import Dictionary
+from dadmatools.models.flair.models import LanguageModel
+from dadmatools.models.flair.optim import *
+from dadmatools.models.flair.training_utils import add_file_handler
 
 log = logging.getLogger("flair")
 

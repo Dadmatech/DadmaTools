@@ -8,8 +8,8 @@ from typing import List
 
 from torch.optim import Optimizer
 
-import models.flair as flair
-from models.flair.data import Dictionary
+import dadmatools.models.flair as flair
+from dadmatools.models.flair.data import Dictionary
 
 
 class LanguageModel(nn.Module):

@@ -7,10 +7,10 @@ from abc import abstractmethod
 
 from typing import Union, List
 
-import models.flair as flair
-from models.flair.data import DataPoint
-from models.flair.datasets import DataLoader
-from models.flair.training_utils import Result
+import dadmatools.models.flair as flair
+from dadmatools.models.flair.data import DataPoint
+from dadmatools.models.flair.datasets import DataLoader
+from dadmatools.models.flair.training_utils import Result
 
 
 class Model(torch.nn.Module):

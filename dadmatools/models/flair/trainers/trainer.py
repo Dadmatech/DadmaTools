@@ -16,13 +16,13 @@ try:
 except ImportError:
     amp = None
 
-import models.flair as flair
-import models.flair.nn
-from models.flair.list_data import ListCorpus
-from models.flair.data import MultiCorpus, Corpus
-from models.flair.datasets import DataLoader
-from models.flair.optim import ExpAnnealLR
-from models.flair.training_utils import (
+import dadmatools.models.flair as flair
+import dadmatools.models.flair.nn
+from dadmatools.models.flair.list_data import ListCorpus
+from dadmatools.models.flair.data import MultiCorpus, Corpus
+from dadmatools.models.flair.datasets import DataLoader
+from dadmatools.models.flair.optim import ExpAnnealLR
+from dadmatools.models.flair.training_utils import (
     init_output_file,
     WeightExtractor,
     log_line,

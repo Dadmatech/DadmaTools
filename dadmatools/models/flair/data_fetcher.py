@@ -7,9 +7,9 @@ from pathlib import Path
 
 from deprecated import deprecated
 
-import flair
-from flair.data import Sentence, Corpus, Token, MultiCorpus
-from flair.file_utils import cached_path
+import dadmatools.flair
+from dadmatools.flair.data import Sentence, Corpus, Token, MultiCorpus
+from dadmatools.flair.file_utils import cached_path
 
 log = logging.getLogger("flair")
 

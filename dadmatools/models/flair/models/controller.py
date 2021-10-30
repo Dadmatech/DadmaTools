@@ -2,8 +2,8 @@ import torch.nn
 from torch.nn.parameter import Parameter
 import torch.nn.functional as F
 import torch.autograd as autograd
-import models.flair.nn
-import models.flair as flair
+import dadmatools.models.flair.nn
+import dadmatools.models.flair as flair
 import torch
 
 import numpy as np

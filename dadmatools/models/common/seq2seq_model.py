@@ -8,10 +8,10 @@ from torch import nn
 import torch.nn.functional as F
 import numpy as np
 
-import models.common.seq2seq_constant as constant
-from models.common import utils
-from models.common.seq2seq_modules import LSTMAttention
-from models.common.beam import Beam
+import dadmatools.models.common.seq2seq_constant as constant
+from dadmatools.models.common import utils
+from dadmatools.models.common.seq2seq_modules import LSTMAttention
+from dadmatools.models.common.beam import Beam
 
 logger = logging.getLogger('stanza')
 

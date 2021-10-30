@@ -9,14 +9,14 @@ import torch.autograd as autograd
 import flair.nn
 import torch
 
-from flair.data import Dictionary, Sentence, Token, Label
-from flair.datasets import DataLoader
-from flair.embeddings import TokenEmbeddings
-from flair.file_utils import cached_path
+from dadmatools.flair.data import Dictionary, Sentence, Token, Label
+from dadmatools.flair.datasets import DataLoader
+from dadmatools.flair.embeddings import TokenEmbeddings
+from dadmatools.flair.file_utils import cached_path
 
 from typing import List, Tuple, Union
 
-from flair.training_utils import Metric, Result, store_embeddings
+from dadmatools.flair.training_utils import Metric, Result, store_embeddings
 from .biaffine_attention import BiaffineAttention
 
 from tqdm import tqdm

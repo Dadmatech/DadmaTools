@@ -7,8 +7,8 @@ import random
 
 import torch
 
-import models.common.seq2seq_constant as constant
-from models.common.doc import HEAD, ID, UPOS
+import dadmatools.models.common.seq2seq_constant as constant
+from dadmatools.models.common.doc import HEAD, ID, UPOS
 
 logger = logging.getLogger('stanza')
 
