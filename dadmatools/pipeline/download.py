@@ -24,7 +24,8 @@ MODELS = {
         'file_extension': '.pt'
     },
     'dependencyparser':{
-        'url': 'https://www.dropbox.com/s/ciy9q85hyu0hew7/dep-best-model.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/o6jc1fy977frkfz/dep-best-model.pt?dl=1',
+#         'url': 'https://www.dropbox.com/s/brxzovuugdqr574/dep-best-model2.tar.gz?dl=1',
         'file_extension': '.pt'
     },
     'parsbert':{
