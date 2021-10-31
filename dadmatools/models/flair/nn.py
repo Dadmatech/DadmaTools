@@ -12,6 +12,10 @@ from dadmatools.models.flair.data import DataPoint
 from dadmatools.models.flair.datasets import DataLoader
 from dadmatools.models.flair.training_utils import Result
 
+import sys
+from dadmatools.models import flair
+
+sys.modules['flair'] = flair
 
 class Model(torch.nn.Module):
     """Abstract base class for all downstream task models in Flair, such as SequenceTagger and TextClassifier.
