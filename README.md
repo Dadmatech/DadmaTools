@@ -128,12 +128,13 @@ Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](http
 
 
 ## Cite
-
+Will be added in future.
+<!-- 
 If you want to cite this project, please use the following BibTeX entry: 
 
 ```
 @inproceedings{
 }
-```
+``` -->
 
-Read the paper here. 
+<!-- Read the paper here.  -->
