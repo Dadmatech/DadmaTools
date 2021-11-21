@@ -11,19 +11,23 @@ DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.pernlp')
 
 MODELS = {
     'fa_lemmatizer':{
-        'url': 'https://www.dropbox.com/s/r2fkn8xeee0vb7c/fa_ewt_lemmatizer.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/2ne7bvkvsm97lzl/fa_ewt_lemmatizer.pt?dl=1',
         'file_extension': '.pt'
     },
     'fa_tokenizer':{
-        'url': 'https://www.dropbox.com/s/bapff5mu2myugpz/fa_ewt_tokenizer.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/pjpp5ik26x1dazm/fa_ewt_tokenizer.pt?dl=1',
+        'file_extension': '.pt'
+    },
+    'fa_constituency':{
+        'url': 'https://www.dropbox.com/s/aro4jf544gf5pe3/const_model_tehran.pt?dl=1',
         'file_extension': '.pt'
     },
     'postagger':{
-        'url': 'https://www.dropbox.com/s/jiy4ddevib752v5/pos-best-model.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/vfrarh4wsvpfd7k/pos_model.pt?dl=1',
         'file_extension': '.pt'
     },
     'dependencyparser':{
-        'url': 'https://www.dropbox.com/s/o6jc1fy977frkfz/dep-best-model.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/5t3lnxf0fz6020d/dependancy_model.pt?dl=1',
         'file_extension': '.pt'
     },
     'parsbert':{
