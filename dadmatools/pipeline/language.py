@@ -8,6 +8,7 @@ import dadmatools.models.tokenizer as tokenizer
 import dadmatools.models.lemmatizer as lemmatizer
 import dadmatools.models.postagger as tagger
 import dadmatools.models.dependancy_parser as dp
+import dadmatools.models.constituency_parser as conspars
 
 
 class NLP():
@@ -22,6 +23,8 @@ class NLP():
     
     Token.set_extension("dep_arc", default=None)
     Doc.set_extension("sentences", default=None)
+    Doc.set_extension("chunks", default=None)
+    Doc.set_extension("constituency", default=None)
     
     global nlp
     nlp = None
@@ -32,7 +35,7 @@ class NLP():
         nlp = spacy.blank(lang)
         self.nlp = nlp
         
-        self.dict = {'tok':'tokenizer', 'lem':'lemmatize', 'pos':'postagger', 'dep':'dependancyparser'}
+        self.dict = {'tok':'tokenizer', 'lem':'lemmatize', 'pos':'postagger', 'dep':'dependancyparser', 'cons':'constituencyparser'}
         self.pipelines = pipelines.split(',')
         
         global tokenizer_model
@@ -53,6 +56,11 @@ class NLP():
             global postagger_model
             postagger_model = tagger.load_model()
             self.nlp.add_pipe('postagger')
+        
+        if 'cons' in pipelines:
+            global consparser_model
+            consparser_model = conspars.load_model()
+            self.nlp.add_pipe('constituencyparser')
     
     @Language.component('tokenizer', retokenizes=True)
     def tokenizer(doc):
@@ -117,6 +125,25 @@ class NLP():
                 d.dep_ = rel
                 d._.dep_arc = arc
                 d.head = sent[arc-1]
+        
+        return doc
+    
+    @Language.component('constituencyparser')
+    def constituencyparser(doc):
+        model = consparser_model
+        
+        constitu_parses = []
+        chunks = []
+        for sent in doc._.sentences:
+            ## getting the constituency of the sentence
+            cons_res = conspars.cons_parser(model, sent.text)
+            constitu_parses.append(cons_res)
+            ## getting the chunks of the sentence
+            chunker_res = conspars.chunker(cons_res)
+            chunks.append(chunker_res)
+        
+        doc._.constituency = constitu_parses
+        doc._.chunks = chunks
         
         return doc
     

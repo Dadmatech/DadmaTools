@@ -77,7 +77,8 @@ def make_tag_dictionary() -> Dictionary:
         # Make the tag dictionary
         tag_dictionary: Dictionary = Dictionary()
         tag_dictionary.add_item("O")
-        list = ["<unk>", "root", "amod", "nsubj:pass", "case", "fixed", "nmod", "aux:pass", "punct", "parataxis", "nsubj", "mark", "ccomp", "cop", "obj", "aux", "advmod", "nummod", "cc", "det", "appos", "conj", "obl", "acl", "xcomp", "compound:lvc", "advcl", "flat", "dep", "vocative", "compound", "dislocated", "flat:foreign", "goeswith", "iobj"]
+        # list = ["<unk>", "root", "amod", "nsubj:pass", "case", "fixed", "nmod", "aux:pass", "punct", "parataxis", "nsubj", "mark", "ccomp", "cop", "obj", "aux", "advmod", "nummod", "cc", "det", "appos", "conj", "obl", "acl", "xcomp", "compound:lvc", "advcl", "flat", "dep", "vocative", "compound", "dislocated", "flat:foreign", "goeswith", "iobj"]
+        list = ['goeswith', 'obl', 'cop', 'conj', 'nummod', 'flat:num', 'dep', 'obl:arg', 'compound', 'compound:lvc', 'nmod', 'advcl', 'iobj', 'flat:name', '<unk>', 'aux', 'root', 'fixed', 'xcomp', 'appos', 'csubj', 'advmod', 'nsubj:pass', 'vocative', 'punct', 'case', 'aux:pass', 'det', 'acl', 'nsubj', 'parataxis', 'cc', 'amod', 'obj', 'mark', 'ccomp']
         for t in list:
             tag_dictionary.add_item(t)
         tag_dictionary.add_item("<START>")

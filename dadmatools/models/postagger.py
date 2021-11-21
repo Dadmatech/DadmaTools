@@ -71,7 +71,8 @@ def make_tag_dictionary() -> Dictionary:
         # Make the tag dictionary
         tag_dictionary: Dictionary = Dictionary()
         tag_dictionary.add_item("O")
-        list = ["<unk>", "root", "ADJ", "NOUN", "ADP", "VERB", "PUNCT", "SCONJ", "AUX", "PART", "NUM", "CCONJ", "ADV", "DET", "PRON", "INTJ", "X"]
+        # list = ["<unk>", "root", "ADJ", "NOUN", "ADP", "VERB", "PUNCT", "SCONJ", "AUX", "PART", "NUM", "CCONJ", "ADV", "DET", "PRON", "INTJ", "X"]
+        list = ['X', 'NOUN', 'PRON', 'PUNCT', 'ADP', 'NUM', 'ADV', 'SCONJ', 'PART', 'PROPN', 'CCONJ', 'ADJ', 'INTJ', 'VERB', 'AUX', 'DET', '<unk>']
         for t in list:
             tag_dictionary.add_item(t)
         tag_dictionary.add_item("<START>")
