@@ -15,7 +15,11 @@ MODELS = {
         'file_extension': '.pt'
     },
     'fa_tokenizer':{
-        'url': 'https://www.dropbox.com/s/pjpp5ik26x1dazm/fa_ewt_tokenizer.pt?dl=1',
+        'url': 'https://www.dropbox.com/s/bajpn68bp11o78s/fa_ewt_tokenizer.pt?dl=1',
+        'file_extension': '.pt'
+    },
+    'fa_mwt':{
+        'url': 'https://www.dropbox.com/s/9xqhfulttjlhv7u/fa_perdt_mwt_expander.pt?dl=1',
         'file_extension': '.pt'
     },
     'fa_constituency':{
@@ -77,10 +81,11 @@ def download_model(model_name: str, cache_dir: str = DEFAULT_CACHE_DIR, process_
     if process_func is not None and not os.path.exists(unzip_dir):
         os.makedirs(unzip_dir, exist_ok=True)
         process_func(model_file_path, model_info, cache_dir=DEFAULT_CACHE_DIR, unzip_dir = unzip_dir , clean_up_raw_data=True)
-    else:
+    elif not os.path.exists(unzip_dir):
         # moveing it to DEFAULT_DESTINATION
         os.makedirs(unzip_dir, exist_ok=True)
         shutil.copy(model_file_path, unzip_dir)
+    else: None
     
     return model_file_path        
 

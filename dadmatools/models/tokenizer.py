@@ -69,7 +69,7 @@ def parse_args():
         'cuda':torch.cuda.is_available(),
         'cpu':True,
         'seed':1234,
-        'use_mwt':'None',
+        'use_mwt':True,
         'no_use_mwt':'use_mwt'
     }
     return args
@@ -139,9 +139,20 @@ def tokenizer(trainer, args, input_sentence):
     
     batches = DataLoader(args, input_text=input_sentence, vocab=vocab, evaluation=True)
     preds = output_predictions(args['conll_file'], trainer, batches, vocab, mwt_dict, args['max_seqlen'])
-    preds = [[p['text'] for p in pred] for pred in preds]
+    # preds = [[p['text'] for p in pred] for pred in preds]
+    new_preds = []
+    for pred in preds:
+        ps = []
+        for p in pred:
+            try:
+                ps.append((p['text'], p['misc']))
+            except:
+                ps.append((p['text'], 'MWT=No'))
+        new_preds.append(ps)
+    preds = new_preds
+    
     return preds
 
-if __name__ == '__main__':
-    preds = tokenize('دیروز با مهدی و علی به کتابخانه رفتیم. سلام ما را به او برسان')
-    print(preds)
+# if __name__ == '__main__':
+#     preds = tokenize('دیروز با مهدی و علی به کتابخانه رفتیم. سلام ما را به او برسان')
+#     print(preds)
