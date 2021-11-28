@@ -17,7 +17,7 @@ setuptools.setup(
     install_requires=[
 	"bpemb==0.3.3",
 	"spacy==3.0.0",
-    "sklearn==0.0",
+    	"sklearn==0.0",
 	"torch==1.7.1",
 	"transformers==4.9.1",
 	"ipython==7.12.0",
