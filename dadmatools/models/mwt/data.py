@@ -8,7 +8,8 @@ import torch
 import dadmatools.models.common.seq2seq_constant as constant
 from dadmatools.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
 from dadmatools.models.mwt.vocab import Vocab
-from dadmatools.models.common.doc import Document
+from dadmatools.models.common.doc import Document 
+
 
 
 class DataLoader:
