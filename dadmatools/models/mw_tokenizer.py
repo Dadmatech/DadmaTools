@@ -8,6 +8,10 @@ For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal
 
 import logging
 import torch
+import numpy as np
+import random
+import os
+from pathlib import Path
 
 from dadmatools.models.mwt.data import DataLoader
 from dadmatools.models.mwt.vocab import Vocab
@@ -42,10 +46,10 @@ def parse_args():
         'batch_size':50,
         'max_grad_norm':5.0,
         'log_step':20,
-        'save_dir':'saved_models/fa_mwt/fa_mwt.pt',
         'seed':1234,
         'cuda':torch.cuda.is_available(),
-        'cpu':True
+        'cpu':True,
+        'save_dir':'saved_models/fa_mwt/fa_mwt.pt'
     }
     return args
      
@@ -54,6 +58,10 @@ def load_model():
     dl.download_model('fa_mwt')
     
     args = parse_args()
+
+    # file paths
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    args['save_dir'] = prefix + args['save_dir']
     
     # load model
     use_cuda = args['cuda'] and not args['cpu']
