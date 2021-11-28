@@ -1,6 +1,7 @@
 import warnings
 import logging
 from pathlib import Path
+from torch import tensor
 
 import torch.nn
 from torch.nn.parameter import Parameter
@@ -412,7 +413,7 @@ class SequenceTagger(flair.nn.Model):
 		
 		#================debug================
 		# 5: de only, 9: en only
-		# self.selection=torch.cuda.FloatTensor([1.,0.])
+		# self.selection=torch.FloatTensor([1.,0.])
 		# self.embedding_selector = True
 		# self.use_rl = True
 		#================debug================
@@ -702,7 +703,7 @@ class SequenceTagger(flair.nn.Model):
 			features_input=features_input.permute(0,3,1,2).reshape(-1,seq_len,num_tags)
 			lengths_input=torch.tensor(lengths)
 			lengths_input=lengths_input.unsqueeze(-1).repeat(1,best_k)
-			lengths_input=lengths_input.reshape(-1).cuda()
+			lengths_input=lengths_input.reshape(-1)
 
 			distillation_loss=self._calculate_crf_distillation_loss(features_input,tags,lengths_input)
 		else:
@@ -736,7 +737,7 @@ class SequenceTagger(flair.nn.Model):
 				.lt(lengths.unsqueeze(1)))
 	def _calculate_distillation_loss(self, features, teacher_features, lengths, T = 1):
 		# TODO: time with mask, and whether this should do softmax
-		# mask=self.sequence_mask(lengths, max_len).unsqueeze(-1).cuda().type_as(features)
+		# mask=self.sequence_mask(lengths, max_len).unsqueeze(-1).type_as(features)
 		mask=self.mask
 		KD_loss = torch.nn.functional.kl_div(F.log_softmax(features/T, dim=-1), F.softmax(teacher_features/T, dim=-1),reduction='none') * mask * T * T
 		# KD_loss = KD_loss.sum()/mask.sum()
@@ -994,7 +995,7 @@ class SequenceTagger(flair.nn.Model):
 			self.time=time.time()
 		features = self.linear(sentence_tensor)
 		
-		self.mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).cuda().type_as(features)
+		self.mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).type_as(features)
 		if self.use_mfvi:
 			# self.sent_feats=sentence_tensor
 			token_feats=sentence_tensor
@@ -1028,7 +1029,7 @@ class SequenceTagger(flair.nn.Model):
 			self.enhanced_transitions = torch.tensordot(atts,self.transitions,dims=1)
 			return 
 		if self.use_language_id:
-			sent_lang_id = torch.cuda.LongTensor([sentence.lang_id for sentence in sentences])
+			sent_lang_id = torch.LongTensor([sentence.lang_id for sentence in sentences])
 			# (batch_size,) (target_languages,num_tags,num_tags) -> (batch_size, num_tags, num_tags)
 			self.enhanced_transitions = torch.index_select(self.transitions,0,sent_lang_id)
 			return 
@@ -1141,7 +1142,7 @@ class SequenceTagger(flair.nn.Model):
 		if not self.use_crf:
 			distribution = F.softmax(feature, dim=-1)
 			_, indices = torch.max(feature, -1)
-			sentrange=torch.arange(0,distribution.shape[1]).long().cuda()
+			sentrange=torch.arange(0,distribution.shape[1]).long()
 
 		if self.predict_posterior:
 
@@ -1153,7 +1154,7 @@ class SequenceTagger(flair.nn.Model):
 			forward_backward_score = (forward_var + backward_var) * mask.unsqueeze(-1)
 			distribution = F.softmax(forward_backward_score, dim=-1)
 			_, indices = torch.max(forward_backward_score, -1)
-			sentrange=torch.arange(0,distribution.shape[1]).long().cuda()
+			sentrange=torch.arange(0,distribution.shape[1]).long()
 		for i, vals in enumerate(zip(feature, lengths)):
 			feats, length=vals
 			if self.use_crf and not self.predict_posterior:
@@ -1853,7 +1854,7 @@ class FastSequenceTagger(SequenceTagger):
 		# longest_token_sequence_in_batch: int = max(lengths)
 
 		# max_len = features.shape[1]
-		# mask=self.sequence_mask(torch.tensor(lengths), max_len).cuda().type_as(features)
+		# mask=self.sequence_mask(torch.tensor(lengths), max_len).type_as(features)
 		loss = self._calculate_loss(features, data_points, self.mask)
 		return loss
 
@@ -1911,13 +1912,13 @@ class FastSequenceTagger(SequenceTagger):
 
 			lengths_input=torch.tensor(lengths)
 			lengths_input=lengths_input.unsqueeze(-1).repeat(1,best_k)
-			lengths_input=lengths_input.reshape(-1).cuda()
+			lengths_input=lengths_input.reshape(-1)
 			# batch*bestk, seq_len, target_size -> batch*bestk, seq_len, target_size, target_size
 			feature_scores=features_input.unsqueeze(-2)
 			# crf_scores = feature_scores + self.transitions.view(1, 1, self.tagset_size, self.tagset_size)
 			
 			
-			# features_input = torch.rand_like(features_input).cuda()
+			# features_input = torch.rand_like(features_input)
 			forward_score = self._forward_alg(features_input, lengths_input)
 			gold_score = self._score_sentence(features_input, tags, lengths_input, mask_input)
 			distillation_loss=forward_score-gold_score
@@ -1960,7 +1961,7 @@ class FastSequenceTagger(SequenceTagger):
 				if train_with_professor and not self.biaf_attention:
 					teacher_features = torch.stack([sentence.get_professor_teacher_prediction(professor_interpolation=professor_interpolation) for sentence in data_points],0)
 				elif self.use_language_attention:
-					sent_lang_id = torch.cuda.LongTensor([sentence.lang_id for sentence in data_points])
+					sent_lang_id = torch.LongTensor([sentence.lang_id for sentence in data_points])
 					teacher_attention = torch.index_select(language_weight,0,sent_lang_id)
 					teacher_attention = F.softmax(teacher_attention,-1)
 					# print(language_weight.softmax(1))
@@ -1968,7 +1969,7 @@ class FastSequenceTagger(SequenceTagger):
 				elif self.biaf_attention:
 					teacher_sentfeats = torch.stack([sentence.get_teacher_sentfeats() for sentence in data_points],0)
 					if self.use_language_vector:
-						sent_lang_id = torch.cuda.LongTensor([sentence.lang_id for sentence in data_points])
+						sent_lang_id = torch.LongTensor([sentence.lang_id for sentence in data_points])
 						input_vecs = torch.index_select(language_vector,0,sent_lang_id)
 					if self.token_level_attention:
 						if self.use_language_vector:
@@ -2105,7 +2106,7 @@ class FastSequenceTagger(SequenceTagger):
 		else:
 			score = torch.nn.functional.cross_entropy(features.view(-1,features.shape[-1]), tag_list.view(-1,), reduction='none') * mask.view(-1,)
 			if self.unlabel_entropy_loss:
-				unlabel_id = torch.cuda.LongTensor([sentence.is_unlabel for sentence in sentences])
+				unlabel_id = torch.LongTensor([sentence.is_unlabel for sentence in sentences])
 				unlabel_id[unlabel_id<0]=0
 				score = score.view(features.shape[0],features.shape[1]).sum(-1) * unlabel_id
 			if self.sentence_level_loss or self.use_crf:
@@ -2133,7 +2134,7 @@ class FastSequenceTagger(SequenceTagger):
 		if self.unlabel_entropy_loss:
 			entropy = (self.entropy_loss(features)*self.mask[:,:,None]).sum([-1,-2])
 
-			unlabel_id = torch.cuda.LongTensor([sentence.is_unlabel for sentence in sentences])
+			unlabel_id = torch.LongTensor([sentence.is_unlabel for sentence in sentences])
 			if self.sentence_level_loss:
 				entro_loss = (entropy * unlabel_id).sum()/len(features)
 			else:
@@ -2154,15 +2155,15 @@ class FastSequenceTagger(SequenceTagger):
 		)
 		stop = stop[None, :].repeat(tags.shape[0], 1)
 
-		pad_start_tags = torch.cat([start, tags], 1).cuda()
-		pad_stop_tags = torch.cat([tags, stop], 1).cuda()
+		pad_start_tags = torch.cat([start, tags], 1)
+		pad_stop_tags = torch.cat([tags, stop], 1)
 		transition_mask=torch.ones(mask.shape[0],mask.shape[1]+1).type_as(mask)
 		transition_mask[:,1:]=mask
 		transition_mask2=torch.ones(mask.shape[0],mask.shape[1]+1).type_as(mask)
 		transition_mask2[:,:-1]=mask
 		transition_mask2[:,-1]=0
 		try:
-			pad_stop_tags = pad_stop_tags.cuda()*transition_mask2.long()+(1-transition_mask2.long())*self.tag_dictionary.get_idx_for_item(STOP_TAG)
+			pad_stop_tags = pad_stop_tags*transition_mask2.long()+(1-transition_mask2.long())*self.tag_dictionary.get_idx_for_item(STOP_TAG)
 		except:
 			pdb.set_trace()
 		
@@ -2322,7 +2323,8 @@ class FastSequenceTagger(SequenceTagger):
 		prediction_mode = True,
 		speed_test = False,
 	):
-		self.selection=torch.cuda.FloatTensor([1.,0.])
+		# self.selection=torch.FloatTensor([1.,0.])
+		self.selection=torch.FloatTensor([1.,0.])
 		sentence: Sentence = Sentence()
 		for t in token_list:
 			token = Token(t)
@@ -2355,7 +2357,7 @@ class FastSequenceTagger(SequenceTagger):
 				with torch.no_grad():
 					# calcualte teacher features
 					# pdb.set_trace()
-					sent_lang_id = torch.cuda.LongTensor([sentence.lang_id for sentence in batch])
+					sent_lang_id = torch.LongTensor([sentence.lang_id for sentence in batch])
 					teacher_attention = torch.index_select(language_weight,0,sent_lang_id)
 					teacher_attention = F.softmax(teacher_attention,-1)
 					teacher_features = torch.stack([sentence.get_teacher_prediction(pooling='weighted', weight=teacher_attention[idx]) for idx,sentence in enumerate(batch)],0)
@@ -2364,7 +2366,7 @@ class FastSequenceTagger(SequenceTagger):
 					# generate the mask
 					lengths: List[int] = [len(sentence.tokens) for sentence in batch]
 					longest_token_sequence_in_batch: int = max(lengths)
-					mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).cuda().type_as(teacher_features)
+					mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).type_as(teacher_features)
 
 
 					if self.distill_prob:

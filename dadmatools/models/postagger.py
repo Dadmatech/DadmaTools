@@ -9,63 +9,67 @@ from pathlib import Path
 
 import dadmatools.pipeline.download as dl
 
-config = {
-  "Controller": {
-    "model_structure": None
-  },
-  "ReinforcementTrainer": {
-    "controller_learning_rate": 0.1,
-    "controller_optimizer": "SGD",
-    "distill_mode": False,
-    "optimizer": "SGD",
-    "sentence_level_batch": True
-  },
-  "embeddings": {
-    "BertEmbeddings-0": {
-#       "bert_model_or_path": "models/parsbert/",
-      "bert_model_or_path": "saved_models/parsbert/parsbert/",
-      "fine_tune": True,
-      "layers": "-1",
-      "pooling_operation": "mean"
-    }
-  },
-  "model": {
-    "FastSequenceTagger": {
-      "crf_attention": False,
-      "dropout": 0.0,
-      "hidden_size": 800,
-      "sentence_loss": True,
-      "use_crf": True
-    }
-  },
-#   "model_name": "xlmr-task_en-elmo_en-bert-task_multi-bert-task_word_en-flair_mflair_char_30episode_300epoch_32batch_0.1lr_800hidden_tweebank_monolingual_crf_fast_sqrtreward_reinforce_freeze_norelearn_sentbatch_0.5discount_5patience_nodev_new_upos8",
-#   "target_dir": "saved_models/",
-    "model_name": "postagger.pt",
-  "target_dir": "saved_models/postagger/",
-  "targets": "upos",
-  "upos": {
-    "Corpus": "UniversalDependenciesCorpus-1",
-    "UniversalDependenciesCorpus-1": {
-      "data_folder": "flair/datasets/persian_dp"
-    }
-  },
-  "train": {
-    "controller_momentum": 0.9,
-    "discount": 0.5,
-    "learning_rate": 0.1,
-    "max_episodes": 30,
-    "max_epochs": 300,
-    "max_epochs_without_improvement": 25,
-    "mini_batch_size": 32,
-    "monitor_test": False,
-    "patience": 5,
-    "save_final_model": False,
-    "sqrt_reward": True,
-    "train_with_dev": False,
-    "true_reshuffle": False
-  },
-  "trainer": "ReinforcementTrainer"
-}
+def get_config():
+  config = {
+    "Controller": {
+      "model_structure": None
+    },
+    "ReinforcementTrainer": {
+      "controller_learning_rate": 0.1,
+      "controller_optimizer": "SGD",
+      "distill_mode": False,
+      "optimizer": "SGD",
+      "sentence_level_batch": True
+    },
+    "embeddings-saved-dir": "saved_models/parsbert/parsbert/",
+    "embeddings": {
+      "BertEmbeddings-0": {
+  #       "bert_model_or_path": "models/parsbert/",
+        "bert_model_or_path": "saved_models/parsbert/parsbert/",
+        "fine_tune": True,
+        "layers": "-1",
+        "pooling_operation": "mean"
+      }
+    },
+    "model": {
+      "FastSequenceTagger": {
+        "crf_attention": False,
+        "dropout": 0.0,
+        "hidden_size": 800,
+        "sentence_loss": True,
+        "use_crf": True
+      }
+    },
+  #   "model_name": "xlmr-task_en-elmo_en-bert-task_multi-bert-task_word_en-flair_mflair_char_30episode_300epoch_32batch_0.1lr_800hidden_tweebank_monolingual_crf_fast_sqrtreward_reinforce_freeze_norelearn_sentbatch_0.5discount_5patience_nodev_new_upos8",
+  #   "target_dir": "saved_models/",
+      "model_name": "postagger.pt",
+    "target_dir": "saved_models/postagger/",
+    "targets": "upos",
+    "upos": {
+      "Corpus": "UniversalDependenciesCorpus-1",
+      "UniversalDependenciesCorpus-1": {
+        "data_folder": "flair/datasets/persian_dp"
+      }
+    },
+    "train": {
+      "controller_momentum": 0.9,
+      "discount": 0.5,
+      "learning_rate": 0.1,
+      "max_episodes": 30,
+      "max_epochs": 300,
+      "max_epochs_without_improvement": 25,
+      "mini_batch_size": 32,
+      "monitor_test": False,
+      "patience": 5,
+      "save_final_model": False,
+      "sqrt_reward": True,
+      "train_with_dev": False,
+      "true_reshuffle": False
+    },
+    "trainer": "ReinforcementTrainer"
+  }
+  return config
+
 
 def make_tag_dictionary() -> Dictionary:
         # Make the tag dictionary
@@ -133,12 +137,14 @@ def load_model():
     dl.download_model('parsbert', process_func=dl._unzip_process_func)
     dl.download_model('postagger')
     
+    config = get_config()
+
     prefix = str(Path(__file__).parent.absolute()).replace('models', '')
     config['target_dir'] = prefix + config['target_dir']
-    config['embeddings']['BertEmbeddings-0']['bert_model_or_path'] = prefix + config['embeddings']['BertEmbeddings-0']['bert_model_or_path']
+    config['embeddings']['BertEmbeddings-0']['bert_model_or_path'] = prefix + config['embeddings-saved-dir']
     
     student=create_model(config)
-    base_path=Path(config['target_dir'])/config['model_name']
+    # base_path=Path(config['target_dir'])/config['model_name']
     
     return student
 
