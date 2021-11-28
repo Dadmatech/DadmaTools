@@ -19,7 +19,6 @@ from dadmatools.models.common.seq2seq_model import Seq2SeqModel
 from dadmatools.models.common import utils, loss
 from dadmatools.models.mwt.vocab import Vocab
 
-
 def unpack_batch(batch, use_cuda):
     """ Unpack a batch from the data loader. """
     if use_cuda:
