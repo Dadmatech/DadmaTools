@@ -657,7 +657,7 @@ class SemanticDependencyParser(flair.nn.Model):
 			sentence_tensor, _ = pad_packed_sequence(x, True, total_length=sentence_tensor.shape[1])
 			sentence_tensor = self.lstm_dropout_func(sentence_tensor)
 	
-		mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).cuda().type_as(sentence_tensor)
+		mask=self.sequence_mask(torch.tensor(lengths),longest_token_sequence_in_batch).type_as(sentence_tensor)
 		self.mask=mask
 		# mask = words.ne(self.pad_index)
 		# lens = mask.sum(dim=1)
@@ -786,7 +786,7 @@ class SemanticDependencyParser(flair.nn.Model):
 			layer_sib = self.trilinear_sib(edge_node_sib_h, edge_node_sib_m, edge_node_sib_m) * mask_sib
 			# keep (ma x mb x mc) -> (ma x mb x mb)
 			#layer_sib = 0.5 * (layer_sib + layer_sib.transpose(3,2))
-			one_mask=torch.ones(layer_sib.shape[-2:]).cuda()
+			one_mask=torch.ones(layer_sib.shape[-2:])
 			tril_mask=torch.tril(one_mask,-1)
 			triu_mask=torch.triu(one_mask,1)
 			layer_sib = layer_sib-layer_sib*tril_mask.unsqueeze(0).unsqueeze(0) + (layer_sib*triu_mask.unsqueeze(0).unsqueeze(0)).permute([0,1,3,2])
@@ -797,7 +797,7 @@ class SemanticDependencyParser(flair.nn.Model):
 			edge_node_cop_h, edge_node_cop_m = arc_cop
 			layer_cop = self.trilinear_cop(edge_node_cop_h, edge_node_cop_m, edge_node_cop_h) * mask_cop
 			# keep (ma x mb x mc) -> (ma x mb x ma)
-			one_mask=torch.ones(layer_cop.shape[-2:]).cuda()
+			one_mask=torch.ones(layer_cop.shape[-2:])
 			tril_mask=torch.tril(one_mask,-1)
 			triu_mask=torch.triu(one_mask,1)
 			layer_cop=layer_cop.transpose(1,2)
@@ -854,7 +854,7 @@ class SemanticDependencyParser(flair.nn.Model):
 		# longest_token_sequence_in_batch: int = max(lengths)
 
 		# max_len = features.shape[1]
-		# mask=self.sequence_mask(torch.tensor(lengths), max_len).cuda().type_as(features)
+		# mask=self.sequence_mask(torch.tensor(lengths), max_len).type_as(features)
 		loss = self._calculate_loss(s_arc, s_rel, data_points, self.mask)
 		return loss
 
