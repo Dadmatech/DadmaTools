@@ -5,6 +5,7 @@ from spacy.tokens import Doc, Token, Span
 from spacy.pipeline import Sentencizer
 
 import dadmatools.models.tokenizer as tokenizer
+import dadmatools.models.mw_tokenizer as mwt
 import dadmatools.models.lemmatizer as lemmatizer
 import dadmatools.models.postagger as tagger
 import dadmatools.models.dependancy_parser as dp
@@ -17,6 +18,7 @@ class NLP():
     possible pipelines: [tokenizer, lemmatize, postagger, dependancyparser]
     """
     tokenizer_model = None
+    mwt_model = None
     lemma_model = None
     postagger_model = None
     depparser_model = None
@@ -42,6 +44,9 @@ class NLP():
         tokenizer_model = tokenizer.load_model()
         self.nlp.add_pipe('tokenizer', first=True)
         
+        global mwt_model
+        mwt_model = mwt.load_model()
+
         if 'lem' in pipelines:
             global lemma_model
             lemma_model = lemmatizer.load_model()
@@ -65,11 +70,13 @@ class NLP():
     @Language.component('tokenizer', retokenizes=True)
     def tokenizer(doc):
         model, args = tokenizer_model
+        model_mwt, args_mwt = mwt_model
         
         with doc.retokenize() as retokenizer:
             retokenizer.merge(doc[0:len(doc)])
         starts = []
         tokens_list = tokenizer.tokenizer(model, args, doc.text)
+        tokens_list = mwt.mwt(model_mwt, args_mwt, tokens_list)
         tokens = []
         index = 0
         for l in tokens_list:
