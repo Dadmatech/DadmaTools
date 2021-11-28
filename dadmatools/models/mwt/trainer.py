@@ -13,6 +13,7 @@ import logging
 
 logger = logging.getLogger('stanza')
 
+
 import dadmatools.models.common.seq2seq_constant as constant
 from dadmatools.models.common.trainer import Trainer as BaseTrainer
 from dadmatools.models.common.seq2seq_model import Seq2SeqModel

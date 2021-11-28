@@ -12,6 +12,7 @@ from dadmatools.models.common.doc import Document
 
 logger = logging.getLogger('stanza')
 
+
 class DataLoader:
     def __init__(self, doc, batch_size, args, vocab=None, evaluation=False):
         self.batch_size = batch_size
