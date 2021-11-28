@@ -10,6 +10,7 @@ from dadmatools.models.common.data import map_to_ids, get_long_tensor, get_float
 from dadmatools.models.mwt.vocab import Vocab
 from dadmatools.models.common.doc import Document 
 
+logger = logging.getLogger('stanza')
 
 
 class DataLoader:
