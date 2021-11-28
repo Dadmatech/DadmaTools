@@ -5,12 +5,12 @@ from collections import Counter
 import logging
 import torch
 
-import models.common.seq2seq_constant as constant
-from models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
-from models.mwt.vocab import Vocab
-from models.common.doc import Document
+import dadmatools.models.common.seq2seq_constant as constant
+from dadmatools.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
+from dadmatools.models.mwt.vocab import Vocab
+from dadmatools.models.common.doc import Document 
 
-logger = logging.getLogger('stanza')
+
 
 class DataLoader:
     def __init__(self, doc, batch_size, args, vocab=None, evaluation=False):
