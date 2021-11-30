@@ -95,8 +95,32 @@ Each task has its abbreviation as following:
 -  ```lem```: Lemmatizing
 -  ```tok```: Tokenizing
 
+Note that the normalizer can be used outside of the pipeline as there are several configs (the default confing is in the pipeline with the name of def-norm).
 Note that if no pipeline is passed to the model the tokenizer will be load as default.
 
+### Normalizer
+The normalizer can be used with the code below:
+
+Note: there are several options for normalizer
+
+-  ```unify_chars=True```,
+-  ```nim_fasele_correction=True```,
+-  ```replace_email=True```,
+-  ```replace_number=True```,
+-  ```replace_url=True```,
+-  ```remove_stop_word=False```,
+-  ```remove_puncs=False```,
+-  ```remove_extra_space=True```,
+-  ```refine_punc_spacing=False```
+
+```
+import dadmatools.models.normalizer as normalizer
+
+normalizer = normalizer.Normalizer(remove_stop_word=True)
+normalized_text = normalizer.normalize('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
+```
+
+### Pipeline - Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser
 ```
 import dadmatools.pipeline.language as language
 
@@ -112,6 +136,13 @@ print(nlp.analyze_pipes(pretty=True))
 doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
 ```
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there is ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extentions. Note that we defined our own extention as well in DadmaTools. If any pipeline related to the that specific extentions is not called, that extention will have no value.
+
+To better see the results you can use this code:
+```
+dictionary = language.to_json(pips, doc)
+print(dictionary)
+```
+
 ```
 sentences = doc._.sentences
 for sentence in sentences:
@@ -125,13 +156,12 @@ for sentence in sentences:
 sent_constituency = doc._.constituency ## this has value only if cons is called
 sent_chunks = doc._.chunks ## this has value only if cons is called
 ```
-To better see the results you can use this code:
-```
-dictionary = language.to_json(doc)
-```
+
 
 Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
+## Colab
+You can see the codes and the output in [The Colab](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing).
 
 ## Cite
 Will be added in future.
