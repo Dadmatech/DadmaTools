@@ -10,6 +10,10 @@ DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.pernlp')
 
 MODELS = {
+    'normalizer':{
+        'url': 'https://www.dropbox.com/s/6h59w1ivi6xxsxc/norm.tar.gz?dl=1',
+        'file_extension': '.tar.gz'
+    },
     'fa_lemmatizer':{
         'url': 'https://www.dropbox.com/s/2ne7bvkvsm97lzl/fa_ewt_lemmatizer.pt?dl=1',
         'file_extension': '.pt'

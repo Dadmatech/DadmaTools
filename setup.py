@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dadmatools",
-    version="1.0.9",
+    version="1.2.1",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -17,7 +17,7 @@ setuptools.setup(
     install_requires=[
 	"bpemb==0.3.3",
 	"spacy==3.0.0",
-    "sklearn==0.0",
+    	"sklearn==0.0",
 	"torch==1.7.1",
 	"transformers==4.9.1",
 	"ipython==7.12.0",

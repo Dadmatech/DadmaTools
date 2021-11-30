@@ -1,9 +1,11 @@
 import spacy
 from spacy import displacy
+from spacy import pipeline
 from spacy.language import Language
 from spacy.tokens import Doc, Token, Span
 from spacy.pipeline import Sentencizer
 
+import dadmatools.models.normalizer as normalizer
 import dadmatools.models.tokenizer as tokenizer
 import dadmatools.models.mw_tokenizer as mwt
 import dadmatools.models.lemmatizer as lemmatizer
@@ -22,6 +24,7 @@ class NLP():
     lemma_model = None
     postagger_model = None
     depparser_model = None
+    normalizer_model = None
     
     Token.set_extension("dep_arc", default=None)
     Doc.set_extension("sentences", default=None)
@@ -40,9 +43,14 @@ class NLP():
         self.dict = {'tok':'tokenizer', 'lem':'lemmatize', 'pos':'postagger', 'dep':'dependancyparser', 'cons':'constituencyparser'}
         self.pipelines = pipelines.split(',')
         
+        if 'def-norm' in pipelines:
+            global normalizer_model
+            normalizer_model = normalizer.load_model()
+            self.nlp.add_pipe('normalizer', first=True)
+
         global tokenizer_model
         tokenizer_model = tokenizer.load_model()
-        self.nlp.add_pipe('tokenizer', first=True)
+        self.nlp.add_pipe('tokenizer')
         
         global mwt_model
         mwt_model = mwt.load_model()
@@ -67,6 +75,17 @@ class NLP():
             consparser_model = conspars.load_model()
             self.nlp.add_pipe('constituencyparser')
     
+    @Language.component('normalizer')
+    def tokenizer(doc):
+        model = normalizer_model
+        with doc.retokenize() as retokenizer:
+            retokenizer.merge(doc[0:len(doc)])
+        norm_text = model.normalize(doc.text)
+        words = norm_text.split(' ')
+        spaces = [True for t in words]
+        doc = Doc(nlp.vocab, words=words, spaces=spaces)
+        return doc
+
     @Language.component('tokenizer', retokenizes=True)
     def tokenizer(doc):
         model, args = tokenizer_model
@@ -153,51 +172,34 @@ class NLP():
         doc._.chunks = chunks
         
         return doc
-    
-    
-    def to_json(self, doc):
-        dict_list = []
-        for sent in doc._.sentences:
-            sentence = []
-            for i, d in enumerate(sent):
-                dictionary = {}
-                dictionary['id'] = i+1
-                dictionary['text'] = d.text
-                if 'lem' in self.pipelines: dictionary['lemma'] = d.lemma_
-                if 'pos' in self.pipelines: dictionary['pos'] = d.pos_
-                if 'dep' in self.pipelines: 
-                    dictionary['rel'] = d.dep_
-                    dictionary['root'] = d._.dep_arc
-                sentence.append(dictionary)
-            dict_list.append(sentence)
-        return dict_list
-    
 
-    
+   
 class Pipeline():
     def __new__(cls, pipeline):
         language = NLP('fa', pipeline)
         nlp = language.nlp
-        return nlp
-    
-    
+        return nlp 
+
+        
 def load_pipline(pipelines):
     language = NLP('fa', pipelines)
     nlp = language.nlp
     return nlp
 
-# if __name__ == '__main__':
-# #     pipelines =  'tok,lem,pos,dep'
-#     pipelines =  'lem'
-# #     lang = 'fa' # delete
-    
-# #     language = NLP(lang, pipelines)
-# #     nlp = language.nlp
-#     nlp = load_pipline(pipelines)
-    
-#     print(nlp.pipe_names)
-#     print(nlp.analyze_pipes(pretty=True))
-
-#     doc = nlp('من دیروز به کتابخانه رفتم! فردا به مدرسه می‌روم.')
-#     print(doc)
-# #     print(language.to_json(doc))
+def to_json(pipelines, doc):
+    dict_list = []
+    for sent in doc._.sentences:
+        sentence = []
+        for i, d in enumerate(sent):
+            dictionary = {}
+            dictionary['id'] = i+1
+            dictionary['text'] = d.text
+            if 'lem' in pipelines: dictionary['lemma'] = d.lemma_
+            if 'pos' in pipelines: dictionary['pos'] = d.pos_
+            if 'dep' in pipelines: 
+                dictionary['rel'] = d.dep_
+                dictionary['root'] = d._.dep_arc
+            sentence.append(dictionary)
+        dict_list.append(sentence)
+    return dict_list
+ 
