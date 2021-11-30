@@ -82,6 +82,7 @@ Here is the list of NLP tasks we currently cover in the repository.
 -  Chunking
 -  Lemmatizing
 -  Tokenizing
+-  Normalizing
 
 ### Use Case
 
@@ -117,13 +118,18 @@ for sentence in sentences:
     text = sentence.text
     for token in sentences:
         token_text = token.text
-        lemma = token.lemma_
-        pos_tag = token.pos_
-        dep = token.dep_
-        dep_arc = token._.dep_arc
-    sent_constituency = sentence._.constituency
-    sent_chunks = sentence._.chunks
+        lemma = token.lemma_ ## this has value only if lem is called
+        pos_tag = token.pos_ ## this has value only if pos is called
+        dep = token.dep_ ## this has value only if dep is called
+        dep_arc = token._.dep_arc ## this has value only if dep is called
+sent_constituency = doc._.constituency ## this has value only if cons is called
+sent_chunks = doc._.chunks ## this has value only if cons is called
 ```
+To better see the results you can use this code:
+```
+dictionary = language.to_json(doc)
+```
+
 Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
 
