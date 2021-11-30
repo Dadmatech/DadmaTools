@@ -66,7 +66,7 @@ You can check the `requirements.txt` file to see what version the packages has b
 
 ### Install from github
 Alternatively you can install the latest version from github using:
-```
+```bash
 pip install git+https://github.com/Dadmatech/dadmatools.git
 ```
 
@@ -121,7 +121,7 @@ normalized_text = normalizer.normalize('از قصهٔ کودکیشان که می
 ```
 
 ### Pipeline - Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser
-```
+```python
 import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
@@ -138,12 +138,15 @@ doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص �
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there is ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extentions. Note that we defined our own extention as well in DadmaTools. If any pipeline related to the that specific extentions is not called, that extention will have no value.
 
 To better see the results you can use this code:
-```
+
 dictionary = language.to_json(pips, doc)
 print(dictionary)
 ```
 
+
 ```
+
+```python
 sentences = doc._.sentences
 for sentence in sentences:
     text = sentence.text
@@ -159,9 +162,6 @@ sent_chunks = doc._.chunks ## this has value only if cons is called
 
 
 Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
-
-## Colab
-You can see the codes and the output in [The Colab](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing).
 
 ## Cite
 Will be added in future.
