@@ -182,7 +182,7 @@ class NLP():
         return doc
     
     @Language.component('ner')
-    def constituencyparser(doc):
+    def namedentity(doc):
         model = ner_model
         
         ners = []
