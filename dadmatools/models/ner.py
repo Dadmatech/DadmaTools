@@ -8,7 +8,7 @@ import torch
 
 from pathlib import Path
 
-import pipeline.download as dl
+import dadmatools.pipeline.download as dl
 
 def get_config():
     config = {
