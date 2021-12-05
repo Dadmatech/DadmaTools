@@ -81,7 +81,7 @@ class NLP():
         if 'ner' in pipelines:
             global ner_model
             ner_model = ner.load_model()
-            self.nlp.add_pipe('ner')
+            self.nlp.add_pipe('ners')
     
     @Language.component('normalizer')
     def tokenizer(doc):
@@ -181,7 +181,7 @@ class NLP():
         
         return doc
     
-    @Language.component('ner')
+    @Language.component('ners')
     def namedentity(doc):
         model = ner_model
         
