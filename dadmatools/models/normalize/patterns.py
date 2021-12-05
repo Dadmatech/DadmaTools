@@ -5,37 +5,8 @@ import re
 import sys
 import unicodedata
 
-CURRENCIES = {
-    "$": "USD",
-    "zł": "PLN",
-    "£": "GBP",
-    "¥": "JPY",
-    "฿": "THB",
-    "₡": "CRC",
-    "₦": "NGN",
-    "₩": "KRW",
-    "₪": "ILS",
-    "₫": "VND",
-    "€": "EUR",
-    "₱": "PHP",
-    "₲": "PYG",
-    "₴": "UAH",
-    "₹": "INR",
-}
-CURRENCY_REGEX = re.compile(
-    "({})+".format("|".join(re.escape(c) for c in CURRENCIES.keys()))
-)
 
-PUNCT_TRANSLATE_UNICODE = dict.fromkeys(
-    (i for i in range(sys.maxunicode) if unicodedata.category(chr(i)).startswith("P")),
-    "",
-)
-
-ACRONYM_REGEX = re.compile(
-    r"(?:^|(?<=\W))(?:(?:(?:(?:[A-Z]\.?)+[a-z0-9&/-]?)+(?:[A-Z][s.]?|[0-9]s?))|(?:[0-9](?:\-?[A-Z])+))(?:$|(?=\W))",
-    flags=re.UNICODE,
-)
-
+# using clean-text source code : https://github.com/jfilter/clean-text/blob/master/cleantext/constants.py
 # taken hostname, domainname, tld from URL regex below
 EMAIL_REGEX = re.compile(
     r"(?:^|(?<=[^\w@.)]))([\w+-](\.(?!\.))?)*?[\w+-](@|[(<{\[]at[)>}\]])(?:(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)(?:\.(?:[a-z\\u00a1-\\uffff0-9]-?)*[a-z\\u00a1-\\uffff0-9]+)*(?:\.(?:[a-z\\u00a1-\\uffff]{2,}))",
@@ -43,9 +14,17 @@ EMAIL_REGEX = re.compile(
 )
 
 # for more information: https://github.com/jfilter/clean-text/issues/10
-PHONE_REGEX = re.compile(
-    r"((?:^|(?<=[^\w)]))(((\+?[01])|(\+\d{2}))[ .-]?)?(\(?\d{3,4}\)?/?[ .-]?)?(\d{3}[ .-]?\d{4})(\s?(?:ext\.?|[#x-])\s?\d{2,6})?(?:$|(?=\W)))|\+?\d{4,5}[ .-/]\d{6,9}"
-)
+# PHONE_REGEX = re.compile(
+#     r"((?:^|(?<=[^\w)]))(((\+?[01])|(\+\d{2}))[ .-]?)?(\(?\d{3,4}\)?/?[ .-]?)?(\d{3}[ .-]?\d{4})(\s?(?:ext\.?|[#x-])\s?\d{2,6})?(?:$|(?=\W)))|\+?\d{4,5}[ .-/]\d{6,9}"
+# )
+HOME_PHONE_REGEX = re.compile(r"(\d{8})|(0\d{2}[-]?\d{8})")
+MOBILE_PHONE_REGEX = re.compile(r"((098|\+98)?(0)?9\d{9})")
+EMOJI_REGEX = re.compile(pattern="["
+                                    u"\U0001F600-\U0001F64F"  # emoticons
+                                    u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                                    u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                                    u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                                    "]+", flags=re.UNICODE)
 
 NUMBERS_REGEX = re.compile(
     r"(?:^|(?<=[^\w,.]))[+–-]?(([1-9]\d{0,2}(,\d{3})+(\.\d*)?)|([1-9]\d{0,2}([ .]\d{3})+(,\d*)?)|(\d*?[.,]\d+)|\d+)(?:$|(?=\b))"
@@ -119,7 +98,7 @@ strange_single_quotes = ["‘", "‛", "’", "❛", "❜", "`", "´", "‘", "�
 DOUBLE_QUOTE_REGEX = re.compile("|".join(strange_double_quotes))
 SINGLE_QUOTE_REGEX = re.compile("|".join(strange_single_quotes))
 
-
+#using Parsivar Normalizer : https://github.com/ICTRC/Parsivar/blob/master/parsivar/normalizer.py
 PERSIAN_CHAR_UNIFY_LIST = [
         ( "ء", "ئ"),
         (r"ٲ|ٱ|إ|ﺍ|أ", r"ا"),
@@ -174,18 +153,20 @@ PERSIAN_CHAR_UNIFY_LIST = [
         # (r'(\n)+',  r'\n')
         ]
 
+#using hazm normalizer source code : https://github.com/sobhe/hazm/blob/master/hazm/Normalizer.py
 punc_after, punc_before = r'\.:!،؛؟»\]\)\}', r'«\[\(\{'
 PUNC_SPACING_PATTERNS = [
-    ('" ([^\n"]+) "', r'"\1"'),  # remove space before and after quotation
-    (' ([' + punc_after + '])', r'\1'),  # remove space before
-    ('([' + punc_before + ']) ', r'\1'),  # remove space after
-    ('([' + punc_after[:3] + '])([^ ' + punc_after + '\d۰۱۲۳۴۵۶۷۸۹])', r'\1 \2'),  # put space after . and :
-    ('([' + punc_after[3:] + '])([^ ' + punc_after + '])', r'\1 \2'),  # put space after
-    ('([^ ' + punc_before + '])([' + punc_before + '])', r'\1 \2'),  # put space before
-]
+				('" ([^\n"]+) "', r'"\1"'),  # remove space before and after quotation
+				(' (['+ punc_after +'])', r'\1'),  # remove space before
+				('(['+ punc_before +']) ', r'\1'),  # remove space after
+				('(['+ punc_after[:3] +'])([^ '+ punc_after +'\d۰۱۲۳۴۵۶۷۸۹])', r'\1 \2'),  # put space after . and :
+				('(['+ punc_after[3:] +'])([^ '+ punc_after +'])', r'\1 \2'),  # put space after
+				('([^ '+ punc_before +'])(['+ punc_before +'])', r'\1 \2'),  # put space before
+			]
 REMOVE_SPACE_PATTERNS = [
                             (r'( )+', r' '),
                             (r'(\n)+',  r'\n')
                         ]
 
 PUNCS_REGEX = r'\.:!،؛؟»\]\)\}«\[\(\{'
+

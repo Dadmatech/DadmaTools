@@ -12,6 +12,7 @@ import dadmatools.models.lemmatizer as lemmatizer
 import dadmatools.models.postagger as tagger
 import dadmatools.models.dependancy_parser as dp
 import dadmatools.models.constituency_parser as conspars
+import dadmatools.models.ner as ner
 
 
 class NLP():
@@ -25,11 +26,13 @@ class NLP():
     postagger_model = None
     depparser_model = None
     normalizer_model = None
+    ner_model = None
     
     Token.set_extension("dep_arc", default=None)
     Doc.set_extension("sentences", default=None)
     Doc.set_extension("chunks", default=None)
     Doc.set_extension("constituency", default=None)
+    Doc.set_extension("ners", default=None)
     
     global nlp
     nlp = None
@@ -74,6 +77,11 @@ class NLP():
             global consparser_model
             consparser_model = conspars.load_model()
             self.nlp.add_pipe('constituencyparser')
+        
+        if 'ner' in pipelines:
+            global ner_model
+            ner_model = ner.load_model()
+            self.nlp.add_pipe('ner')
     
     @Language.component('normalizer')
     def tokenizer(doc):
@@ -170,6 +178,19 @@ class NLP():
         
         doc._.constituency = constitu_parses
         doc._.chunks = chunks
+        
+        return doc
+    
+    @Language.component('ner')
+    def constituencyparser(doc):
+        model = ner_model
+        
+        ners = []
+        for sent in doc._.sentences:
+            ## getting the IOB tags of the sentence
+            ners.append(ner.ner(model, sent.text))
+        
+        doc._.ners = ners
         
         return doc
 

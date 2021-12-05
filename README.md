@@ -15,6 +15,8 @@
 </div>
 <div align="center">
   <h5>
+      Named Entity Recognition
+    <span> | </span>
       Part of Speech Tagging
     <span> | </span>
       Dependency Parsing
@@ -76,6 +78,7 @@ Natural Language Processing is an active area of research and it consists of man
 The Dadmatools repository provides an overview of Persian models for some of the most common NLP tasks (and is continuously evolving). 
 
 Here is the list of NLP tasks we currently cover in the repository.
+-  Named Entity Recognition
 -  Part of speech tagging
 -  Dependency parsing
 -  Constituency parsing
@@ -88,6 +91,7 @@ Here is the list of NLP tasks we currently cover in the repository.
 
 These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
 Each task has its abbreviation as following:
+-  ```ner```: Part of speech tagging
 -  ```pos```: Part of speech tagging
 -  ```dep```: Dependency parsing
 -  ```cons```: Constituency parsing
@@ -126,7 +130,7 @@ import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'lem,pos' 
+pips = 'tok,lem,pos,dep,cons' 
 nlp = language.Pipeline('lem')
 
 # you can see the pipeline with this code
@@ -138,13 +142,21 @@ doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص �
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there is ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extentions. Note that we defined our own extention as well in DadmaTools. If any pipeline related to the that specific extentions is not called, that extention will have no value.
 
 To better see the results you can use this code:
+<<<<<<< HEAD
 ```python
+=======
+
+>>>>>>> c905a25a0267b91856e55f4824b318be548fe8c7
 dictionary = language.to_json(pips, doc)
 print(dictionary)
 ```
 
+<<<<<<< HEAD
 ```python
 [[{'id': 1, 'text': 'از', 'lemma': 'از', 'pos': 'ADP', 'rel': 'case', 'root': 2}, {'id': 2, 'text': 'قصهٔ', 'lemma': 'قصه', 'pos': 'NOUN', 'rel': 'obl', 'root': 10}, {'id': 3, 'text': 'کودکی', 'lemma': 'کودکی', 'pos': 'NOUN', 'rel': 'nmod', 'root': 2}, {'id': 4, 'text': 'شان', 'lemma': 'آنها', 'pos': 'PRON', 'rel': 'nmod', 'root': 3}, {'id': 5, 'text': 'که', 'lemma': 'که', 'pos': 'SCONJ', 'rel': 'mark', 'root': 6}, {'id': 6, 'text': 'می\u200cگفت', 'lemma': 'گفت#گو', 'pos': 'VERB', 'rel': 'acl', 'root': 2}, {'id': 7, 'text': '،', 'lemma': '،', 'pos': 'PUNCT', 'rel': 'punct', 'root': 6}, {'id': 8, 'text': 'گاهی', 'lemma': 'گاه', 'pos': 'NOUN', 'rel': 'obl', 'root': 10}, {'id': 9, 'text': 'حرص', 'lemma': 'حرص', 'pos': 'NOUN', 'rel': 'compound:lvc', 'root': 10}, {'id': 10, 'text': 'می\u200cخورد', 'lemma': 'خورد#خور', 'pos': 'VERB', 'rel': 'root', 'root': 0}, {'id': 11, 'text': '!', 'lemma': '!', 'pos': 'PUNCT', 'rel': 'punct', 'root': 10}]]
+=======
+
+>>>>>>> c905a25a0267b91856e55f4824b318be548fe8c7
 ```
 
 ```python
@@ -159,16 +171,20 @@ for sentence in sentences:
         dep_arc = token._.dep_arc ## this has value only if dep is called
 sent_constituency = doc._.constituency ## this has value only if cons is called
 sent_chunks = doc._.chunks ## this has value only if cons is called
+ners = doc._.ners ## this has value only if ner is called
 ```
 
 
 Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
+<<<<<<< HEAD
 ## How to use (Colab)
 You can see the codes and the output here.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing)
 
+=======
+>>>>>>> c905a25a0267b91856e55f4824b318be548fe8c7
 ## Cite
 Will be added in future.
 <!-- 
