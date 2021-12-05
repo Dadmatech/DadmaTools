@@ -14,10 +14,6 @@ MODELS = {
         'url': 'https://www.dropbox.com/s/6h59w1ivi6xxsxc/norm.tar.gz?dl=1',
         'file_extension': '.tar.gz'
     },
-    'fa_lemmatizer':{
-        'url': 'https://www.dropbox.com/s/2ne7bvkvsm97lzl/fa_ewt_lemmatizer.pt?dl=1',
-        'file_extension': '.pt'
-    },
     'fa_tokenizer':{
         'url': 'https://www.dropbox.com/s/bajpn68bp11o78s/fa_ewt_tokenizer.pt?dl=1',
         'file_extension': '.pt'
@@ -40,6 +36,10 @@ MODELS = {
     },
     'parsbert':{
         'url': 'https://www.dropbox.com/s/9p45owbt89zeyl9/parsbert.tar.gz?dl=1',
+        'file_extension': '.tar.gz'
+    },
+    'ner':{
+        'url': 'https://www.dropbox.com/s/xtb9x0fvm1tq3kk/NER.tar.gz?dl=1',
         'file_extension': '.tar.gz'
     }
 }
