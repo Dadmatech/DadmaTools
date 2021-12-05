@@ -179,8 +179,6 @@ You can see the codes and the output here.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing)
 
-=======
->>>>>>> c905a25a0267b91856e55f4824b318be548fe8c7
 ## Cite
 Will be added in future.
 <!-- 
