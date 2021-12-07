@@ -51,7 +51,7 @@ for more details about how to use this tool read the instruction below.
 
 ## Installation
 
-To get started using DaNLP in your python project simply install the pip package. Note that installing the default pip package 
+To get started using DadmaTools in your python project simply install the pip package. Note that installing the default pip package 
 will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead we provide you with an installation option if you want to install all the required dependencies. 
 
 ### Install with pip
