@@ -1,0 +1,8 @@
+{
+  "name": "TEP",
+  "version": "1.0.0",
+  "task": "Translation",
+  "splits": ["train", "test", "dev"],
+  "description": "TEP: Tehran English-Persian parallel corpus",
+  "size": {"train": 0, "test":  0, "dev":  0}
+}

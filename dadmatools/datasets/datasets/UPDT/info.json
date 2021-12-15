@@ -1,0 +1,8 @@
+{
+  "name": "UPDT",
+  "version": "1.0.0",
+  "task": "Treebank",
+  "splits": ["train", "test", "dev"],
+  "description": "Khajeh Nasir Constituency Parser",
+  "size": {"train": 0, "test":  0, "dev":  0}
+}
