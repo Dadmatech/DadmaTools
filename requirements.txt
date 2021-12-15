@@ -18,3 +18,4 @@ sqlitedict==1.7.0
 tabulate==0.8.6
 typing-utils==0.1.0
 supar==1.1.2
+html2text=2020.1.16
