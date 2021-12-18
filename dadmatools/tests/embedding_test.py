@@ -1,4 +1,4 @@
-from Embeddings import get_embedding
+from embeddings import get_embedding
 
 if __name__ == '__main__':
     # word_embeddings = get_embedding('fasttext-commoncrawl-vec')
