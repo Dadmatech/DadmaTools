@@ -4,5 +4,6 @@
   "task": "Translation",
   "splits": ["train", "test", "dev"],
   "description": "TEP: Tehran English-Persian parallel corpus",
-  "size": {"train": 0, "test":  0, "dev":  0}
+  "size": {"train": 0, "test":  0, "dev":  0},
+  "filenames": ["TEP.en-fa.en", "TEP.en-fa.fa"]
 }

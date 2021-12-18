@@ -1,31 +1,35 @@
+import json
 import os
 
-from datasets.base import BaseDataset, DatasetInfo
-from datasets.dataset_utils import download_with_progress, unzip_archive
+from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://lindat.mff.cuni.cz/repository/xmlui/handle/11372/LRT-1547/allzip'
 DATASET_NAME = "FASpell"
 
-def FaSpell(root):
-    root = os.path.join(root, DATASET_NAME)
+def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
+    base_addr = os.path.dirname(__file__)
+    info_addr = os.path.join(base_addr, 'info.json')
+    DATASET_INFO = json.load(open(info_addr))
+    dest_dir = os.path.join(dest_dir, DATASET_NAME)
 
     def get_faspell_item(dir_addr, fname):
         f = open(os.path.join(dir_addr, fname))
-        for line in f:
+        for i, line in enumerate(f):
+            if i == 0:
+                continue
             try:
                 correct, incorrect = line.split('\t')
             except:
                 correct, incorrect, _ = line.split('\t')
             yield {'correct': correct, 'incorrect': incorrect}
 
-
-    downloaded_file = download_with_progress(URL, root)
-    dir_addr = unzip_archive(downloaded_file, root)
-    base_addr = os.path.dirname(__file__)
-    info_addr = os.path.join(base_addr, 'info.json')
+    if not is_exist_dataset(DATASET_INFO, dest_dir):
+        downloaded_file = download_dataset(URL, dest_dir)
+        dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    fa_spell_main = get_faspell_item(dir_addr, 'faspell_main.txt')
-    fa_spell_ocr = get_faspell_item(dir_addr, 'faspell_ocr.txt')
+    fa_spell_main = get_faspell_item(dest_dir, 'faspell_main.txt')
+    fa_spell_ocr = get_faspell_item(dest_dir, 'faspell_ocr.txt')
     fa_spell_main = BaseDataset(fa_spell_main, info)
     fa_spell_ocr = BaseDataset(fa_spell_ocr, info)
     return {'faspell_main': fa_spell_main, 'faspell_ocr': fa_spell_ocr}

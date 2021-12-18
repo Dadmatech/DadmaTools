@@ -4,5 +4,6 @@
   "task": "SA",
   "splits": [],
   "description": "persent lexicon",
-  "size": 2500
+  "size": 2500,
+  "filenames": ["PerSent.xlsx"]
 }

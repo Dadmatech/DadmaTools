@@ -1,7 +1,7 @@
 import os
 
-from datasets.base import BaseDataset, DatasetInfo
-from datasets.dataset_utils import download_with_progress, unzip_archive
+from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset
 
 URL = 'https://ds.kplab.ir/s/tJ6d8Mifm8eeQ44/download/ctree-khajeh-nasir.tar.xz'
 BASE_PATH = 'Train_Test_Dev_implemented_from_SAZEH_trees'

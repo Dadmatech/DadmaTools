@@ -4,5 +4,6 @@
   "task": "NER",
   "splits": ["train", "test", "dev"],
   "description": "",
+  "filenames": ["train_fold1.txt", "test_fold1.txt"],
   "size": {"train": 0, "test":  0, "dev":  0}
 }

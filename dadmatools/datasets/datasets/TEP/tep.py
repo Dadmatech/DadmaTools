@@ -1,13 +1,17 @@
+import json
 import os
 
-from datasets.base import BaseDataset, SplittedDataset, DatasetInfo
-from datasets.dataset_utils import download_with_progress, unzip_archive
+from dadmatools.datasets.base import BaseDataset, SplittedDataset, DatasetInfo
+from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'http://opus.nlpl.eu/download.php?f=TEP/v1/moses/en-fa.txt.zip'
 DATASET_NAME = "TEP"
 
-def TEP(root):
-    root = os.path.join(root, DATASET_NAME)
+def TEP(dest_dir=DEFAULT_CACHE_DIR):
+    base_addr = os.path.dirname(__file__)
+    info_addr = os.path.join(base_addr, 'info.json')
+    DATASET_INFO = json.load(open(info_addr))
+    dest_dir = os.path.join(dest_dir, DATASET_NAME)
 
     def get_tep_item(dir_addr):
         en_f_name = os.path.join(dir_addr, 'TEP.en-fa.en')
@@ -17,13 +21,11 @@ def TEP(root):
         for fa_line, en_line in zip(fa_f, en_f):
             yield {'farsi': fa_line, 'eng': en_line}
 
-
-    downloaded_file = download_with_progress(URL, root)
-    dir_addr = unzip_archive(downloaded_file, root)
-    base_addr = os.path.dirname(__file__)
-    info_addr = os.path.join(base_addr, 'info.json')
+    if not is_exist_dataset(DATASET_INFO, dest_dir):
+        downloaded_file = download_dataset(URL, dest_dir)
+        dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    train_iterator = get_tep_item(dir_addr)
+    train_iterator = get_tep_item(dest_dir)
     train = BaseDataset(train_iterator, info)
     return train
 

@@ -11,11 +11,13 @@ import sys
 from pathlib import Path
 import requests
 
+from dadmatools.datasets.datasets import *
 DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.json')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
+DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
+DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.dadmatools', 'datasets')
 
-
-def unzip_archive(from_path: str, to_path: str) -> Path:
+def unzip_dataset(from_path: str, to_path: str) -> Path:
     """Unzip archive.
     Args:
         from_path (str): path of the archive
@@ -47,7 +49,7 @@ def unzip_archive(from_path: str, to_path: str) -> Path:
     return Path(to_path)
 
 
-def download_with_progress(url, dest_dir):
+def download_dataset(url, dest_dir):
     # source_code: https://github.com/sirbowen78/lab/blob/master/file_handling/dl_file1.py
     # This example script downloads python program for mac.
 
@@ -104,6 +106,8 @@ def load_dataset_info(info_addr):
         info = json.load(f)
     return info
 
+def is_exist_dataset(dataset_info, dest_dir):
+    return all(os.path.exists(os.path.join(dest_dir, fname)) for fname in dataset_info['filenames'])
 
 def fill_datasets_info():
     datasets_info = {}
@@ -122,6 +126,6 @@ def get_datasets_info(tasks=None):
     return datasets
 
 
-if __name__ == '__main__':
-    # download_with_progress(url='https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.fa.300.bin.gz', dest_dir='./')
-    fill_datasets_info()
+# if __name__ == '__main__':
+#     # download_with_progress(url='https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.fa.300.bin.gz', dest_dir='./')
+#     fill_datasets_info()
