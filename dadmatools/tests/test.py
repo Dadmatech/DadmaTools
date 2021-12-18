@@ -1,6 +1,5 @@
 from pipeline import language
 
-
 nlp = language.Pipeline('lem')
 print(nlp.pipe_names)
 print(nlp.analyze_pipes(pretty=True))

@@ -1,5 +1,5 @@
-from dadmatools.datasets import ARMAN
-from dadmatools.datasets import get_datasets_info
+from datasets import ARMAN
+from datasets import get_datasets_info
 from dadmatools.datasets import TEP
 from dadmatools.datasets import PerSentLexicon
 from dadmatools.datasets import FaSpell
@@ -11,15 +11,15 @@ if __name__ == '__main__':
     print(len(arman_dataset))
     print(next(arman_dataset['train']))
     print(next(arman_dataset['test']))
-    # tep_dataset = TEP()
-    # print(len(tep_dataset))
-    # print (next(tep_dataset))
-    # persent = PerSentLexicon()
-    # print(len(persent))
-    # print (next(persent))
-    # faspell = FaSpell()
-    # print(len(faspell))
-    # print (next(faspell['faspell_main']))
-    # wikipedia_corpus = WikipediaCorpus()
-    # print(len(wikipedia_corpus))
-    # print (next(wikipedia_corpus))
+    tep_dataset = TEP()
+    print(len(tep_dataset))
+    print (next(tep_dataset))
+    persent = PerSentLexicon()
+    print(len(persent))
+    print (next(persent))
+    faspell = FaSpell()
+    print(len(faspell))
+    print (next(faspell['faspell_main']))
+    wikipedia_corpus = WikipediaCorpus()
+    print(len(wikipedia_corpus))
+    print (next(wikipedia_corpus))

@@ -1,8 +1,8 @@
-from Embeddings.embedding import get_embedding
+from Embeddings import get_embedding
 
 if __name__ == '__main__':
-    word_embeddings = get_embedding('fasttext-commoncrawl-vec')
-    # word_embeddings = get_embedding('glove-wiki')
+    # word_embeddings = get_embedding('fasttext-commoncrawl-vec')
+    word_embeddings = get_embedding('glove-wiki')
     word_embeddings.get_vocab()
     print(word_embeddings.get_vector_by_word_name('سلام'))
 
