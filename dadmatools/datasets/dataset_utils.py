@@ -1,8 +1,5 @@
 import glob
 import json
-import lzma
-from pathlib import Path
-# import py7zr
 import zipfile
 import tarfile
 from tqdm import tqdm
