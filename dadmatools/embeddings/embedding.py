@@ -22,12 +22,14 @@ def get_all_embeddings_info():
 
 
 def get_embedding_info(emb_name):
+    if emb_name not in EMBEDDINGS_INFO:
+        raise KeyError(f'{emb_name} not exist! for see all supported embeddings call get_all_embeddings_info()')
     return EMBEDDINGS_INFO[emb_name]
 
 
 def get_embedding(emb_name):
     if emb_name not in EMBEDDINGS_INFO:
-        raise KeyError('this embedding name not exist! please consider available_models.json')
+        raise KeyError(f'{emb_name} not exist! for see all supported embeddings call get_all_embeddings_info()')
     alg = EMBEDDINGS_INFO[emb_name]['algorithm']
     format = EMBEDDINGS_INFO[emb_name]['format']
     if alg == 'fasttext' and format == 'bin':
@@ -69,22 +71,25 @@ class Embedding:
     def similarity(self, w1, w2):
         return self.model.similarity(w1, w2)
 
-    def get_text_embedding(self, text):
+    def embedding_text(self, text):
         if self.emb_type == EmbeddingType.FASTTEXT_BIN:
             return self.model.get_sentence_vector(text)
         if self.emb_type == EmbeddingType.KeyedVector:
-            try:
-                index2word_set = set(self.model.wv.index2word)
-            except AttributeError:
-                index2word_set = set(self.model.index_to_key)
+            # try:
+            #     index2word_set = set(self.model.wv.index2word)
+            # except AttributeError:
+            #     index2word_set = set(self.model.index_to_key)
             words = text.split()
             num_features = self.emb_dim
             feature_vec = np.zeros((num_features,), dtype='float32')
             n_words = 0
             for word in words:
-                if word in index2word_set:
-                    n_words += 1
+                # if word in index2word_set:
+                try:
                     feature_vec = np.add(feature_vec, self.model[word])
+                    n_words += 1
+                except:
+                    pass
             if (n_words > 0):
                 feature_vec = np.divide(feature_vec, n_words)
             return feature_vec
@@ -98,7 +103,7 @@ class Embedding:
         else:
             return self.model.get_words(include_freq=True)
 
-    def get_vector_by_word_name(self, word_name):
+    def word_vector(self, word_name):
         if self.emb_type == EmbeddingType.KeyedVector:
             try:
                 return self.model.wv.get_vector(word_name)
@@ -107,7 +112,7 @@ class Embedding:
         if self.emb_type == EmbeddingType.FASTTEXT_BIN:
             return self.model.get_word_vector(word_name)
 
-    def get_top_nearest(self, word, k):
+    def top_nearest(self, word, k):
         if self.emb_type == EmbeddingType.FASTTEXT_BIN:
             return self.model.get_nearest_neighbors(word, k)
         else:

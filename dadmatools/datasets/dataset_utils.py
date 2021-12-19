@@ -1,3 +1,4 @@
+import bz2
 import glob
 import json
 import zipfile
@@ -37,7 +38,11 @@ def unzip_dataset(from_path: str, to_path: str) -> Path:
         with tarfile.open(from_path) as f:
             for tarinfo in f:
                 f.extract(tarinfo, to_path)
-
+    elif extenstion.endswith('.bz2'):
+        zipfile = bz2.BZ2File(from_path)  # open the file
+        data = zipfile.read()  # get the decompressed data
+        newfilepath = from_path[:-4]  # assuming the filepath ends with .bz2
+        open(newfilepath, 'wb').write(data)  # write a uncompressed file
     # elif '.tgz' '.7z':
     #     szfile = py7zr.SevenZipFile(from_path, mode='r')
     #     szfile.extractall(path=to_path)
@@ -56,6 +61,7 @@ def download_dataset(url, dest_dir):
     # sub_path = "tmp"
     # The header of the dl link has a Content-Length which is in bytes.
     # The bytes is in string hence has to convert to integer.
+
     try:
         filesize = int(requests.head(url).headers["Content-Length"])
     except KeyError:
@@ -122,6 +128,8 @@ def get_all_datasets_info(tasks=None):
     return datasets
 
 def get_dataset_info(ds_name):
+    if ds_name not in DATASET_INFO:
+        raise  KeyError(f'{ds_name} not found in available datasets. call get_all_datasets_info() to see all available datasets')
     return DATASET_INFO[ds_name]
 
 
