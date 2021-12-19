@@ -11,7 +11,7 @@ supar>=1.1.2
 torch>=1.7.1
 transformers==4.9.1
 tabulate>=0.8.6
-html2text=2020.1.16
+html2text==2020.1.16
 gensim>=3.6.0
-fasttext=0.9.2
-wiki-dump-reader=0.0.4
+fasttext==0.9.2
+wiki-dump-reader==0.0.4
