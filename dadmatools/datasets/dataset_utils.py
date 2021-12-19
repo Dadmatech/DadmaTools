@@ -123,6 +123,7 @@ def get_all_datasets_info(tasks=None):
 
 def get_dataset_info(ds_name):
     return DATASET_INFO[ds_name]
+
+
 # if __name__ == '__main__':
-#     # download_with_progress(url='https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.fa.300.bin.gz', dest_dir='./')
 #     fill_datasets_info()
