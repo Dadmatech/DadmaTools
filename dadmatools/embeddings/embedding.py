@@ -6,7 +6,7 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 import fasttext
 import numpy as np
 import os
-from embedding_utils import download_with_progress, unzip_archive
+from dadmatools.embeddings.embedding_utils import download_with_progress, unzip_archive
 
 EMBEDDINGS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'available_models.json')
 EMBEDDINGS_INFO = json.load(open(EMBEDDINGS_INFO_ADDR))

@@ -1,8 +1,8 @@
 import glob
 import json
 import os
-from base import DatasetInfo, BaseDataset
-from dataset_utils import is_exist_dataset, unzip_dataset, download_dataset, DEFAULT_CACHE_DIR
+from dadmatools.datasets.base import DatasetInfo, BaseDataset
+from dadmatools.datasets.dataset_utils import is_exist_dataset, unzip_dataset, download_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://raw.githubusercontent.com/HaniehP/PersianNER/master/ArmanPersoNERCorpus.zip'
 DATASET_NAME = "ARMAN"

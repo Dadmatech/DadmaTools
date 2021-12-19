@@ -96,6 +96,6 @@ def normalizer(model, text):
 if __name__ == '__main__':
     text = '<p> karrabi.mohammad@gmail.com  ایمیل ۲۳۳ ۲۳.۳ . <p>'
     # normalizer = Normalizer(remove_html=True)
-    normalizer = Normalizer(full_cleaning=False)
+    normalizer = Normalizer(full_cleaning=True)
     text = normalizer.normalize(text)
     print(text)

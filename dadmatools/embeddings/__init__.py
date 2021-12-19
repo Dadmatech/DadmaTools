@@ -1,2 +1,2 @@
-from embedding import *
-from embedding_utils import *
+from dadmatools.embeddings.embedding import *
+from dadmatools.embeddings.embedding_utils import *

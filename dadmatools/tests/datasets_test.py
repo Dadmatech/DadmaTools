@@ -1,9 +1,9 @@
-from datasets import ARMAN
-from datasets import get_datasets_info
-from datasets import TEP
-from datasets import PerSentLexicon
-from datasets import FaSpell
-from datasets import WikipediaCorpus
+from dadmatools.datasets import ARMAN
+from dadmatools.datasets import get_datasets_info
+from dadmatools.datasets import TEP
+from dadmatools.datasets import PerSentLexicon
+from dadmatools.datasets import FaSpell
+from dadmatools.datasets import WikipediaCorpus
 if __name__ == '__main__':
     print(get_datasets_info())
     print(get_datasets_info(tasks=['NER']))
