@@ -1,4 +1,4 @@
-from dadmatools.datasets.dataset_utils import get_datasets_info
+from dadmatools.datasets.dataset_utils import get_dataset_info, get_all_datasets_info
 from dadmatools.datasets.datasets.Arman.arman import ARMAN
 from dadmatools.datasets.datasets.FaSpell.sp import FaSpell
 from dadmatools.datasets.datasets.TEP.tep import TEP

@@ -17,6 +17,14 @@ class EmbeddingType(Enum):
     KeyedVector = 2
     GLOVE = 3
 
+def get_all_embeddings_info():
+    return EMBEDDINGS_INFO
+
+
+def get_embedding_info(emb_name):
+    return EMBEDDINGS_INFO[emb_name]
+
+
 def get_embedding(emb_name):
     if emb_name not in EMBEDDINGS_INFO:
         raise KeyError('this embedding name not exist! please consider available_models.json')

@@ -11,9 +11,9 @@ import requests
 from dadmatools.datasets.datasets import *
 DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.json')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
+DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
 DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.dadmatools', 'datasets')
-
 def unzip_dataset(from_path: str, to_path: str) -> Path:
     """Unzip archive.
     Args:
@@ -115,14 +115,14 @@ def fill_datasets_info():
         json.dump(datasets_info, f)
 
 
-def get_datasets_info(tasks=None):
-    with open(DATASETS_INFO_ADDR) as f:
-        datasets = json.load(f)
+def get_all_datasets_info(tasks=None):
+    datasets = DATASET_INFO
     if tasks:
-        datasets = [ds for ds in datasets if datasets[ds]['task'] in tasks]
+        datasets = {ds:DATASET_INFO[ds] for ds in DATASET_INFO if DATASET_INFO[ds]['task'] in tasks}
     return datasets
 
-
+def get_dataset_info(ds_name):
+    return DATASET_INFO[ds_name]
 # if __name__ == '__main__':
 #     # download_with_progress(url='https://dl.fbaipublicfiles.com/fasttext/vectors-crawl/cc.fa.300.bin.gz', dest_dir='./')
 #     fill_datasets_info()

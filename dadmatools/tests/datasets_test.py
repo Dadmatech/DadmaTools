@@ -1,12 +1,12 @@
 from dadmatools.datasets import ARMAN
-from dadmatools.datasets import get_datasets_info
+from dadmatools.datasets import get_all_datasets_info, get_dataset_info
 from dadmatools.datasets import TEP
 from dadmatools.datasets import PerSentLexicon
 from dadmatools.datasets import FaSpell
 from dadmatools.datasets import WikipediaCorpus
 if __name__ == '__main__':
-    print(get_datasets_info())
-    print(get_datasets_info(tasks=['NER']))
+    print(get_dataset_info('TP'))
+    print(get_all_datasets_info(tasks=['NER']))
     arman_dataset = ARMAN()
     print(len(arman_dataset['train']))
     print(len(arman_dataset['test']))
