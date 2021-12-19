@@ -1,7 +1,7 @@
 import bz2
 import glob
 import json
-import zipfile
+import zipfile as zp
 import tarfile
 from tqdm import tqdm
 import os
@@ -15,7 +15,7 @@ DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
 DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
 DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.dadmatools', 'datasets')
-def unzip_dataset(from_path: str, to_path: str) -> Path:
+def unzip_dataset(from_path: str, to_path: str, zip_format=None) -> Path:
     """Unzip archive.
     Args:
         from_path (str): path of the archive
@@ -25,20 +25,21 @@ def unzip_dataset(from_path: str, to_path: str) -> Path:
         path to the directory of extracted files
     """
     # extenstion = ''.join(Path(from_path).suffixes)
+
     extenstion = from_path
-    if extenstion.endswith('zip'):
-        with zipfile.ZipFile(from_path, 'r') as zfile:
+    if extenstion.endswith('zip') or zip_format == 'zip':
+        with zp.ZipFile(from_path, 'r') as zfile:
             zfile.extractall(to_path)
 
-    elif extenstion.endswith('.tar.gz') or extenstion.endswith('.tgz'):
+    elif extenstion.endswith('.tar.gz') or extenstion.endswith('.tgz') or zip_format == 'gz':
         with tarfile.open(from_path, 'r:gz') as tgfile:
             for tarinfo in tgfile:
                 tgfile.extract(tarinfo, to_path)
-    elif extenstion.endswith('.tar.xz'):
+    elif extenstion.endswith('.tar.xz') or zip_format == 'xz':
         with tarfile.open(from_path) as f:
             for tarinfo in f:
                 f.extract(tarinfo, to_path)
-    elif extenstion.endswith('.bz2'):
+    elif extenstion.endswith('.bz2') or zip_format == 'bz2':
         zipfile = bz2.BZ2File(from_path)  # open the file
         data = zipfile.read()  # get the decompressed data
         newfilepath = from_path[:-4]  # assuming the filepath ends with .bz2
@@ -61,7 +62,9 @@ def download_dataset(url, dest_dir):
     # sub_path = "tmp"
     # The header of the dl link has a Content-Length which is in bytes.
     # The bytes is in string hence has to convert to integer.
-
+    if 'drive.google' in url:
+        import gdown
+        return gdown.download(url)
     try:
         filesize = int(requests.head(url).headers["Content-Length"])
     except KeyError:
@@ -132,6 +135,6 @@ def get_dataset_info(ds_name):
         raise  KeyError(f'{ds_name} not found in available datasets. call get_all_datasets_info() to see all available datasets')
     return DATASET_INFO[ds_name]
 
-
+#
 # if __name__ == '__main__':
 #     fill_datasets_info()

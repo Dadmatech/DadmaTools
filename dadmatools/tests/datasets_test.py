@@ -6,6 +6,8 @@ from dadmatools.datasets import FaSpell
 from dadmatools.datasets import WikipediaCorpus
 from dadmatools.datasets import FarsTail
 from dadmatools.datasets import PersianNer
+from dadmatools.datasets import PersianNews
+from dadmatools.datasets import PnSummary
 
 if __name__ == '__main__':
     # print(get_dataset_info('FarsTail'))
@@ -14,11 +16,12 @@ if __name__ == '__main__':
     # for item in farstail['val']:
     #     print(item)
 
-    print(get_dataset_info('Persian-NER'))
+    print(get_dataset_info('PnSummary'))
     # # print(get_all_datasets_info(tasks=['NER']))
-    pner = PersianNer()
-    for item in pner:
-        print(item)
+    pner = PnSummary()
+    for i, item in enumerate(pner['test']):
+        print(i)
+
     # print(len(arman_dataset['train']))
     # print(len(arman_dataset['test']))
     # print(next(arman_dataset['train']))
