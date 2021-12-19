@@ -13,7 +13,7 @@ class DatasetInfo:
 
 class BaseDataset(Iterator):
 
-    def __init__(self, iterator, info, num_lines=1000000000):
+    def __init__(self, iterator, info, num_lines):
         self.iterator = iterator
         self.info = info
         self.num_lines = num_lines

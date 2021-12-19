@@ -25,7 +25,8 @@ def TEP(dest_dir=DEFAULT_CACHE_DIR):
         downloaded_file = download_dataset(URL, dest_dir)
         dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    train_iterator = get_tep_item(dest_dir)
-    train = BaseDataset(train_iterator, info)
+    tep_iterator = get_tep_item(dest_dir)
+    tep_size = DATASET_INFO['size']
+    train = BaseDataset(tep_iterator, info, num_lines=tep_size)
     return train
 

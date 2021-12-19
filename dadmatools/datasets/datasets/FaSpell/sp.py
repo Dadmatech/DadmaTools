@@ -30,6 +30,8 @@ def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
     info = DatasetInfo(info_addr=info_addr)
     fa_spell_main = get_faspell_item(dest_dir, 'faspell_main.txt')
     fa_spell_ocr = get_faspell_item(dest_dir, 'faspell_ocr.txt')
-    fa_spell_main = BaseDataset(fa_spell_main, info)
-    fa_spell_ocr = BaseDataset(fa_spell_ocr, info)
+    fa_spell_main_size = DATASET_INFO['size']['faspell_main']
+    fa_spell_ocr_size = DATASET_INFO['size']['faspell_ocr']
+    fa_spell_main = BaseDataset(fa_spell_main, info, num_lines=fa_spell_main_size)
+    fa_spell_ocr = BaseDataset(fa_spell_ocr, info, num_lines=fa_spell_ocr_size)
     return {'faspell_main': fa_spell_main, 'faspell_ocr': fa_spell_ocr}

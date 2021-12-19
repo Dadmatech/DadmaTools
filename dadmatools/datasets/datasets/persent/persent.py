@@ -25,5 +25,6 @@ def PerSentLexicon(dest_dir=DEFAULT_CACHE_DIR):
         dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
     iterator = get_persent_lexicon(dest_dir)
-    lexicon = BaseDataset(iterator, info)
+    lexicon_size = DATASET_INFO['size']
+    lexicon = BaseDataset(iterator, info, num_lines=lexicon_size)
     return lexicon
