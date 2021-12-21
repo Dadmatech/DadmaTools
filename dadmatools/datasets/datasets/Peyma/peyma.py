@@ -2,24 +2,18 @@ import glob
 import json
 import os
 from dadmatools.datasets.base import BaseDataset, DatasetInfo
-from dadmatools.datasets.dataset_utils import download_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
+from dadmatools.datasets.dataset_utils import download_dataset, is_exist_dataset, DEFAULT_CACHE_DIR, unzip_dataset
 
+URL = 'https://drive.google.com/uc?id=1EC121uhkOFlsPAvsPMJ9TvBAwus_UkhN'
+DATASET_NAME = "Peyma"
 
-URLS = ['https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part1.txt',
-        'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part2.txt',
-        'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part3.txt',
-        'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part4.txt',
-        'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part5.txt'
-        ]
-DATASET_NAME = "Persian-NER"
-
-def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
+def Peyma(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
     info_addr = os.path.join(base_addr, 'info.json')
     DATASET_INFO = json.load(open(info_addr))
     dest_dir = os.path.join(dest_dir, DATASET_NAME)
 
-    def get_PersianNer_item(dir_addr, pattern):
+    def get_peyma_item(dir_addr, pattern):
         pattern = os.path.join(dir_addr, pattern)
         for f_addr in glob.iglob(pattern):
             f = open(f_addr)
@@ -30,19 +24,22 @@ def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
                         yield sentence
                         sentence = []
                     continue
-                splits = line.split(' ')
-                sentence.append([splits[0], splits[-1].rstrip("\n")])
+                line = line.replace('\n', '')
+                token = {'token': line.split('\t')[0], 'tag':line.split('\t')[1]}
+                sentence.append(token)
 
             if len(sentence) > 0:
                 yield sentence
-                sentence = []
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
-        for url in URLS:
-            download_dataset(url, dest_dir)
+        download_dataset(URL, dest_dir)
+        downloaded_file = os.path.join(dest_dir, 'peyma.zip')
+        dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    train_iterator = get_PersianNer_item(dest_dir, 'Persian-NER-part*')
+    iterator1 = get_peyma_item(dest_dir, 'peyma/600K/*')
+    iterator2 = get_peyma_item(dest_dir, 'peyma/300K/*')
     size = DATASET_INFO['size']
-    train_dataset = BaseDataset(train_iterator, info, num_lines=size)
-    return train_dataset
+    train_big = BaseDataset(iterator1, info, num_lines=size)
+    train_small = BaseDataset(iterator2, info, num_lines=size)
+    return {'big':train_big, 'small': train_small}
 
