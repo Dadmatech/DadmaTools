@@ -200,15 +200,15 @@ Here is the list of supported datasets.
 |      ---                | ----------- 
 |    PersianNER           |   NER   | 
 |       Arman             |   NER
-|       Peyma                | NER
-|       FarTail              | Entailment
-|       FaSpell              | Spell checking
-|      PersianNews          | Text classification
-|       PerUDT               | Universal Dependency
-|      PnSummary            | Text Summarization
+|       Peyma             | NER
+|       FarTail           | Entailment
+|       FaSpell           | Spell checking
+|      PersianNews        | Text classification
+|       PerUDT            | Universal Dependency
+|      PnSummary          | Text Summarization
 |    SnappfoodSentiment   | Sentiment Classification
-|           TEP                  | Text Translation(eng-fa)
-| Wikipedia            | Corpus
+|           TEP           | Text Translation(eng-fa)
+| Wikipedia               | Corpus
 
 get dataset info:
 ```python
@@ -223,16 +223,16 @@ get_all_datasets_info(tasks=['NER'])
 ```
 the output will be:
 
-```
-{'Arman': {'description': '',
-           'filenames': ['train_fold1.txt',
-                         'train_fold2.txt',
-                         'train_fold3.txt',
-                         'test_fold1.txt',
-                         'test_fold2.txt',
-                         'test_fold3.txt'],
-           'name': 'Arman',
-           'size': {'test': 7680, 'train': 15361},
+```json
+{"Arman": {"description": "",
+           "filenames": ["train_fold1.txt",
+                         "train_fold2.txt",
+                         "train_fold3.txt",
+                         "test_fold1.txt",
+                         "test_fold2.txt",
+                         "test_fold3.txt"],
+           "name": "Arman",
+           "size": {"test": 7680, "train': 15361},
            'splits': ['train', 'test'],
            'task': 'NER',
            'version': '1.0.0'},
@@ -261,6 +261,9 @@ all datasets are iterator and can be used like below:
 ```python
 from dadmatools.datasets import FarsTail
 from dadmatools.datasets import SnappfoodSentiment
+from dadmatools.datasets import get_all_datasets_info
+from dadmatools.datasets import Peyma
+from dadmatools.datasets import PerUDT
 
 farstail = FarsTail()
 
