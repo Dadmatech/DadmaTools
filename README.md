@@ -196,18 +196,18 @@ We provide an easy-to-use way to load some popular persian nlp datasets
 
 Here is the list of supported datasets.
 
-|    Dataset             | Task 
-|      ---                | ----------- 
-|    PersianNER           |   NER   | 
-|       Arman             |   NER
-|       Peyma             | NER
-|       FarTail           | Entailment
-|       FaSpell           | Spell checking
-|      PersianNews        | Text classification
-|       PerUDT            | Universal Dependency
-|      PnSummary          | Text Summarization
-|    SnappfoodSentiment   | Sentiment Classification
-|           TEP           | Text Translation(eng-fa)
+   |    Dataset             | Task 
+|      ----------------                | ----------- 
+   |    PersianNER           |   NER   | 
+   |       Arman             |   NER
+   |       Peyma             | NER
+  |       FarTail           | Entailment
+ |        FaSpell           | Spell checking
+  |      PersianNews        | Text classification
+  |       PerUDT            | Universal Dependency
+  |      PnSummary          | Text Summarization
+  |    SnappfoodSentiment   | Sentiment Classification
+  |           TEP           | Text Translation(eng-fa)
 | Wikipedia               | Corpus
 
 get dataset info:
@@ -232,30 +232,30 @@ the output will be:
                          "test_fold2.txt",
                          "test_fold3.txt"],
            "name": "Arman",
-           "size": {"test": 7680, "train': 15361},
-           'splits': ['train', 'test'],
-           'task': 'NER',
-           'version': '1.0.0'},
- 'Persian-NER': {'description': 'source: '
-                                'https://github.com/Text-Mining/Persian-NER',
-                 'filenames': ['Persian-NER-part1.txt',
-                               'Persian-NER-part2.txt',
-                               'Persian-NER-part3.txt',
-                               'Persian-NER-part4.txt',
-                               'Persian-NER-part5.txt'],
-                 'name': 'Persian-NER',
-                 'size': 1000000,
-                 'splits': [],
-                 'task': 'NER',
-                 'version': '1.0.0'},
- 'Peyma': {'description': 'source: '
-                          'http://nsurl.org/2019-2/tasks/task-7-named-entity-recognition-ner-for-farsi/',
-           'filenames': ['peyma/600K', 'peyma/300K'],
-           'name': 'Peyma',
-           'size': 1000000,
-           'splits': [],
-           'task': 'NER',
-           'version': '1.0.0'}}
+           "size": {"test": 7680, "train": 15361},
+           "splits": ["train", "test"],
+           "task": "NER",
+           "version": "1.0.0"},
+ "Persian-NER": {"description": "source: "
+                                "https://github.com/Text-Mining/Persian-NER",
+                 "filenames": ["Persian-NER-part1.txt",
+                               "Persian-NER-part2.txt",
+                               "Persian-NER-part3.txt",
+                               "Persian-NER-part4.txt",
+                               "Persian-NER-part5.txt"],
+                 "name": "Persian-NER",
+                 "size": 1000000,
+                 "splits": [],
+                 "task": "NER",
+                 "version": "1.0.0"},
+ "Peyma": {"description": "source: "
+                          "http://nsurl.org/2019-2/tasks/task-7-named-entity-recognition-ner-for-farsi/",
+           "filenames": ["peyma/600K", "peyma/300K"],
+           "name": "Peyma",
+           "size": 1000000,
+           "splits": [],
+           "task": "NER",
+           "version": "1.0.0"}}
 ```
 all datasets are iterator and can be used like below:
 ```python
