@@ -1,0 +1,8 @@
+{
+  "name": "PerDT",
+  "version": "1.0.0",
+  "task": "Treebank",
+  "splits": ["train", "test", "dev"],
+  "description": "The Persian Universal Dependency Treebank (PerUDT) is the result of automatic coversion of Persian Dependency Treebank (PerDT) with extensive manual corrections",
+  "size": {"train": 0, "test":  0, "dev":  0}
+}
