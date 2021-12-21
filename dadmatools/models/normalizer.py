@@ -77,7 +77,10 @@ class Normalizer:
     def normalize(self, text):
         text = self.replace_text(text)
         if self.remove_puncs:
-            text = text.translate(str.maketrans('', '', self.PUNCS))
+            for p in self.PUNCS:
+                text = text.replace(p, ' ')
+            text = ' '.join(text.split())
+            # text = text.translate(str.maketrans('d', 'd', self.PUNCS))
         tokens = text.split()
         if self.remove_stop_word:
             tokens = [tok for tok in tokens if tok not in self.STOPWORDS]
