@@ -211,6 +211,35 @@ Here is the list of supported datasets.
 | Wikipedia               | Corpus
 
 
+all datasets are iterator and can be used like below:
+```python
+from dadmatools.datasets import FarsTail
+from dadmatools.datasets import SnappfoodSentiment
+from dadmatools.datasets import get_all_datasets_info
+from dadmatools.datasets import Peyma
+from dadmatools.datasets import PerUDT
+
+farstail = FarsTail()
+
+#len of dataset
+len(farstail['train'])
+
+#each dataset is a iterator
+next(farstail['train'])
+
+#loop over dataset
+snpfood_sa = SnappfoodSentiment()
+train_dataset_info = snpfood_sa['train'].info
+for i, item in enumerate(snpfood_sa['test']):
+    print(item['comment'], item['label'])
+
+perudt = PerUDT()
+for token_list in perudt['dev']:
+    print(token_list[0]['lemma'])
+
+peyma = Peyma()
+print(next(peyma)[0]['tag'])
+```
 get dataset info:
 ```python
 
@@ -258,35 +287,7 @@ the output will be:
            "task": "NER",
            "version": "1.0.0"}}
 ```
-all datasets are iterator and can be used like below:
-```python
-from dadmatools.datasets import FarsTail
-from dadmatools.datasets import SnappfoodSentiment
-from dadmatools.datasets import get_all_datasets_info
-from dadmatools.datasets import Peyma
-from dadmatools.datasets import PerUDT
 
-farstail = FarsTail()
-
-#len of dataset
-len(farstail['train'])
-
-#each dataset is a iterator
-next(farstail['train'])
-
-#loop over dataset
-snpfood_sa = SnappfoodSentiment()
-train_dataset_info = snpfood_sa['train'].info
-for i, item in enumerate(snpfood_sa['test']):
-    print(item['comment'], item['label'])
-
-perudt = PerUDT()
-for token_list in perudt['dev']:
-    print(token_list[0]['lemma'])
-
-peyma = Peyma()
-print(next(peyma)[0]['tag'])
-```
 
 ### Loading Persian Word Embeddings
 download, load and using some pre-trained persian word embeddings
