@@ -106,7 +106,7 @@ Note that if no pipeline is passed to the model the tokenizer will be load as de
 cleaning text and unify characters.
 
 Note: None means no action! 
-```
+```python
 from dadmatools.models.normalizer import Normalizer
 
 normalizer = Normalizer(
@@ -211,7 +211,8 @@ Here is the list of supported datasets.
 | Wikipedia            | Corpus
 
 get dataset info:
-```
+```python
+
 from dadmatools.datasets import get_all_datasets_info
 
 get_all_datasets_info().keys()
@@ -222,7 +223,7 @@ get_all_datasets_info(tasks=['NER'])
 ```
 the output will be:
 
-```
+```json
 {'Arman': {'description': '',
            'filenames': ['train_fold1.txt',
                          'train_fold2.txt',
@@ -257,7 +258,7 @@ the output will be:
            'version': '1.0.0'}}
 ```
 all datasets are iterator and can be used like below:
-```
+```python
 from dadmatools.datasets import FarsTail
 from dadmatools.datasets import SnappfoodSentiment
 
@@ -287,7 +288,7 @@ print(next(peyma)[0]['tag'])
 download, load and using word embedding trained only by name
 
 dadmatools supports all glove,fasttext and word2vec formats
-```
+```python
 from pprint import pprint
 from dadmatools.embeddings import get_embedding, get_all_embeddings_info, get_embedding_info
 
