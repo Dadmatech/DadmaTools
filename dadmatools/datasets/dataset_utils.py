@@ -62,9 +62,10 @@ def download_dataset(url, dest_dir):
     # sub_path = "tmp"
     # The header of the dl link has a Content-Length which is in bytes.
     # The bytes is in string hence has to convert to integer.
+
     if 'drive.google' in url:
         import gdown
-        return gdown.download(url)
+        return gdown.download(url, quiet=False, output=dest_dir + '/')
     try:
         filesize = int(requests.head(url).headers["Content-Length"])
     except KeyError:

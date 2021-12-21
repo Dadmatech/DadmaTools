@@ -10,3 +10,4 @@ from dadmatools.datasets.datasets.Wikipedia.wikipedia import WikipediaCorpus
 from dadmatools.datasets.datasets.persent.persent import PerSentLexicon
 from dadmatools.datasets.datasets.snappfoodSentiment.snappfood_sentiment import SnappfoodSentiment
 from dadmatools.datasets.datasets.perudt.perudt import PerUDT
+from dadmatools.datasets.datasets.Peyma.peyma import Peyma

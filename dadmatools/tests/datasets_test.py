@@ -10,6 +10,7 @@ from dadmatools.datasets import PersianNews
 from dadmatools.datasets import PnSummary
 from dadmatools.datasets import SnappfoodSentiment
 from dadmatools.datasets import PerUDT
+from dadmatools.datasets import Peyma
 
 if __name__ == '__main__':
     # print(get_dataset_info('FarsTail'))
@@ -23,10 +24,10 @@ if __name__ == '__main__':
     # pner = SnappfoodSentiment()
     # for i, item in enumerate(pner['train']):
     #     print(i)
-    print(get_dataset_info('PerUDT'))
+    # print(get_dataset_info('ARMAN'))
     # # print(get_all_datasets_info(tasks=['NER']))
-    pner = PerUDT()
-    for i, item in enumerate(pner['test']):
+    pner = ARMAN()
+    for i, item in enumerate(pner['train']):
         print(i)
         # print(dict(item[0]))
         # if i > 5:
