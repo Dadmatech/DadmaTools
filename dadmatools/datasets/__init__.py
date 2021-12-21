@@ -8,3 +8,5 @@ from dadmatools.datasets.datasets.persianNews.persian_news import PersianNews
 from dadmatools.datasets.datasets.pnSummary.pn_summary import PnSummary
 from dadmatools.datasets.datasets.Wikipedia.wikipedia import WikipediaCorpus
 from dadmatools.datasets.datasets.persent.persent import PerSentLexicon
+from dadmatools.datasets.datasets.snappfoodSentiment.snappfood_sentiment import SnappfoodSentiment
+from dadmatools.datasets.datasets.perudt.perudt import PerUDT

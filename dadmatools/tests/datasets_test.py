@@ -8,6 +8,8 @@ from dadmatools.datasets import FarsTail
 from dadmatools.datasets import PersianNer
 from dadmatools.datasets import PersianNews
 from dadmatools.datasets import PnSummary
+from dadmatools.datasets import SnappfoodSentiment
+from dadmatools.datasets import PerUDT
 
 if __name__ == '__main__':
     # print(get_dataset_info('FarsTail'))
@@ -15,12 +17,21 @@ if __name__ == '__main__':
     # farstail = FarsTail()
     # for item in farstail['val']:
     #     print(item)
-
-    print(get_dataset_info('PnSummary'))
+    #
+    # print(get_dataset_info('snappfoodSentiment'))
+    # # # print(get_all_datasets_info(tasks=['NER']))
+    # pner = SnappfoodSentiment()
+    # for i, item in enumerate(pner['train']):
+    #     print(i)
+    print(get_dataset_info('PerUDT'))
     # # print(get_all_datasets_info(tasks=['NER']))
-    pner = PnSummary()
+    pner = PerUDT()
     for i, item in enumerate(pner['test']):
         print(i)
+        # print(dict(item[0]))
+        # if i > 5:
+        #     break
+        # print(item)
 
     # print(len(arman_dataset['train']))
     # print(len(arman_dataset['test']))

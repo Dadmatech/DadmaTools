@@ -23,8 +23,8 @@ class BaseDataset(Iterator):
         return self
 
     def __next__(self):
-        if self.current_pos == self.num_lines - 1:
-            raise StopIteration
+        # if self.current_pos == self.num_lines - 1:
+        #     raise StopIteration
         item = next(self.iterator)
         if self.current_pos is None:
             self.current_pos = 0
