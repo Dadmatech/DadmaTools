@@ -16,3 +16,4 @@ gensim>=3.6.0
 fasttext==0.9.2
 wiki-dump-reader==0.0.4
 gdown==4.2.0
+conllu
