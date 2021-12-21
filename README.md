@@ -223,7 +223,7 @@ get_all_datasets_info(tasks=['NER'])
 ```
 the output will be:
 
-```json
+```
 {'Arman': {'description': '',
            'filenames': ['train_fold1.txt',
                          'train_fold2.txt',
@@ -285,7 +285,7 @@ print(next(peyma)[0]['tag'])
 ```
 
 ### Loading Persian Word Embeddings
-download, load and using word embedding trained only by name
+download, load and using some pre-trained persian word embeddings
 
 dadmatools supports all glove,fasttext and word2vec formats
 ```python
