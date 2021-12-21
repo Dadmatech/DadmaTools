@@ -197,7 +197,7 @@ We provide an easy-to-use way to load some popular persian nlp datasets
 Here is the list of supported datasets.
 
    |    Dataset             | Task 
-|      ----------------                | ----------- 
+|       :----------------:               |  :----------------:   
    |    PersianNER           |   NER   | 
    |       Arman             |   NER
    |       Peyma             | NER
@@ -209,6 +209,7 @@ Here is the list of supported datasets.
   |    SnappfoodSentiment   | Sentiment Classification
   |           TEP           | Text Translation(eng-fa)
 | Wikipedia               | Corpus
+
 
 get dataset info:
 ```python
