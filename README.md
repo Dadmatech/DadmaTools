@@ -103,25 +103,45 @@ Note that the normalizer can be used outside of the pipeline as there are severa
 Note that if no pipeline is passed to the model the tokenizer will be load as default.
 
 ### Normalizer
-The normalizer can be used with the code below:
+cleaning text and unify characters.
 
-Note: there are several options for normalizer
+Note: None means no action! 
+```python
+from dadmatools.models.normalizer import Normalizer
 
--  ```unify_chars=True```,
--  ```nim_fasele_correction=True```,
--  ```replace_email=True```,
--  ```replace_number=True```,
--  ```replace_url=True```,
--  ```remove_stop_word=False```,
--  ```remove_puncs=False```,
--  ```remove_extra_space=True```,
--  ```refine_punc_spacing=False```
+normalizer = Normalizer(
+    full_cleaning=False,
+    unify_chars=True,
+    refine_punc_spacing=True,
+    remove_extra_space=True,
+    remove_puncs=False,
+    remove_html=False,
+    remove_stop_word=False,
+    replace_email_with="<EMAIL>",
+    replace_number_with=None,
+    replace_url_with="",
+    replace_mobile_number_with=None,
+    replace_emoji_with=None,
+    replace_home_number_with=None
+)
 
-```
-import dadmatools.models.normalizer as normalizer
+text = """
+<p>
+دادماتولز اولین نسخش سال ۱۴۰۰ منتشر شده. 
+امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه
+لطفا با ایمیل dadmatools@dadmatech.ir با ما در ارتباط باشید
+آدرس گیت‌هاب هم که خب معرف حضور مبارک هست:
+ https://github.com/Dadmatech/DadmaTools
+</p>
+"""
+normalized_text = normalizer.normalize(text)
+#<p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
 
-normalizer = normalizer.Normalizer(remove_stop_word=True)
-normalized_text = normalizer.normalize('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
+#full cleaning
+normalizer = Normalizer(full_cleaning=True)
+normalized_text = normalizer.normalize(text)
+#دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
+
 ```
 
 ### Pipeline - Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser
@@ -170,6 +190,139 @@ ners = doc._.ners ## this has value only if ner is called
 ```
 
 Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
+
+### Loading Persian NLP Datasets
+We provide an easy-to-use way to load some popular persian nlp datasets
+
+Here is the list of supported datasets.
+
+   |    Dataset             | Task 
+|       :----------------:               |  :----------------:   
+   |    PersianNER           |   NER   | 
+   |       Arman             |   NER
+   |       Peyma             | NER
+  |       FarTail           | Entailment
+ |        FaSpell           | Spell checking
+  |      PersianNews        | Text classification
+  |       PerUDT            | Universal Dependency
+  |      PnSummary          | Text Summarization
+  |    SnappfoodSentiment   | Sentiment Classification
+  |           TEP           | Text Translation(eng-fa)
+| Wikipedia               | Corpus
+
+
+all datasets are iterator and can be used like below:
+```python
+from dadmatools.datasets import FarsTail
+from dadmatools.datasets import SnappfoodSentiment
+from dadmatools.datasets import get_all_datasets_info
+from dadmatools.datasets import Peyma
+from dadmatools.datasets import PerUDT
+
+farstail = FarsTail()
+
+#len of dataset
+len(farstail['train'])
+
+#each dataset is a iterator
+next(farstail['train'])
+
+#loop over dataset
+snpfood_sa = SnappfoodSentiment()
+train_dataset_info = snpfood_sa['train'].info
+for i, item in enumerate(snpfood_sa['test']):
+    print(item['comment'], item['label'])
+
+perudt = PerUDT()
+for token_list in perudt['dev']:
+    print(token_list[0]['lemma'])
+
+peyma = Peyma()
+print(next(peyma)[0]['tag'])
+```
+get dataset info:
+```python
+
+from dadmatools.datasets import get_all_datasets_info
+
+get_all_datasets_info().keys()
+#dict_keys(['Persian-NEWS', 'fa-wiki', 'faspell', 'PnSummary', 'TEP', 'PerUDT', 'FarsTail', 'Peyma', 'snappfoodSentiment', 'Persian-NER', 'Arman', 'PerSent'])
+
+#specify task
+get_all_datasets_info(tasks=['NER'])
+```
+the output will be:
+
+```json
+{"Arman": {"description": "",
+           "filenames": ["train_fold1.txt",
+                         "train_fold2.txt",
+                         "train_fold3.txt",
+                         "test_fold1.txt",
+                         "test_fold2.txt",
+                         "test_fold3.txt"],
+           "name": "Arman",
+           "size": {"test": 7680, "train": 15361},
+           "splits": ["train", "test"],
+           "task": "NER",
+           "version": "1.0.0"},
+ "Persian-NER": {"description": "source: "
+                                "https://github.com/Text-Mining/Persian-NER",
+                 "filenames": ["Persian-NER-part1.txt",
+                               "Persian-NER-part2.txt",
+                               "Persian-NER-part3.txt",
+                               "Persian-NER-part4.txt",
+                               "Persian-NER-part5.txt"],
+                 "name": "Persian-NER",
+                 "size": 1000000,
+                 "splits": [],
+                 "task": "NER",
+                 "version": "1.0.0"},
+ "Peyma": {"description": "source: "
+                          "http://nsurl.org/2019-2/tasks/task-7-named-entity-recognition-ner-for-farsi/",
+           "filenames": ["peyma/600K", "peyma/300K"],
+           "name": "Peyma",
+           "size": 1000000,
+           "splits": [],
+           "task": "NER",
+           "version": "1.0.0"}}
+```
+
+
+### Loading Persian Word Embeddings
+download, load and using some pre-trained persian word embeddings
+
+dadmatools supports all glove,fasttext and word2vec formats
+```python
+from pprint import pprint
+from dadmatools.embeddings import get_embedding, get_all_embeddings_info, get_embedding_info
+
+# get all currently supported embeddings information
+pprint(get_all_embeddings_info())
+
+#get embedding information of specific embedding
+embedding_info = get_embedding_info('glove-wiki')
+
+#### load embedding ####
+word_embedding = get_embedding('glove-wiki')
+
+### some useful functions ###
+vocab = word_embedding.get_vocab()
+print(word_embedding.word_vector('سلام'))
+print(word_embedding.doesnt_match("دیروز به دانشگاه رفتم"))
+print(word_embedding.similarity('کتب', 'کتاب'))
+print(word_embedding.embedding_text('امروز هوای خوبی بود'))
+```
+The following word embeddings are currently supported: 
+
+| Name | Embedding Algorithm | Corpus | 
+| :-------------: | :-------------:  | :-------------:  | 
+| [`glove-wiki`](https://github.com/Text-Mining/Persian-Wikipedia-Corpus/tree/master/models/glove)  | glove | Wikipedia  |
+| [`fasttext-commoncrawl-bin`](https://fasttext.cc/docs/en/crawl-vectors.html) | fasttext | CommonCrawl |
+| [`fasttext-commoncrawl-vec`](https://fasttext.cc/docs/en/crawl-vectors.html) | fasttext | CommonCrawl |
+| [`word2vec-conll`](http://vectors.nlpl.eu/) | word2vec | Persian CoNLL17 corpus  |
+
+
 
 ## How to use (Colab)
 You can see the codes and the output here.
