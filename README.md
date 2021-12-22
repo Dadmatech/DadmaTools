@@ -91,7 +91,7 @@ Here is the list of NLP tasks we currently cover in the repository.
 
 These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
 Each task has its abbreviation as following:
--  ```ner```: Part of speech tagging
+-  ```ner```: Named entity recognition
 -  ```pos```: Part of speech tagging
 -  ```dep```: Dependency parsing
 -  ```cons```: Constituency parsing
