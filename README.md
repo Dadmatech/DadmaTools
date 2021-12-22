@@ -297,16 +297,32 @@ dadmatools supports all glove,fasttext and word2vec formats
 from pprint import pprint
 from dadmatools.embeddings import get_embedding, get_all_embeddings_info, get_embedding_info
 
+# get all currently supported embeddings information
 pprint(get_all_embeddings_info())
-# word_embeddings = get_embedding('fasttext-commoncrawl-vec')
+
+#get embedding information of specific embedding
 embedding_info = get_embedding_info('glove-wiki')
-word_embeddings = get_embedding('glove-wiki')
-vocab = word_embeddings.get_vocab()
-print(word_embeddings.word_vector('سلام'))
-print(word_embeddings.doesnt_match("دیروز به دانشگاه رفتم"))
-print(word_embeddings.similarity('کتب', 'کتاب'))
-print(word_embeddings.embedding_text('امروز هوای خوبی بود'))
+
+#### load embedding ####
+word_embedding = get_embedding('glove-wiki')
+
+### some useful functions ###
+vocab = word_embedding.get_vocab()
+print(word_embedding.word_vector('سلام'))
+print(word_embedding.doesnt_match("دیروز به دانشگاه رفتم"))
+print(word_embedding.similarity('کتب', 'کتاب'))
+print(word_embedding.embedding_text('امروز هوای خوبی بود'))
 ```
+The following word embeddings are currently supported: 
+
+| Name | Embedding Algorithm | Corpus | 
+| :-------------: | :-------------:  | :-------------:  | 
+| [`glove-wiki`](https://github.com/Text-Mining/Persian-Wikipedia-Corpus/tree/master/models/glove)  | glove | Wikipedia  |
+| [`fasttext-commoncrawl-bin`](https://fasttext.cc/docs/en/crawl-vectors.html) | fasttext | CommonCrawl |
+| [`fasttext-commoncrawl-vec`](https://fasttext.cc/docs/en/crawl-vectors.html) | fasttext | CommonCrawl |
+| [`word2vec-conll`](http://vectors.nlpl.eu/) | word2vec | Persian CoNLL17 corpus  |
+
+
 
 ## How to use (Colab)
 You can see the codes and the output here.
