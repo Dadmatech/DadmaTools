@@ -45,9 +45,3 @@ def ner(nlp, sentence):
     predictions = [(token, labels[prediction]) for token, prediction in zip(tokens, predictions[0].numpy())]
     
     return predictions
-
-    
-# if __name__ == '__main__':
-#     model = load_model()
-#     preds = ner(model, 'مغازه‌دار که آرایشش می‌کرد، خیلی خوشگل می‌شد')
-#     print(preds)

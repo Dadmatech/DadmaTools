@@ -8,10 +8,7 @@
 
 <div align="center">
   <a href="https://pypi.org/project/dadmatools/"><img src="https://img.shields.io/pypi/v/dadmatools.svg"></a>
-  <!-- <a href="https://travis-ci.com/dadmatech/dadmatools"><img src="https://travis-ci.com/dadmatech/dadmatools.svg?branch=master"></a> -->
-  <!-- <a href="https://coveralls.io/github/alexandrainst/danlp?branch=master"><img src="https://coveralls.io/repos/github/alexandrainst/danlp/badge.svg?branch=master"></a> -->
   <a href=""><img src="https://img.shields.io/badge/license-Apache%202-blue.svg"></a>
-  <!-- <a href=''><img src='https://readthedocs.org/projects/danlp-alexandra/badge/?version=latest' alt='Documentation Status' /></a> -->
 </div>
 <div align="center">
   <h5>
@@ -32,9 +29,6 @@
       Lemmatizer
   </h5>
   <h5>
-    <!-- <a href="https://github.com/alexandrainst/danlp/tree/master/examples/tutorials">
-      Tutorials
-    </a> -->
   </h5>
 </div>
 
@@ -322,7 +316,55 @@ The following word embeddings are currently supported:
 | [`fasttext-commoncrawl-vec`](https://fasttext.cc/docs/en/crawl-vectors.html) | fasttext | CommonCrawl |
 | [`word2vec-conll`](http://vectors.nlpl.eu/) | word2vec | Persian CoNLL17 corpus  |
 
+## Evaluation
+We have compared our pos tagging, dependancy parsing, and lemmatization models to `stanza`.
 
+<table>
+  <tr align='center'>
+    <td colspan="4"><b>PerDT</b></td>
+  </tr>
+  <tr align='center'>
+    <td><b>Toolkit</b></td>
+    <td><b>POS Taggeer</b></td>
+    <td><b>Dependancy Parser (UAS/LAS)</b></td>
+    <td><b>Lemmatizer</b></td>
+  </tr>
+  <tr align='center'>
+    <td>DadmaTools</td>
+    <td>97.52%</td>
+    <td>95.36%  /  92.54% </td>
+    <td>99.14% </td>
+  </tr>
+  <tr align='center'>
+    <td>stanza</td>
+    <td>97.35%</td>
+    <td>93.34%  /  91.05% </td>
+    <td>98.97% </td>
+  </tr>
+
+
+  <tr align='center'>
+    <td colspan="4"><b>Seraji</b></td>
+  </tr>
+  <tr align='center'>
+    <td><b>Toolkit</b></td>
+    <td><b>POS Taggeer</b></td>
+    <td><b>Dependancy Parser (UAS/LAS)</b></td>
+    <td><b>Lemmatizer</b></td>
+  </tr>
+  <tr align='center'>
+    <td>DadmaTools</td>
+    <td>97.83%</td>
+    <td>92.5%  /  89.23% </td>
+    <td> - </td>
+  </tr>
+  <tr align='center'>
+    <td>stanza</td>
+    <td>97.43%</td>
+    <td>87.20% /  83.89% </td>
+    <td> - </td>
+  </tr>
+</table>
 
 ## How to use (Colab)
 You can see the codes and the output here.

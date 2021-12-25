@@ -90,9 +90,11 @@ def lemmatize(input_tokens):
         args.cuda = False
     elif args.cuda:
         torch.cuda.manual_seed(args.seed)
-        
+    
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    args['save_dir'] = prefix + args['save_dir']
     # file paths
-    model_file = os.path.join(args.save_dir, '{}_lemmatizer.pt'.format(args.lang))
+    model_file = os.path.join(args['save_dir'], '{}_lemmatizer.pt'.format(args.lang))
 
     # load model
     use_cuda = args.cuda and not args.cpu
@@ -199,8 +201,3 @@ def lemma(trainer, args, input_tokens):
     
     return preds
 
-
-if __name__ == '__main__':
-    preds = lemmatize([['رفته', 'کرده', 'خواندم']])
-#     preds = lemmatize([['من کتاب را خواندم']])
-    print(preds)
