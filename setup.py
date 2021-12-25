@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dadmatools",
-    version="1.2.6",
+    version="1.2.7",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -27,7 +27,10 @@ setuptools.setup(
 	"pytorch-transformers>=1.1.0",
 	"segtok==1.5.7",
 	"tabulate>=0.8.6",
-	"supar>=1.1.2"
+	"supar>=1.1.2",
+	"html2text=2020.1.16",
+	"gensim>=3.6.0",
+	"fasttext=0.9.2"
     ],
 
     classifiers=[
