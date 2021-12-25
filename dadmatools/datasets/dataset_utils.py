@@ -10,7 +10,7 @@ from pathlib import Path
 import requests
 
 from dadmatools.datasets.datasets import *
-DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.json')
+DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.py')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
 DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
 DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')

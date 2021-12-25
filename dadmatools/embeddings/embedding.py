@@ -8,7 +8,7 @@ import numpy as np
 import os
 from dadmatools.embeddings.embedding_utils import download_with_progress, unzip_archive
 
-EMBEDDINGS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'available_models.json')
+EMBEDDINGS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'available_models.py')
 EMBEDDINGS_INFO = json.load(open(EMBEDDINGS_INFO_ADDR))
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.dadmatools', 'embeddings')
 
