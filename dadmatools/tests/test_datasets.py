@@ -1,10 +1,8 @@
 from dadmatools.datasets import ARMAN
-from dadmatools.datasets import get_all_datasets_info, get_dataset_info
+from dadmatools.datasets import get_dataset_info
 from dadmatools.datasets import TEP
 from dadmatools.datasets import PerSentLexicon
 from dadmatools.datasets import FaSpell
-from dadmatools.datasets import WikipediaCorpus
-from dadmatools.datasets import PersianNer
 from dadmatools.datasets import PersianNews
 from dadmatools.datasets import PnSummary
 from dadmatools.datasets import FarsTail
@@ -16,8 +14,8 @@ from dadmatools.datasets import PersianTweets
 
 
 def test_overall():
-    # print(get_all_datasets_info(tasks=['NER', 'Sentiment-Analysis']))
-    print(get_dataset_info('Arman'))
+    assert list(get_all_datasets_info(tasks=['NER', 'Sentiment-Analysis']).keys()) == ['Peyma', 'ARMAN', 'SnappfoodSentiment', 'PersianNER', 'Persent']
+
 
 def test_armna():
     arman = ARMAN()
@@ -28,6 +26,7 @@ def test_fatail():
     fatail = FarsTail()
     assert get_dataset_info('FarsTail')['task'] == 'Textual-Entailment'
     assert len(fatail.test) == fatail.info.size['test']
+    print(fatail.info)
 
 def test_faspell():
     faspell = FaSpell()
@@ -71,9 +70,6 @@ def test_tep():
 
 def test_tweets():
     tweets = PersianTweets()
-    # assert len(arman.test) == arman.info.size['test']
+    assert len(tweets.test) == tweets.info.size['test']
 
-# def test_tep():
-#     tep = TEP()
-#     assert len(tep.data) == tep.info.size
 
