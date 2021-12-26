@@ -17,3 +17,4 @@ fasttext==0.9.2
 wiki-dump-reader==0.0.4
 gdown==4.2.0
 conllu==4.4.1
+py7zr==0.17.2
