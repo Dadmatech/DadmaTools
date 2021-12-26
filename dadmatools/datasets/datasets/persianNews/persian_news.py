@@ -2,11 +2,11 @@ import csv
 import io
 import json
 import os
-from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, is_exist_dataset, DEFAULT_CACHE_DIR, unzip_dataset
 
 URL = 'https://drive.google.com/uc?id=1B6xotfXCcW9xS1mYSBQos7OCg0ratzKC'
-DATASET_NAME = "Persian-NEWS"
+DATASET_NAME = "PersianNews"
 
 def PersianNews(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
@@ -33,8 +33,11 @@ def PersianNews(dest_dir=DEFAULT_CACHE_DIR):
     test_iterator = get_persian_news_item(dest_dir, 'persian_news/test.csv')
     dev_iterator = get_persian_news_item(dest_dir, 'persian_news/dev.csv')
     sizes = DATASET_INFO['size']
-    train_dataset = BaseDataset(train_iterator, info, num_lines=sizes['train'])
-    test_dataset = BaseDataset(test_iterator, info, num_lines=sizes['test'])
-    dev_dataset = BaseDataset(dev_iterator, info, num_lines=sizes['dev'])
-    return {'train':train_dataset, 'test':test_dataset, 'dev':dev_dataset}
+    train_iterator = BaseIterator(train_iterator, num_lines=sizes['train'])
+    test_iterator = BaseIterator(test_iterator, num_lines=sizes['test'])
+    dev_iterator = BaseIterator(dev_iterator, num_lines=sizes['dev'])
+    iterators = {'train': train_iterator, 'test': test_iterator, 'dev': dev_iterator}
+    dataset = BaseDataset(info)
+    dataset.set_iterators(iterators)
+    return dataset
 

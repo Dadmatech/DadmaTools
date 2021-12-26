@@ -2,7 +2,7 @@ import json
 import os
 
 import pandas as pd
-from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://www.gelbukh.com/resources/persent/v1/PerSent.xlsx'
@@ -24,7 +24,8 @@ def PerSentLexicon(dest_dir=DEFAULT_CACHE_DIR):
         downloaded_file = download_dataset(URL, dest_dir)
         dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    iterator = get_persent_lexicon(dest_dir)
     lexicon_size = DATASET_INFO['size']
-    lexicon = BaseDataset(iterator, info, num_lines=lexicon_size)
-    return lexicon
+    iterator = BaseIterator(get_persent_lexicon(dest_dir), num_lines=lexicon_size)
+    dataset = BaseDataset(info)
+    dataset.set_iterators(iterator)
+    return dataset

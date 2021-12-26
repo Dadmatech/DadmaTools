@@ -1,7 +1,7 @@
 import json
 import os
 
-from dadmatools.datasets.base import BaseDataset, SplittedDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'http://opus.nlpl.eu/download.php?f=TEP/v1/moses/en-fa.txt.zip'
@@ -25,8 +25,10 @@ def TEP(dest_dir=DEFAULT_CACHE_DIR):
         downloaded_file = download_dataset(URL, dest_dir)
         dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    tep_iterator = get_tep_item(dest_dir)
+    train_iterator = get_tep_item(dest_dir)
     tep_size = DATASET_INFO['size']
-    train = BaseDataset(tep_iterator, info, num_lines=tep_size)
+    tep_iterator = BaseIterator(train_iterator, num_lines=tep_size)
+    train = BaseDataset(info)
+    train.set_iterators(tep_iterator)
     return train
 

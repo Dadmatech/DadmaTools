@@ -1,7 +1,7 @@
 {
   "name": "PnSummary",
   "version": "1.0.0",
-  "task": "Classification",
+  "task": "Summarization",
   "splits": ["train", "test", "dev"],
   "description": "source: https://github.com/hooshvare/pn-summary",
   "size" : {"train": 13179, "dev": 1469, "test":5503},

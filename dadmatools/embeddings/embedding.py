@@ -65,6 +65,9 @@ class Embedding:
         self.model = emb_model
         self.emb_type = emb_type
         self.emb_dim = emb_dim
+
+    def __getitem__(self, word):
+        return self.model[word]
     def doesnt_match(self, txt):
         return self.model.doesnt_match(txt.split())
 

@@ -1,7 +1,7 @@
 {
-  "name": "Persian-NER",
+  "name": "PersianNer",
   "version": "1.0.0",
-  "task": " NER",
+  "task": "NER",
   "splits": [],
   "description": "source: https://github.com/Text-Mining/Persian-NER",
   "size" : 1000000,

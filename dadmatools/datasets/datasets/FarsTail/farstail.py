@@ -2,7 +2,7 @@ import json
 import os
 import io
 import csv
-from dadmatools.datasets.base import BaseDataset, SplittedDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 URLS = ['https://raw.githubusercontent.com/dml-qom/FarsTail/master/data/Test-word.csv',
         'https://raw.githubusercontent.com/dml-qom/FarsTail/master/data/Train-word.csv',
@@ -40,8 +40,11 @@ def FarsTail(dest_dir=DEFAULT_CACHE_DIR):
     test_iterator = get_FarsTail_item(dest_dir, 'Test-word.csv')
     val_iterator = get_FarsTail_item(dest_dir, 'Val-word.csv')
     sizes = DATASET_INFO['size']
-    train_dataset = BaseDataset(train_iterator, info, num_lines=sizes['train'])
-    test_dataset = BaseDataset(test_iterator, info, num_lines=sizes['test'])
-    val_dataset = BaseDataset(val_iterator, info, num_lines=sizes['val'])
-    return {'train': train_dataset, 'test': test_dataset, 'val': val_dataset}
+    train_dataset = BaseIterator(train_iterator, num_lines=sizes['train'])
+    test_dataset = BaseIterator(test_iterator, num_lines=sizes['test'])
+    val_dataset = BaseIterator(val_iterator, num_lines=sizes['val'])
+    iterators = {'train': train_dataset, 'test': test_dataset, 'val': val_dataset}
+    dataset = BaseDataset(info=info)
+    dataset.set_iterators(iterators)
+    return dataset
 

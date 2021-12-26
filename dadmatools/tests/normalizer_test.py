@@ -1,10 +1,34 @@
 from dadmatools.models.normalizer import Normalizer
 
-if __name__ == '__main__':
-    text = """
-    شرکت فناوری دولتی «روستک» روسیهدر نمایشگاه بی‌ المللی هوایی «ماکس-۲۰۲۱»  در شهر «ژوکوفسکی» در حومه مسکو از جدیدترین جنگنده داخلی تک موتوره خود رونمایی کرد. این جنگنده هجدیدی تا حدودی ویژگی‌های جنگنده «سوخو-۵۷» روسیه را دارد. چک‌ میت اخیرا در نمایشگاه هوایی «دبی ۲۰۲۱» که در امارات متحده عربی برگزار شد، عرضه شد.
+normalizer = Normalizer(
+    full_cleaning=False,
+    unify_chars=True,
+    refine_punc_spacing=True,
+    remove_extra_space=True,
+    remove_puncs=False,
+    remove_html=False,
+    remove_stop_word=False,
+    replace_email_with="<EMAIL>",
+    replace_number_with=None,
+    replace_url_with="",
+    replace_mobile_number_with=None,
+    replace_emoji_with=None,
+    replace_home_number_with=None
+)
+text = """
+<p>
+دادماتولز اولین نسخش سال ۱۴۰۰ منتشر شده. 
+امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه
+لطفا با ایمیل dadmatools@dadmatech.ir با ما در ارتباط باشید
+آدرس گیت‌هاب هم که خب معرف حضور مبارک هست:
+ https://github.com/Dadmatech/DadmaTools
+</p>
 
-چک میت  جدیدترین سامانه‌ها از جمله پیکربندی آن و فناوری‌های هوش مصنوعی منحصر به فرد را دارد. این جنگنده تک موتوره جدید مجهز به انواع موشک‌های هوا به هوا و هوا به زمین مبتنی بر فناوری رادارگریز است و هفت تن  مهمات حمل می‌کند و می‌تواند تا ۶ هدف را در یک زمان مورد اصابت قرار دهد.
-    """
-    normalizer = Normalizer(full_cleaning=True)
-    print(normalizer.normalize(text))
+"""
+normalized_text = normalizer.normalize(text)
+#<p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
+
+#full cleaning
+normalizer = Normalizer(full_cleaning=True)
+normalized_text = normalizer.normalize(text)
+#دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
