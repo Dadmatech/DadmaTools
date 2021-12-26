@@ -30,7 +30,7 @@ def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
                         yield sentence
                         sentence = []
                     continue
-                splits = {'token': line.split(' ')[0], 'tag': line.split(' ')[1].replace('\n', '')}
+                splits = {'token': line.split('\t')[0], 'tag': line.split('\t')[1].replace('\n', '')}
                 sentence.append(splits)
 
             if len(sentence) > 0:
