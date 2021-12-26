@@ -19,10 +19,10 @@ def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
             if i == 0:
                 continue
             try:
-                correct, incorrect = line.split('\t')
+                correct, incorrect = line.replace('\n', '').split('\t')
             except:
-                correct, incorrect, _ = line.split('\t')
-            yield {'correct': correct, 'incorrect': incorrect}
+                incorrect, correct, _ = line.replace('\n', '').split('\t')
+            yield {'correct': correct, 'wrong': incorrect}
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
         downloaded_file = download_dataset(URL, dest_dir)

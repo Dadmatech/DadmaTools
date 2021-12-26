@@ -20,7 +20,10 @@ def FarsTail(dest_dir=DEFAULT_CACHE_DIR):
         f_addr = os.path.join(dir_addr, fname)
         with io.open(f_addr, encoding="utf8") as f:
             reader = csv.reader(f)
-            for row in reader:
+            for i, row in enumerate(reader):
+                #skip headers
+                if i == 0:
+                    continue
                 item = row[0].split('\t')
                 if fname == 'Test-word.csv':
                     if len(item) != 5:

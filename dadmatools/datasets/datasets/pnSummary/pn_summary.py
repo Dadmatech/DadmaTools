@@ -19,8 +19,9 @@ def PnSummary(dest_dir=DEFAULT_CACHE_DIR):
         keys = ['id', 'title', 'article', 'summary', 'category', 'categories', 'network']
         with io.open(f_addr, encoding="utf8") as f:
             reader = csv.reader(f)
-            for row in reader:
-
+            for i, row in enumerate(reader):
+                if i ==0 :
+                    continue
                 item = row[0].split('\t')
                 try:
                     yield {k:item[i] for i,k in enumerate(keys)}

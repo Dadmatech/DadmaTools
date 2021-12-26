@@ -30,8 +30,8 @@ def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
                         yield sentence
                         sentence = []
                     continue
-                splits = line.split(' ')
-                sentence.append([splits[0], splits[-1].rstrip("\n")])
+                splits = {'token': line.split(' ')[0], 'tag': line.split(' ')[1].replace('\n', '')}
+                sentence.append(splits)
 
             if len(sentence) > 0:
                 yield sentence
