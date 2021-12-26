@@ -12,6 +12,9 @@ class DatasetInfo:
     def __repr__(self):
         return '\n'.join([f'{key}: {value}' for key, value in self.info.items()])
 
+    def __str__(self):
+        return '\n'.join([f'{key}: {value}' for key, value in self.info.items()])
+
 
 class BaseIterator(Iterator):
 
