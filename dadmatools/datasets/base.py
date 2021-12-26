@@ -5,9 +5,12 @@ from collections import Iterator
 class DatasetInfo:
     def __init__(self, info_addr):
         with open(info_addr) as f:
-            info = json.load(f)
-            for info_key, info_value in info.items():
+            self.info = json.load(f)
+            for info_key, info_value in self.info.items():
                 setattr(self, info_key, info_value)
+
+    def __repr__(self):
+        return '\n'.join([f'{key}: {value}' for key, value in self.info.items()])
 
 
 class BaseIterator(Iterator):
