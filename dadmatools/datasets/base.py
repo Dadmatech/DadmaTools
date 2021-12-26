@@ -59,4 +59,4 @@ class BaseDataset:
                 setattr(self, iterator_name, iterator_func)
 
     def __getattr__(self, attr):
-        raise AttributeError("'this dataset has no {} attribute. available splits for this dataset : {}".format(attr, list(self.__dict__.keys())))
+        raise AttributeError("'this dataset has no {} attribute. valid attributes : {}".format(attr, list(self.__dict__.keys())))
