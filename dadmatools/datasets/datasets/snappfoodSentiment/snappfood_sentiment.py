@@ -17,16 +17,16 @@ def SnappfoodSentiment(dest_dir=DEFAULT_CACHE_DIR):
     def get_snf_sa_item(dir_addr, fname):
         f_addr = os.path.join(dir_addr, fname)
         keys = ['index', 'comment', 'label', 'label_id']
-        with io.open(f_addr, encoding="utf8") as f:
-            reader = csv.reader(f)
-            for i, row in enumerate(reader):
-                if i == 0:
-                    continue
-                item = row[0].split('\t')
-                try:
-                    yield {k:item[i] for i,k in enumerate(keys)}
-                except :
-                    continue
+        f = open(f_addr, encoding="utf8")
+        reader = csv.reader(f)
+        for i, row in enumerate(reader):
+            if i == 0:
+                continue
+            item = row[0].split('\t')
+            try:
+                yield {k:item[i] for i,k in enumerate(keys)}
+            except :
+                continue
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
         downloaded_file = download_dataset(URL, dest_dir)

@@ -192,17 +192,18 @@ Here is the list of supported datasets.
 
    |    Dataset             | Task 
 |       :----------------:               |  :----------------:   
-   |    PersianNER           |   NER   | 
-   |       Arman             |   NER
-   |       Peyma             | NER
-  |       FarTail           | Entailment
- |        FaSpell           | Spell checking
-  |      PersianNews        | Text classification
+   |    PersianNER           |   Named Entity Recognition   | 
+   |       ARMAN             |   Named Entity Recognition
+   |       Peyma             | Named Entity Recognition
+  |       FarsTail           | Textual Entailment
+ |        FaSpell           | Spell Checking
+  |      PersianNews        | Text Classification
   |       PerUDT            | Universal Dependency
   |      PnSummary          | Text Summarization
   |    SnappfoodSentiment   | Sentiment Classification
   |           TEP           | Text Translation(eng-fa)
-| Wikipedia               | Corpus
+| WikipediaCorpus               | Corpus
+| PersianTweets           | Corpus
 
 
 all datasets are iterator and can be used like below:
