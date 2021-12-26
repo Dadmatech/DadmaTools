@@ -4,7 +4,7 @@ from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://drive.google.com/uc?id=1jHje8Q07tQWEpt8cEpFR_TOuqjFs79Vb'
-DATASET_NAME = "wikipedia"
+DATASET_NAME = "WikipediaCorpus"
 
 def WikipediaCorpus(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
