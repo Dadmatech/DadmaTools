@@ -18,14 +18,17 @@ def PersianNews(dest_dir=DEFAULT_CACHE_DIR):
         f_addr = os.path.join(dir_addr, fname)
         f = open(f_addr, encoding="utf8")
         reader = csv.reader(f)
-        for i, row in enumerate(reader):
-            if i == 0:
-                continue
-            item = row[0].split('\t')
-            try:
-                yield {"text": item[1], "label": item[2], "label_id": item[3]}
-            except :
-                continue
+        try:
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                item = row[0].split('\t')
+                try:
+                    yield {"text": item[1], "label": item[2], "label_id": item[3]}
+                except IndexError:
+                    continue
+        except GeneratorExit:
+            f.close()
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
         downloaded_file = download_dataset(URL, dest_dir)

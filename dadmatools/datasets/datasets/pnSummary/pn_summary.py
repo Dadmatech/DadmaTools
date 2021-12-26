@@ -19,15 +19,17 @@ def PnSummary(dest_dir=DEFAULT_CACHE_DIR):
         keys = ['id', 'title', 'article', 'summary', 'category', 'categories', 'network']
         f = open(f_addr, encoding="utf8")
         reader = csv.reader(f)
-        for i, row in enumerate(reader):
-            if i ==0 :
-                continue
-            item = row[0].split('\t')
-            try:
-                yield {k:item[i] for i,k in enumerate(keys)}
-            except :
-                continue
-
+        try:
+            for i, row in enumerate(reader):
+                if i ==0 :
+                    continue
+                item = row[0].split('\t')
+                try:
+                    yield {k:item[i] for i,k in enumerate(keys)}
+                except IndexError:
+                    continue
+        except GeneratorExit:
+            f.close()
     if not is_exist_dataset(DATASET_INFO, dest_dir):
         downloaded_file = download_dataset(URL, dest_dir)
         dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='zip')
