@@ -12,6 +12,7 @@ from dadmatools.datasets import SnappfoodSentiment
 from dadmatools.datasets import get_all_datasets_info
 from dadmatools.datasets import Peyma
 from dadmatools.datasets import PerUDT
+from dadmatools.datasets import PersianTweets
 
 
 def test_overall():
@@ -68,6 +69,9 @@ def test_tep():
     arman = TEP()
     assert len(arman.test) == arman.info.size['test']
 
+def test_tweets():
+    tweets = PersianTweets()
+    # assert len(arman.test) == arman.info.size['test']
 
 # def test_tep():
 #     tep = TEP()

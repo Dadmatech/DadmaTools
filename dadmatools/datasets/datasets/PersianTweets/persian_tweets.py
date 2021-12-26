@@ -3,11 +3,11 @@ import os
 from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
-URL = 'https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-3195/lscp-0.5-fa-normalized.7z?sequence=5&isAllowed=y'
+URL = 'https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-3195/lscp-0.5-fa-normalized.7z'
 DATASET_NAME = "PersianTweets"
 
 
-def WikipediaCorpus(dest_dir=DEFAULT_CACHE_DIR):
+def PersianTweets(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
     info_addr = os.path.join(base_addr, 'info.json')
     DATASET_INFO = json.load(open(info_addr))
