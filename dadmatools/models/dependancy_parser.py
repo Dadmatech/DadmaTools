@@ -157,25 +157,5 @@ def depparser(model, tokens_list):
     return preds_arcs, preds_rels
 
 
-# preds_arcs, preds_rels = dependancy_parser_model(['نظامی', 'می‌گوید', 'که', 'در', 'سال', '۵۱۰', 'تربت', 'او', 'را', 'زیارت', 'کرده', '.'])
-# print(preds_arcs)
-# print(preds_rels)
-
-# from typing import List
-# import re
-
-# from flair.data import Sentence, Token
-
-# position = 0
-# a = ['من', 'دیروز', 'به', 'مدرسه', 'رفتم', '.']
-
-# sentence: Sentence = Sentence()
-    
-# for line in a:
-#     token = Token(line)
-#     sentence.add_token(token)
-
-# print(sentence)
-
 
 

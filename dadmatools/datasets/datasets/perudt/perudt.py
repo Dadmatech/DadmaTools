@@ -11,7 +11,7 @@ DATASET_NAME = "PerUDT"
 
 def PerUDT(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
-    info_addr = os.path.join(base_addr, 'info.json')
+    info_addr = os.path.join(base_addr, 'info.py')
     DATASET_INFO = json.load(open(info_addr))
     dest_dir = os.path.join(dest_dir, DATASET_NAME)
 

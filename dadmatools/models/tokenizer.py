@@ -153,6 +153,3 @@ def tokenizer(trainer, args, input_sentence):
     
     return preds
 
-# if __name__ == '__main__':
-#     preds = tokenize('دیروز با مهدی و علی به کتابخانه رفتیم. سلام ما را به او برسان')
-#     print(preds)

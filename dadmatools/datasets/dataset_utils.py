@@ -10,7 +10,7 @@ from pathlib import Path
 import requests
 import py7zr
 
-DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.json')
+DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.py')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
 DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
 DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
@@ -118,7 +118,7 @@ def is_exist_dataset(dataset_info, dest_dir):
 
 def fill_datasets_info():
     datasets_info = {}
-    for info_addr in glob.iglob(DATASETS_DIR + '/*/info.json'):
+    for info_addr in glob.iglob(DATASETS_DIR + '/*/info.py'):
         ds_info = json.load(open(info_addr))
         datasets_info[ds_info['name']] = ds_info
     with open(DATASETS_INFO_ADDR, 'w+') as f:

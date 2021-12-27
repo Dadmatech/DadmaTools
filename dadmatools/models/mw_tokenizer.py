@@ -95,8 +95,3 @@ def mwt(trainer, args, input_tokens):
         new_preds.append(tmp)
     
     return new_preds
-
-# if __name__ == '__main__':
-#     model, arg = load_model()
-#     preds = mwt(model, arg, [[('مغازه\u200cدار', 'MWT=No'), ('که', 'MWT=No'), ('آرایشش', 'MWT=Yes'), ('خوشگل', 'MWT=No')]])
-#     print(preds)
