@@ -1,7 +1,7 @@
 import glob
 import json
 import os
-from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, is_exist_dataset, DEFAULT_CACHE_DIR, unzip_dataset
 
 URL = 'https://drive.google.com/uc?id=1EC121uhkOFlsPAvsPMJ9TvBAwus_UkhN'
@@ -36,10 +36,10 @@ def Peyma(dest_dir=DEFAULT_CACHE_DIR):
         downloaded_file = os.path.join(dest_dir, 'peyma.zip')
         dest_dir = unzip_dataset(downloaded_file, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    iterator1 = get_peyma_item(dest_dir, 'peyma/600K/*')
-    iterator2 = get_peyma_item(dest_dir, 'peyma/300K/*')
+    iterator = get_peyma_item(dest_dir, 'peyma/*K/*')
     size = DATASET_INFO['size']
-    train_big = BaseDataset(iterator1, info, num_lines=size)
-    train_small = BaseDataset(iterator2, info, num_lines=size)
-    return {'big':train_big, 'small': train_small}
+    data_iterator = BaseIterator(iterator, num_lines=size)
+    dataset = BaseDataset(info)
+    dataset.set_iterators(data_iterator)
+    return dataset
 

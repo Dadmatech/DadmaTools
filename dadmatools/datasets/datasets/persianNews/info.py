@@ -1,5 +1,5 @@
 {
-  "name": "Persian-NEWS",
+  "name": "PersianNews",
   "version": "1.0.0",
   "task": "Classification",
   "splits": ["train", "test", "dev"],

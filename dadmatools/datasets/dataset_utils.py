@@ -8,8 +8,8 @@ import os
 import sys
 from pathlib import Path
 import requests
+import py7zr
 
-from dadmatools.datasets.datasets import *
 DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.py')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
 DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
@@ -44,10 +44,10 @@ def unzip_dataset(from_path: str, to_path: str, zip_format=None) -> Path:
         data = zipfile.read()  # get the decompressed data
         newfilepath = from_path[:-4]  # assuming the filepath ends with .bz2
         open(newfilepath, 'wb').write(data)  # write a uncompressed file
-    # elif '.tgz' '.7z':
-    #     szfile = py7zr.SevenZipFile(from_path, mode='r')
-    #     szfile.extractall(path=to_path)
-    #     szfile.close()
+    elif extenstion.endswith('7z') or zip_format == '7z':
+        szfile = py7zr.SevenZipFile(from_path, mode='r')
+        szfile.extractall(path=to_path)
+        szfile.close()
 
     return Path(to_path)
 
@@ -118,7 +118,7 @@ def is_exist_dataset(dataset_info, dest_dir):
 
 def fill_datasets_info():
     datasets_info = {}
-    for info_addr in glob.iglob(DATASETS_DIR + '/*/info.json'):
+    for info_addr in glob.iglob(DATASETS_DIR + '/*/info.py'):
         ds_info = json.load(open(info_addr))
         datasets_info[ds_info['name']] = ds_info
     with open(DATASETS_INFO_ADDR, 'w+') as f:
@@ -136,6 +136,6 @@ def get_dataset_info(ds_name):
         raise  KeyError(f'{ds_name} not found in available datasets. call get_all_datasets_info() to see all available datasets')
     return DATASET_INFO[ds_name]
 
-#
+
 # if __name__ == '__main__':
 #     fill_datasets_info()

@@ -192,47 +192,59 @@ Here is the list of supported datasets.
 
    |    Dataset             | Task 
 |       :----------------:               |  :----------------:   
-   |    PersianNER           |   NER   | 
-   |       Arman             |   NER
-   |       Peyma             | NER
-  |       FarTail           | Entailment
- |        FaSpell           | Spell checking
-  |      PersianNews        | Text classification
+   |    PersianNER           |   Named Entity Recognition   | 
+   |       ARMAN             |   Named Entity Recognition
+   |       Peyma             | Named Entity Recognition
+  |       FarsTail           | Textual Entailment
+ |        FaSpell           | Spell Checking
+  |      PersianNews        | Text Classification
   |       PerUDT            | Universal Dependency
   |      PnSummary          | Text Summarization
   |    SnappfoodSentiment   | Sentiment Classification
   |           TEP           | Text Translation(eng-fa)
-| Wikipedia               | Corpus
+| WikipediaCorpus               | Corpus
+| PersianTweets           | Corpus
 
 
 all datasets are iterator and can be used like below:
 ```python
 from dadmatools.datasets import FarsTail
 from dadmatools.datasets import SnappfoodSentiment
-from dadmatools.datasets import get_all_datasets_info
 from dadmatools.datasets import Peyma
 from dadmatools.datasets import PerUDT
+from dadmatools.datasets import PersianTweets
+from dadmatools.datasets import PnSummary
+
 
 farstail = FarsTail()
-
 #len of dataset
-len(farstail['train'])
+print(len(farstail.train))
 
-#each dataset is a iterator
-next(farstail['train'])
+#like a generator
+print(next(farstail.train))
+
+#dataset details
+pn_summary = PnSummary()
+print('PnSummary dataset information: ', pn_summary.info)
 
 #loop over dataset
 snpfood_sa = SnappfoodSentiment()
-train_dataset_info = snpfood_sa['train'].info
-for i, item in enumerate(snpfood_sa['test']):
+for i, item in enumerate(snpfood_sa.test):
     print(item['comment'], item['label'])
 
+#get first tokens' lemma of all dev items
 perudt = PerUDT()
-for token_list in perudt['dev']:
+for token_list in perudt.dev:
     print(token_list[0]['lemma'])
 
+#get NER tag of first Peyma's data
 peyma = Peyma()
-print(next(peyma)[0]['tag'])
+print(next(peyma.data)[0]['tag'])
+
+#corpus 
+tweets = PersianTweets()
+print('tweets count : ', len(tweets.data))
+print('sample tweet: ', next(tweets.data))
 ```
 get dataset info:
 ```python
@@ -243,43 +255,50 @@ get_all_datasets_info().keys()
 #dict_keys(['Persian-NEWS', 'fa-wiki', 'faspell', 'PnSummary', 'TEP', 'PerUDT', 'FarsTail', 'Peyma', 'snappfoodSentiment', 'Persian-NER', 'Arman', 'PerSent'])
 
 #specify task
-get_all_datasets_info(tasks=['NER'])
+get_all_datasets_info(tasks=['NER', 'Sentiment-Analysis'])
 ```
 the output will be:
 
 ```json
-{"Arman": {"description": "",
-           "filenames": ["train_fold1.txt",
-                         "train_fold2.txt",
-                         "train_fold3.txt",
-                         "test_fold1.txt",
-                         "test_fold2.txt",
-                         "test_fold3.txt"],
-           "name": "Arman",
-           "size": {"test": 7680, "train": 15361},
-           "splits": ["train", "test"],
-           "task": "NER",
-           "version": "1.0.0"},
- "Persian-NER": {"description": "source: "
-                                "https://github.com/Text-Mining/Persian-NER",
-                 "filenames": ["Persian-NER-part1.txt",
-                               "Persian-NER-part2.txt",
-                               "Persian-NER-part3.txt",
-                               "Persian-NER-part4.txt",
-                               "Persian-NER-part5.txt"],
-                 "name": "Persian-NER",
-                 "size": 1000000,
-                 "splits": [],
-                 "task": "NER",
-                 "version": "1.0.0"},
- "Peyma": {"description": "source: "
-                          "http://nsurl.org/2019-2/tasks/task-7-named-entity-recognition-ner-for-farsi/",
-           "filenames": ["peyma/600K", "peyma/300K"],
-           "name": "Peyma",
-           "size": 1000000,
-           "splits": [],
-           "task": "NER",
-           "version": "1.0.0"}}
+{"ARMAN": {"description": "ARMAN dataset holds 7,682 sentences with 250,015 sentences tagged over six different classes.\n\nOrganization\nLocation\nFacility\nEvent\nProduct\nPerson",
+  "filenames": ["train_fold1.txt",
+   "train_fold2.txt",
+   "train_fold3.txt",
+   "test_fold1.txt",
+   "test_fold2.txt",
+   "test_fold3.txt"],
+  "name": "ARMAN",
+  "size": {"test": 7680, "train": 15361},
+  "splits": ["train", "test"],
+  "task": "NER",
+  "version": "1.0.0"},
+ "PersianNer": {"description": "source: https://github.com/Text-Mining/Persian-NER",
+  "filenames": ["Persian-NER-part1.txt",
+   "Persian-NER-part2.txt",
+   "Persian-NER-part3.txt",
+   "Persian-NER-part4.txt",
+   "Persian-NER-part5.txt"],
+  "name": "PersianNer",
+  "size": 976599,
+  "splits": [],
+  "task": "NER",
+  "version": "1.0.0"},
+ "Peyma": {"description": "source: http://nsurl.org/2019-2/tasks/task-7-named-entity-recognition-ner-for-farsi/",
+  "filenames": ["peyma/600K", "peyma/300K"],
+  "name": "Peyma",
+  "size": 10016,
+  "splits": [],
+  "task": "NER",
+  "version": "1.0.0"},
+ "snappfoodSentiment": {"description": "source: https://huggingface.co/HooshvareLab/bert-fa-base-uncased-sentiment-snappfood",
+  "filenames": ["snappfood/train.csv",
+   "snappfood/test.csv",
+   "snappfood/dev.csv"],
+  "name": "snappfoodSentiment",
+  "size": {"dev": 6274, "test": 6972, "train": 56516},
+  "splits": ["train", "test", "dev"],
+  "task": "Sentiment-Analysis",
+  "version": "1.0.0"}}
 ```
 
 
@@ -288,10 +307,9 @@ download, load and using some pre-trained persian word embeddings
 
 dadmatools supports all glove,fasttext and word2vec formats
 ```python
-from pprint import pprint
 from dadmatools.embeddings import get_embedding, get_all_embeddings_info, get_embedding_info
+from pprint import pprint
 
-# get all currently supported embeddings information
 pprint(get_all_embeddings_info())
 
 #get embedding information of specific embedding
@@ -300,10 +318,14 @@ embedding_info = get_embedding_info('glove-wiki')
 #### load embedding ####
 word_embedding = get_embedding('glove-wiki')
 
-### some useful functions ###
+#get vector of the word
+print(word_embedding['سلام'])
+
+#vocab
 vocab = word_embedding.get_vocab()
-print(word_embedding.word_vector('سلام'))
-print(word_embedding.doesnt_match("دیروز به دانشگاه رفتم"))
+
+### some useful functions ###
+print(word_embedding.top_nearest("زمستان", 10))
 print(word_embedding.similarity('کتب', 'کتاب'))
 print(word_embedding.embedding_text('امروز هوای خوبی بود'))
 ```
@@ -382,4 +404,3 @@ If you want to cite this project, please use the following BibTeX entry:
 ``` -->
 
 <!-- Read the paper here.  -->
-

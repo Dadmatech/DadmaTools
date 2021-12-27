@@ -11,3 +11,4 @@ from dadmatools.datasets.datasets.persent.persent import PerSentLexicon
 from dadmatools.datasets.datasets.snappfoodSentiment.snappfood_sentiment import SnappfoodSentiment
 from dadmatools.datasets.datasets.perudt.perudt import PerUDT
 from dadmatools.datasets.datasets.Peyma.peyma import Peyma
+from dadmatools.datasets.datasets.PersianTweets.persian_tweets import PersianTweets

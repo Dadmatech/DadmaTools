@@ -1,7 +1,7 @@
 import glob
 import json
 import os
-from dadmatools.datasets.base import DatasetInfo, BaseDataset
+from dadmatools.datasets.base import DatasetInfo, BaseDataset, BaseIterator
 from dadmatools.datasets.dataset_utils import is_exist_dataset, unzip_dataset, download_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://raw.githubusercontent.com/HaniehP/PersianNER/master/ArmanPersoNERCorpus.zip'
@@ -25,7 +25,7 @@ def ARMAN(dest_dir=DEFAULT_CACHE_DIR):
                         yield sentence
                         sentence = []
                     continue
-                splits = {'token':line.split(' ')[0], 'tag':line.split(' ')[1].replace('\n', '')}
+                splits = {'token': line.split(' ')[0], 'tag': line.split(' ')[1].replace('\n', '')}
                 sentence.append(splits)
 
             if len(sentence) > 0:
@@ -45,6 +45,9 @@ def ARMAN(dest_dir=DEFAULT_CACHE_DIR):
     info = DatasetInfo(info_addr=info_addr)
     train_size = DATASET_INFO['size']['train']
     test_size = DATASET_INFO['size']['test']
-    train_dataset = BaseDataset(train_iterator,info, num_lines=train_size)
-    test_dataset = BaseDataset(test_dataset,info, num_lines=test_size)
-    return {'train': train_dataset, 'test': test_dataset}
+    train_iterator = BaseIterator(train_iterator, num_lines=train_size)
+    test_iterator = BaseIterator(test_dataset, num_lines=test_size)
+    iterators = {'train': train_iterator, 'test': test_iterator}
+    dataset = BaseDataset(info=info)
+    dataset.set_iterators(iterators)
+    return dataset

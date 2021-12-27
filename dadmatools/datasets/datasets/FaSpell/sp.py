@@ -1,11 +1,11 @@
 import json
 import os
 
-from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, unzip_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 URL = 'https://lindat.mff.cuni.cz/repository/xmlui/handle/11372/LRT-1547/allzip'
-DATASET_NAME = "FASpell"
+DATASET_NAME = "FaSpell"
 
 def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
@@ -19,10 +19,10 @@ def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
             if i == 0:
                 continue
             try:
-                correct, incorrect = line.split('\t')
+                correct, incorrect = line.replace('\n', '').split('\t')
             except:
-                correct, incorrect, _ = line.split('\t')
-            yield {'correct': correct, 'incorrect': incorrect}
+                incorrect, correct, _ = line.replace('\n', '').split('\t')
+            yield {'correct': correct, 'wrong': incorrect}
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
         downloaded_file = download_dataset(URL, dest_dir)
@@ -30,8 +30,11 @@ def FaSpell(dest_dir=DEFAULT_CACHE_DIR):
     info = DatasetInfo(info_addr=info_addr)
     fa_spell_main = get_faspell_item(dest_dir, 'faspell_main.txt')
     fa_spell_ocr = get_faspell_item(dest_dir, 'faspell_ocr.txt')
-    fa_spell_main_size = DATASET_INFO['size']['faspell_main']
-    fa_spell_ocr_size = DATASET_INFO['size']['faspell_ocr']
-    fa_spell_main = BaseDataset(fa_spell_main, info, num_lines=fa_spell_main_size)
-    fa_spell_ocr = BaseDataset(fa_spell_ocr, info, num_lines=fa_spell_ocr_size)
-    return {'faspell_main': fa_spell_main, 'faspell_ocr': fa_spell_ocr}
+    fa_spell_main_size = DATASET_INFO['size']['main']
+    fa_spell_ocr_size = DATASET_INFO['size']['ocr']
+    main_iterator = BaseIterator(fa_spell_main, num_lines=fa_spell_main_size)
+    ocr_iterator =  BaseIterator(fa_spell_ocr, num_lines=fa_spell_ocr_size)
+    iterators = {'main': main_iterator, 'ocr': ocr_iterator}
+    faspell_dataset = BaseDataset(info)
+    faspell_dataset.set_iterators(iterators)
+    return faspell_dataset

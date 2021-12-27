@@ -1,7 +1,7 @@
 import glob
 import json
 import os
-from dadmatools.datasets.base import BaseDataset, DatasetInfo
+from dadmatools.datasets.base import BaseDataset, DatasetInfo, BaseIterator
 from dadmatools.datasets.dataset_utils import download_dataset, is_exist_dataset, DEFAULT_CACHE_DIR
 
 
@@ -11,7 +11,7 @@ URLS = ['https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persia
         'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part4.txt',
         'https://raw.githubusercontent.com/Text-Mining/Persian-NER/master/Persian-NER-part5.txt'
         ]
-DATASET_NAME = "Persian-NER"
+DATASET_NAME = "PersianNer"
 
 def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
     base_addr = os.path.dirname(__file__)
@@ -30,8 +30,8 @@ def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
                         yield sentence
                         sentence = []
                     continue
-                splits = line.split(' ')
-                sentence.append([splits[0], splits[-1].rstrip("\n")])
+                splits = {'token': line.split('\t')[0], 'tag': line.split('\t')[1].replace('\n', '')}
+                sentence.append(splits)
 
             if len(sentence) > 0:
                 yield sentence
@@ -41,8 +41,9 @@ def PersianNer(dest_dir=DEFAULT_CACHE_DIR):
         for url in URLS:
             download_dataset(url, dest_dir)
     info = DatasetInfo(info_addr=info_addr)
-    train_iterator = get_PersianNer_item(dest_dir, 'Persian-NER-part*')
     size = DATASET_INFO['size']
-    train_dataset = BaseDataset(train_iterator, info, num_lines=size)
-    return train_dataset
+    iterator = BaseIterator(get_PersianNer_item(dest_dir, 'Persian-NER-part*'), num_lines=size)
+    dataset = BaseDataset(info)
+    dataset.set_iterators(iterator)
+    return dataset
 
