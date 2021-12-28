@@ -31,8 +31,9 @@ def PnSummary(dest_dir=DEFAULT_CACHE_DIR):
         except GeneratorExit:
             f.close()
     if not is_exist_dataset(DATASET_INFO, dest_dir):
-        downloaded_file = download_dataset(URL, dest_dir)
-        dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='zip')
+        downloaded_file = os.path.join(dest_dir, 'pn_summary.zip')
+        download_dataset(URL, dest_dir, filename=downloaded_file)
+        dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='xz')
     info = DatasetInfo(info_addr=info_addr)
     train_iterator = get_pn_summary_item(dest_dir, 'pn_summary/train.csv')
     test_iterator = get_pn_summary_item(dest_dir, 'pn_summary/test.csv')

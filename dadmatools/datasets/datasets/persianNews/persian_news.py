@@ -31,7 +31,8 @@ def PersianNews(dest_dir=DEFAULT_CACHE_DIR):
             f.close()
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
-        downloaded_file = download_dataset(URL, dest_dir)
+        downloaded_file = os.path.join(dest_dir, 'persian_news.zip')
+        download_dataset(URL, dest_dir, filename=downloaded_file)
         dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='zip')
     info = DatasetInfo(info_addr=info_addr)
     train_iterator = get_persian_news_item(dest_dir, 'persian_news/train.csv')
