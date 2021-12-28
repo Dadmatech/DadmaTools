@@ -19,8 +19,9 @@ def WikipediaCorpus(dest_dir=DEFAULT_CACHE_DIR):
             yield json.loads(line)
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
-        downloaded_file = download_dataset(URL, dest_dir)
-        dest_dir = unzip_dataset(downloaded_file, dest_dir)
+        downloaded_file = os.path.join(dest_dir, 'wikipedia.tar.xz')
+        download_dataset(URL, dest_dir, filename=downloaded_file)
+        dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='xz')
     info = DatasetInfo(info_addr=info_addr)
     wiki_iterator = BaseIterator(get_wikipedia_item(dest_dir), num_lines=DATASET_INFO['size'])
     dataset = BaseDataset(info=info)

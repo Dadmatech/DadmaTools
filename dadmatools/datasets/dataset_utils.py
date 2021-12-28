@@ -52,7 +52,7 @@ def unzip_dataset(from_path: str, to_path: str, zip_format=None) -> Path:
     return Path(to_path)
 
 
-def download_dataset(url, dest_dir):
+def download_dataset(url, dest_dir, filename=None):
     # source_code: https://github.com/sirbowen78/lab/blob/master/file_handling/dl_file1.py
     # This example script downloads python program for mac.
 
@@ -63,9 +63,14 @@ def download_dataset(url, dest_dir):
     # The header of the dl link has a Content-Length which is in bytes.
     # The bytes is in string hence has to convert to integer.
 
+    os.makedirs(dest_dir, exist_ok=True)
     if 'drive.google' in url:
         import gdown
-        return gdown.download(url, quiet=False, output=dest_dir + '/')
+        # import os
+        # print('gdown downloadddd output: ', dest_dir )
+        # print(dest_dir, filename)
+        # dest_dir = os.path.join(dest_dir,'peyma.zip')
+        return gdown.download(url, quiet=False, output=filename)
     try:
         filesize = int(requests.head(url).headers["Content-Length"])
     except KeyError:

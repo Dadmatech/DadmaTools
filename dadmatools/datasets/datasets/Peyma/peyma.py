@@ -32,9 +32,9 @@ def Peyma(dest_dir=DEFAULT_CACHE_DIR):
                 yield sentence
 
     if not is_exist_dataset(DATASET_INFO, dest_dir):
-        download_dataset(URL, dest_dir)
         downloaded_file = os.path.join(dest_dir, 'peyma.zip')
-        dest_dir = unzip_dataset(downloaded_file, dest_dir)
+        download_dataset(URL, dest_dir, filename=downloaded_file)
+        dest_dir = unzip_dataset(downloaded_file, dest_dir, zip_format='zip')
     info = DatasetInfo(info_addr=info_addr)
     iterator = get_peyma_item(dest_dir, 'peyma/*K/*')
     size = DATASET_INFO['size']
