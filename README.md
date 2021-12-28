@@ -4,7 +4,7 @@
 </h1> -->
 
 
-<h2 align="center">Dadmatools: A Python NLP Library for Persian</h2>
+<h2 align="center">DadmaTools: A Python NLP Library for Persian</h2>
 
 <div align="center">
   <a href="https://pypi.org/project/dadmatools/"><img src="https://img.shields.io/pypi/v/dadmatools.svg"></a>
@@ -34,7 +34,7 @@
 
 
 # **DadmaTools**
-Dadmatools is a repository for Natural Language Processing resources for the Persian Language. 
+DadmaTools is a repository for Natural Language Processing resources for the Persian Language. 
 The aim is to make it easier and more applicable to practitioners in the industry to use 
 Persian NLP and hence this project is licensed to allow commercial use. 
 The project features code examples on how to use the models in popular 
@@ -69,7 +69,7 @@ pip install git+https://github.com/Dadmatech/dadmatools.git
 ## NLP Models
 
 Natural Language Processing is an active area of research and it consists of many different tasks. 
-The Dadmatools repository provides an overview of Persian models for some of the most common NLP tasks (and is continuously evolving). 
+The DadmaTools repository provides an overview of Persian models for some of the most common NLP tasks (and is continuously evolving). 
 
 Here is the list of NLP tasks we currently cover in the repository.
 -  Named Entity Recognition
@@ -145,7 +145,7 @@ import dadmatools.pipeline.language as language
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
 pips = 'tok,lem,pos,dep,cons' 
-nlp = language.Pipeline('lem')
+nlp = language.Pipeline(pips)
 
 # you can see the pipeline with this code
 print(nlp.analyze_pipes(pretty=True))
