@@ -34,56 +34,31 @@
 
 
 # **DadmaTools**
-DadmaTools is a repository for Natural Language Processing resources for the Persian Language. 
-The aim is to make it easier and more applicable to practitioners in the industry to use 
-Persian NLP and hence this project is licensed to allow commercial use. 
-The project features code examples on how to use the models in popular 
-NLP frameworks such as spaCy and Transformers as well as Deep Learning frameworks 
-such as PyTorch. 
-for more details about how to use this tool read the instruction below. 
-
-
-## Installation
-
-To get started using DadmaTools in your python project simply install the pip package. Note that installing the default pip package 
-will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead we provide you with an installation option if you want to install all the required dependencies. 
-
-### Install with pip
-
-To get started using DadmaTools simply install the project with pip:
-
-```bash
-pip install dadmatools 
-```
-
-Note that the default installation of DadmaTools does install other NLP libraries such as SpaCy and supar.
-
-You can check the `requirements.txt` file to see what version the packages has been tested with.
-
-### Install from github
-Alternatively you can install the latest version from github using:
-```bash
-pip install git+https://github.com/Dadmatech/dadmatools.git
-```
+DadmaTools is a repository for Natural Language Processing resources for the Persian Language. The aim is to make it easier and more applicable to practitioners in the industry to use Persian NLP, and hence this project is licensed to allow commercial use. The project features code examples on how to use the models in popular NLP frameworks such as spaCy and Transformers, as well as Deep Learning frameworks such as PyTorch. Furthermore, DadmaTools support common Persian embedding and Persian datasets.
+for more details about how to use this tool read the instruction below.
 
 ## NLP Models
 
-Natural Language Processing is an active area of research and it consists of many different tasks. 
-The DadmaTools repository provides an overview of Persian models for some of the most common NLP tasks (and is continuously evolving). 
+Natural Language Processing is an active area of research, and it consists of many different tasks. 
+The DadmaTools repository provides an overview of Persian models for some of the most basic NLP tasks (and is continuously evolving). 
 
-Here is the list of NLP tasks we currently cover in the repository.
--  Named Entity Recognition
--  Part of speech tagging
--  Dependency parsing
--  Constituency parsing
--  Chunking
--  Lemmatizing
--  Tokenizing
+Here is the list of NLP tasks we currently cover in the repository. These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
+Each task has its abbreviation as follows:
+-  Named Entity Recognition: ```ner```
+-  Part of speech tagging: ```pos```
+-  Dependency parsing: ```dep```
+-  Constituency parsing: ```cons```
+-  Chunking: ```chunk```
+-  Lemmatizing: ```lem```
+-  Tokenizing: ```tok```
 -  Normalizing
+
+**Note** that the normalizer can be used outside of the pipeline as there are several configs (the default config is in the pipeline with the name of def-norm).
+**Note** that if no pipeline is passed to the model, the tokenizer will be loaded as default.
 
 ### Use Case
 
-These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
+<!-- These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
 Each task has its abbreviation as following:
 -  ```ner```: Named entity recognition
 -  ```pos```: Part of speech tagging
@@ -94,7 +69,7 @@ Each task has its abbreviation as following:
 -  ```tok```: Tokenizing
 
 Note that the normalizer can be used outside of the pipeline as there are several configs (the default confing is in the pipeline with the name of def-norm).
-Note that if no pipeline is passed to the model the tokenizer will be load as default.
+Note that if no pipeline is passed to the model the tokenizer will be load as default. -->
 
 ### Normalizer
 cleaning text and unify characters.
@@ -153,9 +128,9 @@ print(nlp.analyze_pipes(pretty=True))
 # doc is an SpaCy object
 doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
 ```
-[```doc```](https://spacy.io/api/doc) object has different extensions. First, there is ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extentions. Note that we defined our own extention as well in DadmaTools. If any pipeline related to the that specific extentions is not called, that extention will have no value.
+[```doc```](https://spacy.io/api/doc) object has different extensions. First, there are ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extensions. Note that we defined our own extension as well in DadmaTools. If any pipeline related to the specific extensions is not called, that extension will have no value.
 
-To better see the results you can use this code:
+To better see the results which you can use this code:
 
 ```python
 
@@ -183,10 +158,10 @@ sent_chunks = doc._.chunks ## this has value only if cons is called
 ners = doc._.ners ## this has value only if ner is called
 ```
 
-Note that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
+**Note** that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
 ### Loading Persian NLP Datasets
-We provide an easy-to-use way to load some popular persian nlp datasets
+We provide an easy-to-use way to load some popular Persian NLP datasets
 
 Here is the list of supported datasets.
 
@@ -303,9 +278,9 @@ the output will be:
 
 
 ### Loading Persian Word Embeddings
-download, load and using some pre-trained persian word embeddings
+download, load and use some pre-trained Persian word embeddings.
 
-dadmatools supports all glove,fasttext and word2vec formats
+dadmatools supports all glove, fasttext, and word2vec formats.
 ```python
 from dadmatools.embeddings import get_embedding, get_all_embeddings_info, get_embedding_info
 from pprint import pprint
@@ -339,7 +314,7 @@ The following word embeddings are currently supported:
 | [`word2vec-conll`](http://vectors.nlpl.eu/) | word2vec | Persian CoNLL17 corpus  |
 
 ## Evaluation
-We have compared our pos tagging, dependancy parsing, and lemmatization models to `stanza`.
+We have compared our pos tagging, dependancy parsing, and lemmatization models to `stanza` and `hazm`.
 
 <table>
   <tr align='center'>
@@ -353,15 +328,21 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
   </tr>
   <tr align='center'>
     <td>DadmaTools</td>
-    <td>97.52%</td>
-    <td>95.36%  /  92.54% </td>
-    <td>99.14% </td>
+    <td><b>97.52%</b></td>
+    <td><b>95.36%</b>  /  <b>92.54%</b> </td>
+    <td><b>99.14%</b> </td>
   </tr>
   <tr align='center'>
     <td>stanza</td>
     <td>97.35%</td>
     <td>93.34%  /  91.05% </td>
     <td>98.97% </td>
+  </tr>
+  <tr align='center'>
+    <td>hazm</td>
+    <td>-</td>
+    <td>- </td>
+    <td>89.01% </td>
   </tr>
 
 
@@ -376,8 +357,8 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
   </tr>
   <tr align='center'>
     <td>DadmaTools</td>
-    <td>97.83%</td>
-    <td>92.5%  /  89.23% </td>
+    <td><b>97.83%</b></td>
+    <td><b>92.5%</b>  /  <b>89.23%</b> </td>
     <td> - </td>
   </tr>
   <tr align='center'>
@@ -386,7 +367,37 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
     <td>87.20% /  83.89% </td>
     <td> - </td>
   </tr>
+  <tr align='center'>
+    <td>hazm</td>
+    <td>-</td>
+    <td>- </td>
+    <td>86.93% </td>
+  </tr>
 </table>
+
+
+## Installation
+
+To get started using DadmaTools in your python project, simply install via the pip package. Note that installing the default pip package 
+will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead, we provide you with an installation option if you want to install all the required dependencies. 
+
+### Install with pip
+
+To get started using DadmaTools, simply install the project with pip:
+
+```bash
+pip install dadmatools 
+```
+
+Note that the default installation of DadmaTools **does** install other NLP libraries such as SpaCy and supar.
+
+You can check the `requirements.txt` file to see what version the packages has been tested with.
+
+### Install from github
+Alternatively you can install the latest version from github using:
+```bash
+pip install git+https://github.com/Dadmatech/dadmatools.git
+```
 
 ## How to use (Colab)
 You can see the codes and the output here.
