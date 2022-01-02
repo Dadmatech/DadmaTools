@@ -376,6 +376,24 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 </table>
 
 
+<table>
+  <tr align='center'>
+    <td colspan="2"><b>Tehran university tree bank</b></td>
+  </tr>
+  <tr align='center'>
+    <td><b>Toolkit</b></td>
+    <td><b>Constituency Parser</b></td>
+  </tr>
+  <tr align='center'>
+    <td>DadmaTools (without preprocess))</td>
+    <td><b>82.88%</b></td>
+  </tr>
+  <tr align='center'>
+    <td>Stanford (with some preprocess on POS tags)</td>
+    <td>80.28</td>
+  </tr>
+</table>
+
 ## Installation
 
 To get started using DadmaTools in your python project, simply install via the pip package. Note that installing the default pip package 
