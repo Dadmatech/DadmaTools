@@ -68,7 +68,7 @@ Each task has its abbreviation as following:
 -  ```lem```: Lemmatizing
 -  ```tok```: Tokenizing
 
-Note that the normalizer can be used outside of the pipeline as there are several configs (the default confing is in the pipeline with the name of def-norm).
+Note that the normalizer can be used outside of the pipeline as there are several configs.
 Note that if no pipeline is passed to the model the tokenizer will be load as default. -->
 
 ### Normalizer
@@ -119,7 +119,7 @@ import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok,lem,pos,dep,cons' 
+pips = 'tok,lem,pos,dep,chunk,cons' 
 nlp = language.Pipeline(pips)
 
 # you can see the pipeline with this code

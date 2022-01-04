@@ -13,6 +13,7 @@ import dadmatools.models.postagger as tagger
 import dadmatools.models.dependancy_parser as dp
 import dadmatools.models.constituency_parser as conspars
 import dadmatools.models.ner as ner
+import dadmatools.models.chunker as chunker
 
 
 class NLP():
@@ -25,6 +26,8 @@ class NLP():
     lemma_model = None
     postagger_model = None
     depparser_model = None
+    consparser_model = None
+    chunker_model = None
     normalizer_model = None
     ner_model = None
     
@@ -46,10 +49,10 @@ class NLP():
         self.dict = {'tok':'tokenizer', 'lem':'lemmatize', 'pos':'postagger', 'dep':'dependancyparser', 'cons':'constituencyparser'}
         self.pipelines = pipelines.split(',')
         
-        if 'def-norm' in pipelines:
-            global normalizer_model
-            normalizer_model = normalizer.load_model()
-            self.nlp.add_pipe('normalizer', first=True)
+        # if 'def-norm' in pipelines:
+        #     global normalizer_model
+        #     normalizer_model = normalizer.load_model()
+        #     self.nlp.add_pipe('normalizer', first=True)
 
         global tokenizer_model
         tokenizer_model = tokenizer.load_model()
@@ -63,15 +66,20 @@ class NLP():
             lemma_model = lemmatizer.load_model()
             self.nlp.add_pipe('lemmatize')
         
-        if 'dep' in pipelines:
+        if 'dep' or 'chunk' in pipelines:
             global depparser_model
             depparser_model = dp.load_model()
             self.nlp.add_pipe('dependancyparser')
         
-        if 'pos' in pipelines:
+        if 'pos' or 'chunk' in pipelines:
             global postagger_model
             postagger_model = tagger.load_model()
             self.nlp.add_pipe('postagger')
+
+        if 'chunk' in pipelines:
+            global chunker_model
+            chunker_model = chunker.load_model()
+            self.nlp.add_pipe('chunking')
         
         if 'cons' in pipelines:
             global consparser_model
@@ -83,16 +91,16 @@ class NLP():
             ner_model = ner.load_model()
             self.nlp.add_pipe('ners')
     
-    @Language.component('normalizer')
-    def tokenizer(doc):
-        model = normalizer_model
-        with doc.retokenize() as retokenizer:
-            retokenizer.merge(doc[0:len(doc)])
-        norm_text = model.normalize(doc.text)
-        words = norm_text.split(' ')
-        spaces = [True for t in words]
-        doc = Doc(nlp.vocab, words=words, spaces=spaces)
-        return doc
+    # @Language.component('normalizer')
+    # def tokenizer(doc):
+    #     model = normalizer_model
+    #     with doc.retokenize() as retokenizer:
+    #         retokenizer.merge(doc[0:len(doc)])
+    #     norm_text = model.normalize(doc.text)
+    #     words = norm_text.split(' ')
+    #     spaces = [True for t in words]
+    #     doc = Doc(nlp.vocab, words=words, spaces=spaces)
+    #     return doc
 
     @Language.component('tokenizer', retokenizes=True)
     def tokenizer(doc):
@@ -162,22 +170,30 @@ class NLP():
         
         return doc
     
+    @Language.component('chunking')
+    def constituencyparser(doc):
+        model = chunker_model
+
+        chunks = []
+        for sent in doc._.sentences:
+            chu = chunker.chunk(model, sent)
+            chunks.append(chu)
+        
+        doc._.chunks = chunks
+        
+        return doc
+
     @Language.component('constituencyparser')
     def constituencyparser(doc):
         model = consparser_model
         
         constitu_parses = []
-        chunks = []
         for sent in doc._.sentences:
             ## getting the constituency of the sentence
             cons_res = conspars.cons_parser(model, sent.text)
             constitu_parses.append(cons_res)
-            ## getting the chunks of the sentence
-            chunker_res = conspars.chunker(cons_res)
-            chunks.append(chunker_res)
         
         doc._.constituency = constitu_parses
-        doc._.chunks = chunks
         
         return doc
     
