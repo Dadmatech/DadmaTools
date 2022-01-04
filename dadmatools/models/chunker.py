@@ -64,16 +64,13 @@ class FindChunks():
         return self.cp.parse(pos_taged_tuples)
 
 
-#How to use class
-from __future__ import unicode_literals
-import dadmatools.pipeline.language as language
 
-chunker_dadma = FindChunks()
-pips = 'tok,lem,pos,dep' 
-nlp = language.Pipeline(pips)
+def load_model():
+    chunker_dadma = FindChunks()
+    return chunker_dadma
 
-sent = "چشمان سبزش در چهره رنگ‌پریده اش، با بی‌قراری شعله کشیده بودند."
-doc = nlp(sent)
-dictionary = language.to_json(pips, doc)
-chnk_tags = list(zip([i['text'] for i in dictionary[0]],[str(j['text']+','+j['rel']+','+j['pos']) for j in dictionary[0]]))
-print(chunker_dadma.convert_nestedtree2rawstring(chunker_dadma.chunk_sentence(chnk_tags)))
+def chunk(model, sentence):
+    chnk_tags = list(zip([t.text for t in sentence ],[str(d.text+','+ d.dep_ +','+ d.pos_) for d in sentence ]))
+    chunk_tree = model.convert_nestedtree2rawstring(model.chunk_sentence(chnk_tags))
+    return chunk_tree
+
