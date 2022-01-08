@@ -318,11 +318,11 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 
 <table>
   <tr align='center'>
-    <td colspan="4"><b>PerDT</b></td>
+    <td colspan="4"><b>PerDT (F1 score)</b></td>
   </tr>
   <tr align='center'>
     <td><b>Toolkit</b></td>
-    <td><b>POS Taggeer</b></td>
+    <td><b>POS Tagger (UPOS)</b></td>
     <td><b>Dependancy Parser (UAS/LAS)</b></td>
     <td><b>Lemmatizer</b></td>
   </tr>
@@ -347,11 +347,11 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 
 
   <tr align='center'>
-    <td colspan="4"><b>Seraji</b></td>
+    <td colspan="4"><b>Seraji (F1 score)</b></td>
   </tr>
   <tr align='center'>
     <td><b>Toolkit</b></td>
-    <td><b>POS Taggeer</b></td>
+    <td><b>POS Tagger (UPOS)</b></td>
     <td><b>Dependancy Parser (UAS/LAS)</b></td>
     <td><b>Lemmatizer</b></td>
   </tr>
@@ -378,7 +378,7 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 
 <table>
   <tr align='center'>
-    <td colspan="2"><b>Tehran university tree bank</b></td>
+    <td colspan="2"><b>Tehran university tree bank (F1 score)</b></td>
   </tr>
   <tr align='center'>
     <td><b>Toolkit</b></td>
