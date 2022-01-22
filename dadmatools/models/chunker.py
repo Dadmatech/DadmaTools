@@ -5,43 +5,55 @@ class FindChunks():
 
     def __init__(self):
         self.grammar = r"""
-                        VPRT: {<.*,compound:lvc,NOUN>(<و,cc,CCONJ><.*conj,NOUN>)?<.*,PRON>?}
-                        VPRT: {<.*,compound:lvc,ADJ>(<و,cc,CCONJ><.*conj,ADJ>)?<.*,PRON>?}
+                        PP: {<را,.*,ADP>}
                         VP: {<.*,compound:lvc,NOUN><.*,ADP><.*,NOUN><.*,VERB><.*,AUX>?}
                         VP: {<.*,compound:lvc,NOUN><.*,ADP><.*,NOUN><.*,AUX>?<.*,VERB>}
+                        VP: {<.*,compound:lvc,NOUN><.*,NOUN><.*,VERB><.*,AUX>?}
+                        VP: {<.*,compound:lvc,NOUN><.*,NOUN><.*,AUX>?<.*,VERB>}
                         VP: {<.*,ADP><.*,compound:lvc,PRON><.*,VERB><.*,AUX>?}
                         VP: {<.*,ADP><.*,compound:lvc,PRON><.*,AUX>?<.*,VERB>}
                         VP: {<.*,ADP><.*,compound:lvc,NOUN><.*,VERB><.*,AUX>?}
                         VP: {<.*,ADP><.*,compound:lvc,NOUN><.*,AUX>?<.*,VERB>}
-                        VP: {<VPRT><.*,VERB><.*,AUX>?}
-                        VP: {<VPRT><.*,AUX>?<.*,VERB>}
-                        VP: {<.*,AUX>?<.*,VERB>}
+                        VP: {<.*,compound:lvc,NOUN>(<و,.*,CCONJ><.*conj,NOUN>)?<.*,PRON>?<.*,VERB><.*,AUX>?}
+                        VP: {<.*,compound:lvc,NOUN>(<و,.*,CCONJ><.*conj,NOUN>)?<.*,PRON>?<.*,AUX>?<.*,VERB>}
+                        VP: {<.*,compound:lvc,ADJ>(<و,.*,CCONJ><.*conj,ADJ>)?<.*,PRON>?<.*,VERB><.*,AUX>?}
+                        VP: {<.*,compound:lvc,ADJ>(<و,.*,CCONJ><.*conj,ADJ>)?<.*,PRON>?<.*,AUX>?<.*,VERB>}
+                        VP: {<.*,AUX><.*,VERB>}
                         VP: {<.*,VERB><.*,AUX>*}
                         VP: {<.*,AUX>}
-                        ADJP: {<.*advmod,ADV>?<.*,ADJ>(<،,punct,PUNCT><.*,ADV>?<.*conj,ADJ>)+<و,cc,CCONJ><.*,ADV>?<.*conj,ADJ>}
-                        ADJP: {<.*advmod,ADV>?<.*,ADJ>(<و,cc,CCONJ><.*,ADV>?<.*conj,ADJ>)*}
-                        NUMP: {<.*,NUM>+(<و,cc,CCONJ><.*,NUM>+)+}
-                        NUMP: {<.*,NUM>+((<،,punct,PUNCT><.*,NUM>)+<و,cc,CCONJ><.*,NUM>)}
-                        PRNP: {<.*nmod,PROPN><.*nmod,PROPN>?}
+                        AJP: {<.*advmod,ADV>?<.*amod,ADJ>(<،,punct,PUNCT><.*,ADV>?<.*conj,ADJ>)+<و,.*,CCONJ><.*,ADV>?<.*conj,ADJ>}
+                        AJP: {<.*advmod,ADV>?<.*amod,ADJ>(<و,.*,CCONJ><.*,ADV>?<.*conj,ADJ>)*}
+                        NUMP: {<.*,NUM>+(<و,.*,CCONJ><.*flat:num,NUM>+)+}
+                        NUMP: {<.*,NUM>+(<و,.*,CCONJ><.*flat:num,NOUN>+)+}
+                        NUMP: {<.*,NUM>+((<،,punct,PUNCT><.*,NUM>)+<و,.*,CCONJ><.*flat:num,NUM>)?}
+                        NUMP: {<.*,NUM>+((<،,punct,PUNCT><.*,NUM>)+<و,.*,CCONJ><.*flat:num,NOUN>)?}
                         NP: {<.*,INTJ><.*vocative,NOUN><AJP>?}
                         NP: {<.*vocative,NOUN><.*,INTJ>}
-                        NP: {<.*,NOUN>(<،,punct,PUNCT><.*conj,NOUN>)+<و,cc,CCONJ><.*conj,NOUN><PRNP>?}
-                        NP: {<.*,NOUN>(<و,cc,CCONJ><.*conj,NOUN>)+<PRNP>?}
-                        NP: {<.*,DET>+<.*,NOUN><AJP>?<PRNP>?}
-                        NP: {<.*,DET>?<NUMP><.*,NOUN><AJP>?<PRNP>?}
-                        NP: {<.*,DET>?<.*,NOUN><NUMP><PRNP>?}
-                        NP: {<AJP>?<.*,NOUN><AJP>?<PRNP>?}
-                        NP: {<.*,PROPN><.*flat:name,PROPN>*(<،,punct,PUNCT><.*conj,PROPN><.*flat:name,PROPN>*)+<و,cc,CCONJ><.*conj,PROPN><.*flat:name,PROPN>*}
-                        NP: {<.*,PROPN><.*flat:name,PROPN>*(<و,cc,CCONJ><.*conj,PROPN><.*flat:name,PROPN>*)*}
-                        NP: {<.*,PRON><.*nmod,PROPN>?(<،,punct,PUNCT><.*conj,PRON><.*nmod,PROPN>?)+<و,cc,CCONJ><.*conj,PRON><.*nmod,PROPN>?}
-                        NP: {<.*,PRON><.*nmod,PROPN>?(<و,cc,CCONJ><.*conj,PRON><.*nmod,PROPN>)*}
-                        NP: {<NUMP>}
+                        NP: {<.*,compound:lvc,NOUN><.*,ADP><.*,NOUN>(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,compound:lvc,NOUN><.*,NOUN>(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,ADP><.*,compound:lvc,PRON>(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,ADP><.*,compound:lvc,NOUN>(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,compound:lvc,NOUN>(<و,.*,CCONJ><.*conj,NOUN>)?(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,compound:lvc,ADJ>(<و,.*,CCONJ><.*conj,ADJ>)?(<.*تن,.*,NOUN>|<.*دن,.*,NOUN>)(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,NOUN>(<،,punct,PUNCT><.*conj,NOUN>)+<و,.*,CCONJ><.*conj,NOUN>(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,NOUN>(<و,.*,CCONJ><.*conj,NOUN>)+(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,DET>+<AJP>?<.*,NOUN><AJP>?(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,DET>?<NUMP><.*,NOUN><AJP>?(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,DET>?<.*,NOUN><NUMP>(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<AJP>?<.*,NOUN><AJP>?(<.*nmod,PRON><.*nmod,PRON>?)?}
+                        NP: {<.*,PROPN><.*flat:name,PROPN>*(<،,punct,PUNCT><.*conj,PROPN><.*flat:name,PROPN>*)+<و,.*,CCONJ><.*conj,PROPN><.*flat:name,PROPN>*}
+                        NP: {<.*,PROPN><.*flat:name,PROPN>*(<و,.*,CCONJ><.*conj,PROPN><.*flat:name,PROPN>*)*}
+                        NP: {<.*,PRON><.*nmod,PRON>?(<،,punct,PUNCT><.*conj,PRON><.*nmod,PRON>?)+<و,.*,CCONJ><.*conj,PRON><.*nmod,PRON>?}
+                        NP: {<.*,PRON><.*nmod,PRON>?(<و,.*,CCONJ><.*conj,PRON><.*nmod,PRON>?)*}
+                        ADJP: {<.*advmod,ADV>?<.*ADJ>(<،,punct,PUNCT><.*ADV>?<.*conj,ADJ>)+<و,.*,CCONJ><.*ADV>?<.*conj,ADJ>}
+                        ADJP: {<.*advmod,ADV>?<.*ADJ>(<و,.*,CCONJ><.*ADV>?<.*conj,ADJ>)*}
                         ADVP: {<.*,ADV>}
                         PP: {<.*,ADP>}
                         INTJP: {<.*case,INTJ>?<.*,INTJ>}
-                        PARTP: {<.*,PART>}
-                        CCONJP: {<.*,CCONJ>}
-                        SCONJP: {<.*,SCONJ>}        
+                        PARTP: {<.*,PART>}  
+                        ADJP: {<AJP>}
+                        NP: {<NUMP>}
+                        NP: {<PRNP>}        
                         """
 
         self.cp = nltk.RegexpParser(self.grammar)
