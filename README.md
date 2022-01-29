@@ -9,6 +9,7 @@
 <div align="center">
   <a href="https://pypi.org/project/dadmatools/"><img src="https://img.shields.io/pypi/v/dadmatools.svg"></a>
   <a href=""><img src="https://img.shields.io/badge/license-Apache%202-blue.svg"></a>
+  <a href='https://dadmatools.readthedocs.io/en/latest/'><img src='https://readthedocs.org/projects/danlp-alexandra/badge/?version=latest' alt='Documentation Status' /></a>
 </div>
 <div align="center">
   <h5>
