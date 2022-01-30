@@ -4,12 +4,17 @@ from pathlib import Path
 from tqdm import tqdm
 from typing import Callable
 import shutil
+import gdown
 
 # DEFAULT_DESTINATION = os.path.join(str(os.getcwd()), 'saved_models')
 DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.pernlp')
 
 MODELS = {
+    'kasreh_ezafeh':{
+        'url': 'https://drive.google.com/u/0/uc?id=1wyN7bHqSVnfZDBKHbACaU-7xmcs3Ofw_&export=download',
+        'file_extension': '.pt'
+    },
     'fa_lemmatizer':{
         'url': 'https://www.dropbox.com/s/2ne7bvkvsm97lzl/fa_ewt_lemmatizer.pt?dl=1',
         'file_extension': '.pt'
@@ -76,7 +81,10 @@ def download_model(model_name: str, cache_dir: str = DEFAULT_CACHE_DIR, process_
 #         os.makedirs(cache_dir, exist_ok=True)
 
         single_file = model_info['name'] + model_info['file_extension']
-        _download_file(model_info, model_file_path)
+        if 'drive.google' in model_info['url']:
+            gdown.download(model_info['url'], model_file_path)
+        else:
+            _download_file(model_info, model_file_path)
     
     else:
         print("Model {} exists in {}".format(model_name, model_file_path))

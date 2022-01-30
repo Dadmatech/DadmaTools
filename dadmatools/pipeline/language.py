@@ -14,6 +14,7 @@ import dadmatools.models.dependancy_parser as dp
 import dadmatools.models.constituency_parser as conspars
 import dadmatools.models.ner as ner
 import dadmatools.models.chunker as chunker
+import dadmatools.models.kasreh as kasreh
 
 
 class NLP():
@@ -30,12 +31,14 @@ class NLP():
     chunker_model = None
     normalizer_model = None
     ner_model = None
+    kasreh_model = None
     
     Token.set_extension("dep_arc", default=None)
     Doc.set_extension("sentences", default=None)
     Doc.set_extension("chunks", default=None)
     Doc.set_extension("constituency", default=None)
     Doc.set_extension("ners", default=None)
+    Doc.set_extension("kasreh_ezafe", default=None)
     
     global nlp
     nlp = None
@@ -90,6 +93,11 @@ class NLP():
             global ner_model
             ner_model = ner.load_model()
             self.nlp.add_pipe('ners')
+        
+        if 'kasreh' in pipelines:
+            global kasreh_model
+            kasreh_model = kasreh.load_model()
+            self.nlp.add_pipe('kasreh_ezafe')
     
     # @Language.component('normalizer')
     # def tokenizer(doc):
@@ -207,6 +215,19 @@ class NLP():
             ners.append(ner.ner(model, sent.text))
         
         doc._.ners = ners
+        
+        return doc
+    
+    @Language.component('kasreh_ezafe')
+    def kasrehezafe(doc):
+        model = kasreh_model
+        
+        all_kasreh = []
+        for sent in doc._.sentences:
+            ## getting the IOB tags of the sentence
+            all_kasreh.append(kasreh.kasreh_ezafe(model))
+        
+        doc._.kasreh_ezafe = all_kasreh
         
         return doc
 

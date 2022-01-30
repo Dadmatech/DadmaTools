@@ -77,11 +77,10 @@ def parse_args():
 def tokenize(input_sentence):
     args = parse_args()
 
-    if args.cpu:
-        args.cuda = False
-    utils.set_random_seed(args.seed, args.cuda)
+    if args['cpu']:
+        args['cuda'] = False
+    utils.set_random_seed(args['seed'], args['cuda'])
 
-    args = vars(args)
     
     mwt_dict = load_mwt_dict(args['mwt_json_file'])
     use_cuda = args['cuda'] and not args['cpu']
