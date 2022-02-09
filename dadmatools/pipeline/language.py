@@ -69,12 +69,12 @@ class NLP():
             lemma_model = lemmatizer.load_model()
             self.nlp.add_pipe('lemmatize')
         
-        if 'dep' or 'chunk' in pipelines:
+        if ('dep' or 'chunk') in pipelines:
             global depparser_model
             depparser_model = dp.load_model()
             self.nlp.add_pipe('dependancyparser')
         
-        if 'pos' or 'chunk' in pipelines:
+        if ('pos' or 'chunk') in pipelines:
             global postagger_model
             postagger_model = tagger.load_model()
             self.nlp.add_pipe('postagger')
