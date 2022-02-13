@@ -77,6 +77,10 @@ def parse_args():
 def tokenize(input_sentence):
     args = parse_args()
 
+    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    args['save_dir'] = prefix + args['save_dir']
+
+    
     if args['cpu']:
         args['cuda'] = False
     utils.set_random_seed(args['seed'], args['cuda'])
