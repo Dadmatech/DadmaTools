@@ -225,7 +225,7 @@ class NLP():
         all_kasreh = []
         for sent in doc._.sentences:
             ## getting the IOB tags of the sentence
-            all_kasreh.append(kasreh.kasreh_ezafe(model))
+            all_kasreh.append(kasreh.kasreh_ezafe(model, sent.text))
         
         doc._.kasreh_ezafe = all_kasreh
         

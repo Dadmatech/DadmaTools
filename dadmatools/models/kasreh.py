@@ -26,7 +26,7 @@ def load_model():
     return model
 
 
-def kasreh_ezafe(model):
+def kasreh_ezafe(model, text):
 
     word_tokenize = lambda x: x
     sent_tokenize = tokenizer.tokenize
