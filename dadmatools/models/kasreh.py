@@ -5,6 +5,13 @@ from pathlib import Path
 import dadmatools.pipeline.download as dl
 import dadmatools.models.tokenizer as tokenizer
 
+device = torch.device('cpu')
+if torch.cuda.is_available():
+    device = torch.device('cuda:0')
+    mode = 'gpu'
+else:
+    device = torch.device('cpu')
+    mode = 'cpu'
 
 def get_config():
   config = {
@@ -21,7 +28,8 @@ def load_model():
     prefix = str(Path(__file__).parent.absolute()).replace('models', '')
     args['save_model'] = prefix + args['save_model']
 
-    model = torch.load(args['save_model'])
+    model = torch.load(args['save_model'], map_location=device)
+    model.network.device = device
 
     return model
 
