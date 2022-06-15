@@ -15,6 +15,7 @@ import dadmatools.models.constituency_parser as conspars
 import dadmatools.models.ner as ner
 import dadmatools.models.chunker as chunker
 import dadmatools.models.kasreh as kasreh
+import dadmatools.models.spellchecker as spellchecker
 
 
 class NLP():
@@ -32,14 +33,16 @@ class NLP():
     normalizer_model = None
     ner_model = None
     kasreh_model = None
-    
+    spellchecker_model = None
+
     Token.set_extension("dep_arc", default=None)
     Doc.set_extension("sentences", default=None)
     Doc.set_extension("chunks", default=None)
     Doc.set_extension("constituency", default=None)
     Doc.set_extension("ners", default=None)
     Doc.set_extension("kasreh_ezafe", default=None)
-    
+    Doc.set_extension("spellchecker", default=None)
+
     global nlp
     nlp = None
     
@@ -98,6 +101,11 @@ class NLP():
             global kasreh_model
             kasreh_model = kasreh.load_model()
             self.nlp.add_pipe('kasreh_ezafe')
+
+        if 'spellchecker' in pipelines:
+            global spellchecker_model
+            spellchecker_model = spellchecker.load_model()
+            self.nlp.add_pipe('spellchecker')
     
     # @Language.component('normalizer')
     # def tokenizer(doc):
@@ -231,7 +239,20 @@ class NLP():
         
         return doc
 
-   
+    @Language.component('spellchecker')
+    def kasrehezafe(doc):
+        model = spellchecker_model
+
+        spell_output = []
+        for sent in doc._.sentences:
+            ## getting the IOB tags of the sentence
+            spell_output.append(spellchecker.spellchecker(model, sent.text))
+
+        doc._.spellchecker = spell_output
+
+        return doc
+
+
 class Pipeline():
     def __new__(cls, pipeline):
         language = NLP('fa', pipeline)

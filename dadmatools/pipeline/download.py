@@ -15,6 +15,10 @@ MODELS = {
         'url': 'https://drive.google.com/u/0/uc?id=1wyN7bHqSVnfZDBKHbACaU-7xmcs3Ofw_&export=download&confirm=t',
         'file_extension': '.pt'
     },
+    'spellchecker': {
+        'url': 'https://drive.google.com/uc?id=1wGl1ru6y6vX3MLX5LfEe09iWf3Yiad5U&export=download&confirm=t',
+        'file_extension': '.tar.gz'
+    },
     'fa_lemmatizer':{
         'url': 'https://www.dropbox.com/s/2ne7bvkvsm97lzl/fa_ewt_lemmatizer.pt?dl=1',
         'file_extension': '.pt'
