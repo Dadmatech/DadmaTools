@@ -2,7 +2,6 @@ from pathlib import Path
 import dadmatools.pipeline.download as dl
 import time
 import torch
-from hazm import Normalizer
 from torch import nn
 from torch.nn.utils.rnn import pad_sequence
 import torch.nn.functional as F
@@ -62,7 +61,7 @@ def load_data(base_path, corr_file, incorr_file):
     for x, y in tqdm(zip(corr_data, incorr_data)):
         data.append((x, y))
 
-    print(f"loaded tuples of (corr,incorr) examples from {base_path}")
+    # print(f"loaded tuples of (corr,incorr) examples from {base_path}")
     return data
 
 
@@ -194,7 +193,6 @@ def merge_subtokens(tokens: "list"):
 
 
 def _custom_bert_tokenize_sentence(text):
-    # from hazm import WordTokenizer
     new_tokens = []
     tokens = BERT_TOKENIZER.tokenize(text)
     j = 0
@@ -318,6 +316,13 @@ def get_sentences_splitters(txt):
     return [item[0] for item in all_sents], [item[1] for item in all_sents[:-1]]
 
 
+def space_special_chars(txt):
+    return re.sub('([.:،<>,!?()])', r' \1 ', txt)
+
+def de_space_special_chars(txt):
+    txt = re.sub('( ([.:،<>,!?()]) )', r'\2', txt)
+    txt = re.sub('( ([.:،<>,!?()]))', r'\2', txt)
+    return re.sub('(([.:،<>,!?()]) )', r'\2', txt)
 
 #################### models ############################
 
@@ -438,13 +443,13 @@ def model_inference(model, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
         """
     if vocab_ is not None:
         vocab = vocab_
-    print("###############################################")
+    # print("###############################################")
     inference_st_time = time.time()
     _corr2corr, _corr2incorr, _incorr2corr, _incorr2incorr = 0, 0, 0, 0
     _mistakes = []
     VALID_BATCH_SIZE = BATCH_SIZE
     valid_loss = 0.
-    print("data size: {}".format(len(data)))
+    # print("data size: {}".format(len(data)))
     data_iter = batch_iter(data, batch_size=VALID_BATCH_SIZE, shuffle=False)
     model.eval()
     model.to(DEVICE)
@@ -503,52 +508,58 @@ def model_inference(model, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
                     ["batch_time","batch_loss","avg_batch_loss","batch_acc","avg_batch_acc"], 
                     [time.time()-st_time,batch_loss,valid_loss/(batch_id+1),None,None])
         '''
-    print(f"\nEpoch {None} valid_loss: {valid_loss / (batch_id + 1)}")
-    print("total inference time for this data is: {:4f} secs".format(time.time() - inference_st_time))
-    print("###############################################")
-    print("###############################################")
+    # print(f"\nEpoch {None} valid_loss: {valid_loss / (batch_id + 1)}")
+    # print("total inference time for this data is: {:4f} secs".format(time.time() - inference_st_time))
+    # print("###############################################")
+    # print("###############################################")
     return results
 
-def load_model(vocab):
+def load_bert_model(vocab):
     model = SubwordBert(3*len(vocab["chartoken2idx"]),vocab["token2idx"][ vocab["pad_token"] ],len(vocab["token_freq"]))
-    print(model)
-    print( get_model_nparams(model) )
+    # print(model)
+    # print( get_model_nparams(model) )
     return model
 
 
-def load_pretrained(model, checkpoint_path, optimizer=None, device='cuda'):
+def load_pretrained(checkpoint_path, optimizer=None, device='cuda'):
     if torch.cuda.is_available() and device != "cpu":
         map_location = lambda storage, loc: storage.cuda()
     else:
         map_location = 'cpu'
-    print(f"Loading model params from checkpoint dir: {checkpoint_path}")
-    checkpoint_data = torch.load(checkpoint_path, map_location=map_location)
-    model.load_state_dict(checkpoint_data['model_state_dict'])
-    if optimizer is not None:
-        optimizer.load_state_dict(checkpoint_data['optimizer_state_dict'])
-    max_dev_acc, argmax_dev_acc = checkpoint_data["max_dev_acc"], checkpoint_data["argmax_dev_acc"]
-
-    if optimizer is not None:
-        return model, optimizer, max_dev_acc, argmax_dev_acc
+    # print(f"Loading model params from checkpoint dir: {checkpoint_path}")
+    model = torch.load(checkpoint_path, map_location=map_location)
+    # model.load_state_dict(checkpoint_data['model_state_dict'])
+    # torch.save(model, '/content/model_nevise1.pt')
+    # print('save is done')
+    # exit()
+    # if optimizer is not None:
+    #     optimizer.load_state_dict(checkpoint_data['optimizer_state_dict'])
+    # max_dev_acc, argmax_dev_acc = checkpoint_data["max_dev_acc"], checkpoint_data["argmax_dev_acc"]
+    #
+    # if optimizer is not None:
+    #     return model, optimizer, max_dev_acc, argmax_dev_acc
     return model
 
 def load_pre_model(vocab_path, model_checkpoint_path):
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-    print(f"loading vocab from {vocab_path}")
+    # print(f"loading vocab from {vocab_path}")
     vocab = load_vocab_dict(vocab_path)
-    model = load_model(vocab)
-    model = load_pretrained(model, model_checkpoint_path)
+    # model = load_bert_model(vocab)
+    # model = load_pretrained(model, model_checkpoint_path)
+    model = load_pretrained(model_checkpoint_path)
     return model, vocab, DEVICE
 
 
-def spell_checking_on_sents(model, vocab, device, normalizer, txt):
-    sents, splitters = get_sentences_splitters(txt)
-    sents = [utils.space_special_chars(s) for s in sents]
-    sents = list(filter(lambda txt: (txt != '' and txt != ' '), sents))
-    test_data = [(normalizer.normalize(t), normalizer.normalize(t)) for t in sents]
-    print('inputs:')
-    for t in test_data:
-        print(t)
+def spell_checking_on_sents(model, vocab, device, txt):
+    # sents, splitters = get_sentences_splitters(txt)
+    txt = space_special_chars(txt)
+    # test_data = list(filter(lambda txt: (txt != '' and txt != ' '), sents))
+    # test_data = [(normalizer.normalize(t), normalizer.normalize(t)) for t in sents]
+    # print('inputs:')
+    # for t in test_data:
+    #     print(t)
+    # print(' input : ', txt)
+    test_data = [(txt, txt)]
     greedy_results = model_inference(model, test_data, topk=1, DEVICE=device, BATCH_SIZE=1,
                                      vocab_=vocab)
     out = []
@@ -566,13 +577,14 @@ def spell_checking_on_sents(model, vocab, device, normalizer, txt):
     new_out = []
     for i, sent in enumerate(out):
             new_out.append( (de_space_special_chars(out[i][0]), de_space_special_chars(out[i][1])))
-    return new_out, splitters
+    # print(new_out[0])
+    return new_out[0]
 
 
 def get_config():
     config = {
-        'save_model': 'saved_models/spellchecker/model.pth.tar',
-        'save_vocab': 'saved_models/spellchecker/vocab.pkl'
+        'save_model': 'saved_models/spellchecker/nevise/model_nevise1.pt',
+        'save_vocab': 'saved_models/spellchecker/nevise/vocab.pkl'
     }
     return config
 
@@ -587,16 +599,16 @@ def load_model():
     vocab_path =  prefix + config['save_vocab']
 
 
-    normalizer = Normalizer(punctuation_spacing=False, remove_extra_spaces=False)
+    # normalizer = Normalizer(punctuation_spacing=False, remove_extra_spaces=False)
     model, vocab, device = load_pre_model(vocab_path=vocab_path, model_checkpoint_path=model_path)
 
-    nlp = (model, vocab, device, normalizer)
+    nlp = (model, vocab, device)
 
     return nlp
 
 
 def spellchecker(nlp, sentence):
-    model, vocab, device, normalizer = nlp
-    output = spell_checking_on_sents(model, vocab, device, normalizer, sentence)
+    model, vocab, device = nlp
+    output = spell_checking_on_sents(model, vocab, device, sentence)
 
     return output
