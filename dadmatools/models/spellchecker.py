@@ -12,12 +12,14 @@ import numpy as np
 import transformers
 
 ################### helpers   ###################
+from transformers import BertConfig, AutoModel
+
 
 def progressBar(value, endvalue, names, values, bar_length=30):
     assert (len(names) == len(values));
     percent = float(value) / endvalue
     arrow = '-' * int(round(percent * bar_length) - 1) + '>'
-    spaces = ' ' * (bar_length - len(arrow));
+    spaces = ' ' * (bar_length - len(arrow))
     string = '';
     for name, val in zip(names, values):
         temp = '|| {0}: {1:.4f} '.format(name, val) if val != None else '|| {0}: {1} '.format(name, None)
@@ -175,11 +177,6 @@ def load_vocab_dict(path_: str):
     return vocab
 
 
-BERT_TOKENIZER = transformers.BertTokenizer.from_pretrained("HooshvareLab/bert-fa-base-uncased", do_lower_case=False)
-BERT_TOKENIZER.do_basic_tokenize = False
-BERT_TOKENIZER.tokenize_chinese_chars = False
-BERT_MAX_SEQ_LEN = 512
-
 
 def merge_subtokens(tokens: "list"):
     merged_tokens = []
@@ -192,7 +189,7 @@ def merge_subtokens(tokens: "list"):
     return text
 
 
-def _custom_bert_tokenize_sentence(text):
+def _custom_bert_tokenize_sentence(BERT_TOKENIZER, BERT_MAX_SEQ_LEN, text):
     new_tokens = []
     tokens = BERT_TOKENIZER.tokenize(text)
     j = 0
@@ -216,18 +213,18 @@ def _custom_bert_tokenize_sentence(text):
     return text, tokens, split_sizes
 
 
-def _custom_bert_tokenize_sentences(list_of_texts):
-    out = [_custom_bert_tokenize_sentence(text) for text in list_of_texts]
+def _custom_bert_tokenize_sentences(list_of_texts, BERT_TOKENIZER):
+    out = [_custom_bert_tokenize_sentence(text=text, BERT_TOKENIZER=BERT_TOKENIZER, BERT_MAX_SEQ_LEN=512) for text in list_of_texts]
     texts, tokens, split_sizes = list(zip(*out))
     return [*texts], [*tokens], [*split_sizes]
 
 
-_simple_bert_tokenize_sentences = \
-    lambda list_of_texts: [merge_subtokens(BERT_TOKENIZER.tokenize(text)[:BERT_MAX_SEQ_LEN - 2]) for text in
+def _simple_bert_tokenize_sentences(list_of_texts, BERT_TOKENIZER, BERT_MAX_SEQ_LEN):
+    return [merge_subtokens(BERT_TOKENIZER.tokenize(text)[:BERT_MAX_SEQ_LEN - 2]) for text in
                            list_of_texts]
 
 
-def bert_tokenize(batch_sentences):
+def bert_tokenize(BERT_TOKENIZER, batch_sentences):
     """
     inputs:
         batch_sentences: List[str]
@@ -260,7 +257,7 @@ def bert_tokenize(batch_sentences):
     return batch_sentences, batch_bert_dict, batch_splits
 
 
-def bert_tokenize_for_valid_examples(batch_orginal_sentences, batch_noisy_sentences):
+def bert_tokenize_for_valid_examples(BERT_TOKENIZER, batch_orginal_sentences, batch_noisy_sentences):
     """
     inputs:
         batch_noisy_sentences: List[str]
@@ -273,8 +270,8 @@ def bert_tokenize_for_valid_examples(batch_orginal_sentences, batch_noisy_senten
         batch_splits: List[List[Int]]
             specifies #sub-tokens for each word in each textual string after sub-word tokenization
     """
-    _batch_orginal_sentences = _simple_bert_tokenize_sentences(batch_orginal_sentences)
-    _batch_noisy_sentences, _batch_tokens, _batch_splits = _custom_bert_tokenize_sentences(batch_noisy_sentences)
+    _batch_orginal_sentences = _simple_bert_tokenize_sentences(batch_orginal_sentences, BERT_TOKENIZER, BERT_MAX_SEQ_LEN=512)
+    _batch_noisy_sentences, _batch_tokens, _batch_splits = _custom_bert_tokenize_sentences(batch_noisy_sentences, BERT_TOKENIZER)
     valid_idxs = [idx for idx, (a, b) in enumerate(zip(_batch_orginal_sentences, _batch_noisy_sentences)) if
                   len(a.split()) == len(b.split())]
     batch_orginal_sentences = [line for idx, line in enumerate(_batch_orginal_sentences) if idx in valid_idxs]
@@ -334,11 +331,12 @@ def de_space_special_chars(txt):
 
 
 class SubwordBert(nn.Module):
-    def __init__(self, screp_dim, padding_idx, output_dim):
+    def __init__(self, tokenizer_config_path, screp_dim, padding_idx, output_dim):
         super(SubwordBert, self).__init__()
 
         self.bert_dropout = torch.nn.Dropout(0.2)
-        self.bert_model = transformers.BertModel.from_pretrained("HooshvareLab/bert-fa-base-uncased")
+        config = BertConfig.from_pretrained('nevise')
+        self.bert_model = AutoModel.from_config(config)
         self.bertmodule_outdim = self.bert_model.config.hidden_size
         # Uncomment to freeze BERT layers
         # for param in self.bert_model.parameters():
@@ -434,7 +432,7 @@ class SubwordBert(nn.Module):
         return loss
 
 
-def model_inference(model, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
+def model_inference(model, BERT_TOKENIZER, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
     """
         model: an instance of SubwordBert
         data: list of tuples, with each tuple consisting of correct and incorrect
@@ -459,7 +457,7 @@ def model_inference(model, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
         torch.cuda.empty_cache()
         st_time = time.time()
         # set batch data for bert
-        batch_labels_, batch_sentences_, batch_bert_inp, batch_bert_splits = bert_tokenize_for_valid_examples(
+        batch_labels_, batch_sentences_, batch_bert_inp, batch_bert_splits = bert_tokenize_for_valid_examples(BERT_TOKENIZER,
             batch_labels, batch_sentences)
         if len(batch_labels_) == 0:
             print("################")
@@ -514,20 +512,24 @@ def model_inference(model, data, topk, DEVICE, BATCH_SIZE=16, vocab_=None):
     # print("###############################################")
     return results
 
-def load_bert_model(vocab):
-    model = SubwordBert(3*len(vocab["chartoken2idx"]),vocab["token2idx"][ vocab["pad_token"] ],len(vocab["token_freq"]))
+def load_bert_model(tokenizer_config_path, vocab):
+    model = SubwordBert(tokenizer_config_path, 3*len(vocab["chartoken2idx"]),vocab["token2idx"][ vocab["pad_token"] ],len(vocab["token_freq"]))
     # print(model)
     # print( get_model_nparams(model) )
     return model
 
 
-def load_pretrained(checkpoint_path, optimizer=None, device='cuda'):
+def load_pretrained(checkpoint_path, tokenizer_config_path, vocab, optimizer=None, device='cuda'):
     if torch.cuda.is_available() and device != "cpu":
         map_location = lambda storage, loc: storage.cuda()
     else:
         map_location = 'cpu'
     # print(f"Loading model params from checkpoint dir: {checkpoint_path}")
-    model = torch.load(checkpoint_path, map_location=map_location)
+    # model = torch.load(checkpoint_path, map_location=map_location)
+    state_dicts = torch.load(checkpoint_path, map_location=map_location)
+    model = load_bert_model(tokenizer_config_path, vocab)
+    model.load_state_dict(state_dicts)
+    # torch.save(model.state_dict(), 'state_dict_nevise.pt')
     # model.load_state_dict(checkpoint_data['model_state_dict'])
     # torch.save(model, '/content/model_nevise1.pt')
     # print('save is done')
@@ -540,17 +542,17 @@ def load_pretrained(checkpoint_path, optimizer=None, device='cuda'):
     #     return model, optimizer, max_dev_acc, argmax_dev_acc
     return model
 
-def load_pre_model(vocab_path, model_checkpoint_path):
+def load_pre_model(vocab_path, model_checkpoint_path, tokenizer_config_path):
     DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
     # print(f"loading vocab from {vocab_path}")
     vocab = load_vocab_dict(vocab_path)
     # model = load_bert_model(vocab)
     # model = load_pretrained(model, model_checkpoint_path)
-    model = load_pretrained(model_checkpoint_path)
+    model = load_pretrained(model_checkpoint_path, tokenizer_config_path, vocab)
     return model, vocab, DEVICE
 
 
-def spell_checking_on_sents(model, vocab, device, txt):
+def spell_checking_on_sents(model, BERT_TOKENIZER, vocab, device, txt):
     # sents, splitters = get_sentences_splitters(txt)
     txt = space_special_chars(txt)
     # test_data = list(filter(lambda txt: (txt != '' and txt != ' '), sents))
@@ -560,7 +562,7 @@ def spell_checking_on_sents(model, vocab, device, txt):
     #     print(t)
     # print(' input : ', txt)
     test_data = [(txt, txt)]
-    greedy_results = model_inference(model, test_data, topk=1, DEVICE=device, BATCH_SIZE=1,
+    greedy_results = model_inference(model, BERT_TOKENIZER, test_data, topk=1, DEVICE=device, BATCH_SIZE=1,
                                      vocab_=vocab)
     out = []
     for i, line in enumerate(greedy_results):
@@ -583,8 +585,9 @@ def spell_checking_on_sents(model, vocab, device, txt):
 
 def get_config():
     config = {
-        'save_model': 'saved_models/spellchecker/nevise/model_nevise1.pt',
-        'save_vocab': 'saved_models/spellchecker/nevise/vocab.pkl'
+        'save_model': 'saved_models/spellchecker/nevise/state_dict_nevise.pt',
+        'save_vocab': 'saved_models/spellchecker/nevise/vocab.pkl',
+        'config_tokenizer': 'saved_models/spellchecker/nevise/'
     }
     return config
 
@@ -597,18 +600,28 @@ def load_model():
 
     model_path = prefix + config['save_model']
     vocab_path =  prefix + config['save_vocab']
-
+    tokenizer_config_path =  prefix + config['config_tokenizer']
+    # tokenizer_config_path = 'nevise'
+    # vocab_path = 'nevise/vocab.pkl'
+    # model_path = 'nevise/state_dict_nevise.pt'
 
     # normalizer = Normalizer(punctuation_spacing=False, remove_extra_spaces=False)
-    model, vocab, device = load_pre_model(vocab_path=vocab_path, model_checkpoint_path=model_path)
+    model, vocab, device = load_pre_model(vocab_path=vocab_path, model_checkpoint_path=model_path, tokenizer_config_path=tokenizer_config_path)
 
-    nlp = (model, vocab, device)
+    BERT_TOKENIZER = transformers.BertTokenizer.from_pretrained(tokenizer_config_path,
+                                                                do_lower_case=False)
+    BERT_TOKENIZER.do_basic_tokenize = False
+    BERT_TOKENIZER.tokenize_chinese_chars = False
+
+    nlp = (model, vocab, device, BERT_TOKENIZER)
 
     return nlp
 
 
 def spellchecker(nlp, sentence):
-    model, vocab, device = nlp
-    output = spell_checking_on_sents(model, vocab, device, sentence)
+    model, vocab, device, BERT_TOKENIZER = nlp
+    output = spell_checking_on_sents(model, BERT_TOKENIZER, vocab, device, sentence)
 
     return output
+
+# print(spellchecker(load_model(), 'جمله تستی برای نویسه اسست'))
