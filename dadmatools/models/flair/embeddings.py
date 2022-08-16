@@ -2695,8 +2695,11 @@ class BertEmbeddings(TokenEmbeddings):
                     key=len,
                 )
             )
-        except:
-            pdb.set_trace()
+        except Exception as e:
+            # pdb.set_trace()
+            print(e)
+            print('There is an error for finding the longest sentence in batch (dadmatools/models/flair/embeddings.py(line: 2700))')
+            longest_sentence_in_batch = 128
         if not hasattr(self,'max_sequence_length'):
             self.max_sequence_length=510
         if longest_sentence_in_batch>self.max_sequence_length:
@@ -2788,8 +2791,9 @@ class BertEmbeddings(TokenEmbeddings):
                         ]
                         try:
                             mean = torch.mean(torch.cat(embeddings, dim=0), dim=0)
-                        except:
-                            pdb.set_trace()
+                        except Exception as e:
+                            print(e)
+                            # pdb.set_trace()
                         token.set_embedding(self.name, mean)
 
                     token_idx += feature.token_subtoken_count[token.idx] - 1
@@ -3038,7 +3042,8 @@ class TransformerWordEmbeddings(TokenEmbeddings):
                     else:
                         tokenized_string = re.sub('<EOS>', self.tokenizer._sep_token, tokenized_string)
                 else:
-                    pdb.set_trace()
+                    print('line 3045 . tokenized_string is none.')
+                    # pdb.set_trace()
             else:
                 sent_tokens = sentence.tokens
             # method 1: subtokenize sentence
@@ -3374,7 +3379,8 @@ class TransformerWordEmbeddings(TokenEmbeddings):
                 elif self.tokenizer._sep_token is not None:
                     tokenized_string = re.sub('<EOS>', self.tokenizer._sep_token, tokenized_string)
                 else:
-                    pdb.set_trace()
+                    print('line 3382 . tokenized_string is none.')
+                    # pdb.set_trace()
             # method 1: subtokenize sentence
             # subtokenized_sentence = self.tokenizer.encode(tokenized_string, add_special_tokens=True)
 
@@ -3491,8 +3497,9 @@ class TransformerWordEmbeddings(TokenEmbeddings):
                         token_ids_to_extract = doc_token_ids_to_extract[i*batch_size+h_idx]
                         # assert len(extract_indices)==len(token_ids_to_extract)
                         doc_hidden_states[torch.Tensor(token_ids_to_extract).long()] = hidden_state[torch.Tensor(extract_indices).long()]
-                    except:
-                        pdb.set_trace()
+                    except Exception as e:
+                        print(e)
+                        # pdb.set_trace()
                 # doc_hidden_states.append()
             # make the tuple a tensor; makes working with it easier.
             # iterate over all subtokenized sentences
@@ -3734,8 +3741,9 @@ class TransformerWordEmbeddings(TokenEmbeddings):
                     if self.pooling_operation == "first":
                         try:
                             final_embedding: torch.FloatTensor = current_embeddings[0]
-                        except:
-                            pdb.set_trace()
+                        except Exception as e:
+                            print(e)
+                            # pdb.set_trace()
 
                     if self.pooling_operation == "last":
                         final_embedding: torch.FloatTensor = current_embeddings[-1]
