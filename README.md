@@ -329,6 +329,10 @@ the output will be:
 
 
 ## Loading Persian Word Embeddings
+To start using embedding please install fasttext:
+
+`pip install fasttext`
+
 download, load and use some pre-trained Persian word embeddings.
 
 dadmatools supports all glove, fasttext, and word2vec formats.
