@@ -17,7 +17,7 @@ MODELS = {
     },
     'spellchecker': {
         # 'url': 'https://drive.google.com/uc?id=1wGl1ru6y6vX3MLX5LfEe09iWf3Yiad5U&export=download&confirm=t',
-        'url': 'https://drive.google.com/uc?id=1-2_S62b070xdU8i2W0BE2lh-Gqpd7Nf4&export=download&confirm=t',
+        'url': 'https://drive.google.com/uc?id=xOjqnnAqRdhds3D75OsnBrbp6cF&export=download&confirm=t',
         'file_extension': '.tar.gz'
     },
     'fa_lemmatizer':{
