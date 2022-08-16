@@ -23,8 +23,14 @@
       Constituency Parsing
     <span> | </span>
       Chunking
+    <span> | </span>
+      Kasreh Ezafe Detection
   </h5>
   <h5>
+      Spellchecker
+    <span> | </span>
+       Normalizer
+    <span> | </span>
       Tokenizer
     <span> | </span>
       Lemmatizer
@@ -38,6 +44,42 @@
 DadmaTools is a repository for Natural Language Processing resources for the Persian Language. The aim is to make it easier and more applicable to practitioners in the industry to use Persian NLP, and hence this project is licensed to allow commercial use. The project features code examples on how to use the models in popular NLP frameworks such as spaCy and Transformers, as well as Deep Learning frameworks such as PyTorch. Furthermore, DadmaTools support common Persian embedding and Persian datasets.
 for more details about how to use this tool read the instruction below.
 
+Contents:
+- [Installation](#installation)
+- [NLP Models](#nlp-models)
+  - [Normalizer](#normalizer)
+  - [Pipline (tok,lem,dep,pos,cons,chunk,kasreh,spellchecker)](#pipeline)
+- [Datasets](#loading-persian-nlp-datasets)
+- [Embeddings](#loading-persian-word-embeddings)
+- [Evaluation](#evaluation)
+- [How to use in colab](#how-to-use)
+- [Cite us](#cite)
+
+
+## Installation
+
+To get started using DadmaTools in your python project, simply install via the pip package. Note that installing the default pip package 
+will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead, we provide you with an installation option if you want to install all the required dependencies. 
+
+### Install with pip
+
+To get started using DadmaTools, simply install the project with pip:
+
+```bash
+pip install dadmatools 
+```
+
+Note that the default installation of DadmaTools **does** install other NLP libraries such as SpaCy and supar.
+
+You can check the `requirements.txt` file to see what version the packages has been tested with.
+
+### Install from github
+Alternatively you can install the latest version from github using:
+```bash
+pip install git+https://github.com/Dadmatech/dadmatools.git
+```
+
+
 ## NLP Models
 
 Natural Language Processing is an active area of research, and it consists of many different tasks. 
@@ -49,9 +91,11 @@ Each task has its abbreviation as follows:
 -  Part of speech tagging: ```pos```
 -  Dependency parsing: ```dep```
 -  Constituency parsing: ```cons```
+-  Kasreh Ezafe Detection: ```kasreh```
 -  Chunking: ```chunk```
 -  Lemmatizing: ```lem```
 -  Tokenizing: ```tok```
+-  Spellchecker: ```spellchecker```
 -  Normalizing
 
 **Note** that the normalizer can be used outside of the pipeline as there are several configs (the default config is in the pipeline with the name of def-norm).
@@ -114,13 +158,15 @@ normalized_text = normalizer.normalize(text)
 
 ```
 
-### Pipeline - Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser
+### Pipeline
+Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, spellcheker.
+
 ```python
 import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok,lem,pos,dep,chunk,cons' 
+pips = 'tok,lem,pos,dep,chunk,cons,spellchecker,kasreh' 
 nlp = language.Pipeline(pips)
 
 # you can see the pipeline with this code
@@ -148,7 +194,7 @@ print(dictionary)
 sentences = doc._.sentences
 for sentence in sentences:
     text = sentence.text
-    for token in sentences:
+    for token in sentence:
         token_text = token.text
         lemma = token.lemma_ ## this has value only if lem is called
         pos_tag = token.pos_ ## this has value only if pos is called
@@ -157,6 +203,8 @@ for sentence in sentences:
 sent_constituency = doc._.constituency ## this has value only if cons is called
 sent_chunks = doc._.chunks ## this has value only if cons is called
 ners = doc._.ners ## this has value only if ner is called
+spellchekers = doc._.spellchecker ## this has value only if spellchecker is called
+kasreh = doc._.kasreh_ezafe ## this has value only if kasreh is called
 ```
 
 **Note** that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
@@ -395,33 +443,12 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
   </tr>
 </table>
 
-## Installation
 
-To get started using DadmaTools in your python project, simply install via the pip package. Note that installing the default pip package 
-will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead, we provide you with an installation option if you want to install all the required dependencies. 
-
-### Install with pip
-
-To get started using DadmaTools, simply install the project with pip:
-
-```bash
-pip install dadmatools 
-```
-
-Note that the default installation of DadmaTools **does** install other NLP libraries such as SpaCy and supar.
-
-You can check the `requirements.txt` file to see what version the packages has been tested with.
-
-### Install from github
-Alternatively you can install the latest version from github using:
-```bash
-pip install git+https://github.com/Dadmatech/dadmatools.git
-```
-
-## How to use (Colab)
-You can see the codes and the output here.
+## How to use
+You can see the codes and the output in colab.
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing)
+
 
 ## Cite
 ```
