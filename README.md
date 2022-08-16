@@ -101,7 +101,7 @@ Each task has its abbreviation as follows:
 **Note** that the normalizer can be used outside of the pipeline as there are several configs (the default config is in the pipeline with the name of def-norm).
 **Note** that if no pipeline is passed to the model, the tokenizer will be loaded as default.
 
-### Use Case
+<!--### Use Case -->
 
 <!-- These NLP tasks are defined as pipelines. Therefore, a pipeline list must be created and passed through the model. This will allow the user to choose the only task needed without loading others. 
 Each task has its abbreviation as following:
@@ -110,6 +110,8 @@ Each task has its abbreviation as following:
 -  ```dep```: Dependency parsing
 -  ```cons```: Constituency parsing
 -  ```chunk```: Chunking
+-  ```kasreh```: Kasreh Ezafe Detection
+-  ```spellchecker```: SpellChecker
 -  ```lem```: Lemmatizing
 -  ```tok```: Tokenizing
 
@@ -209,7 +211,7 @@ kasreh = doc._.kasreh_ezafe ## this has value only if kasreh is called
 
 **Note** that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
-### Loading Persian NLP Datasets
+## Loading Persian NLP Datasets
 We provide an easy-to-use way to load some popular Persian NLP datasets
 
 Here is the list of supported datasets.
@@ -326,7 +328,7 @@ the output will be:
 ```
 
 
-### Loading Persian Word Embeddings
+## Loading Persian Word Embeddings
 download, load and use some pre-trained Persian word embeddings.
 
 dadmatools supports all glove, fasttext, and word2vec formats.
