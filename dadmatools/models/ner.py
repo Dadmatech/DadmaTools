@@ -10,6 +10,11 @@ from pathlib import Path
 
 import dadmatools.pipeline.download as dl
 
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+else:
+    device = torch.device('cpu')
+
 def get_config():
     config = {
         'save_dir':'saved_models/ner/ner/'
@@ -27,6 +32,7 @@ def load_model():
     config = AutoConfig.from_pretrained(model_name)
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForTokenClassification.from_pretrained(model_name)
+    model.to(device)
     labels = list(config.label2id.keys())
 
     nlp = (model, tokenizer, labels)
@@ -39,9 +45,9 @@ def ner(nlp, sentence):
     model, tokenizer, labels = nlp
     
     tokens = tokenizer.tokenize(tokenizer.decode(tokenizer.encode(sentence)))
-    inputs = tokenizer.encode(sentence, return_tensors="pt")
+    inputs = tokenizer.encode(sentence, return_tensors="pt").to(device)
     outputs = model(inputs)[0]
     predictions = torch.argmax(outputs, axis=2)
-    predictions = [(token, labels[prediction]) for token, prediction in zip(tokens, predictions[0].numpy())]
+    predictions = [(token, labels[prediction]) for token, prediction in zip(tokens, predictions[0].cpu().numpy())]
     
     return predictions
