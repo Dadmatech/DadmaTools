@@ -116,6 +116,7 @@ def create_model(config):
 			tagger = tagger.load(base_path)
 		else:
 			assert 0, str(base_path)+ ' not exist!'
+		tagger.embeddings = embeddings
 		tagger.use_bert=False
 		for embedding in config['embeddings']:
 			if 'bert' in embedding.lower():

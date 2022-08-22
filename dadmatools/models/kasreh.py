@@ -1,4 +1,5 @@
 import NERDA
+from NERDA import models
 import torch
 import glob
 from pathlib import Path
@@ -30,6 +31,11 @@ def load_model():
 
     model = torch.load(args['save_model'], map_location=device)
     model.network.device = device
+
+    # model = models.NERDA(transformer=prefix+'saved_models/parsbert/parsbert/', tag_scheme=['KASREH','N-KASREH'])
+    # model.network.load_state_dict(torch.load(args['save_model'], map_location=torch.device(device)))
+    # model.network.eval()
+    ### model.load_network_from_file(args['save_model'])
 
     return model
 
