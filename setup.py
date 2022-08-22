@@ -21,7 +21,7 @@ setuptools.setup(
 	"spacy>=3.0.0",
     "sklearn>=0.0",
 	"torch>=1.7.1",
-	"transformers==4.9.1",
+	"transformers>=4.9.1",
 	"h5py>=3.3.0",
 	"Deprecated==1.2.6",
 	"hyperopt>=0.2.5",
