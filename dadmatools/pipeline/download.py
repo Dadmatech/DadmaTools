@@ -12,7 +12,8 @@ DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.pernlp')
 
 MODELS = {
     'kasreh_ezafeh':{
-        'url': 'https://drive.google.com/u/0/uc?id=1wyN7bHqSVnfZDBKHbACaU-7xmcs3Ofw_&export=download&confirm=t',
+        # 'url': 'https://drive.google.com/u/0/uc?id=1wyN7bHqSVnfZDBKHbACaU-7xmcs3Ofw_&export=download&confirm=t',
+        'url': 'https://drive.google.com/uc?id=12lp8MZvy840aPlyc9WggYm9HGOs46fjo&export=download&confirm=t',
         'file_extension': '.pt'
     },
     'spellchecker': {
