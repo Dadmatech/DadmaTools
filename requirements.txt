@@ -5,7 +5,7 @@ hyperopt>=0.2.5
 pyconll>=3.1.0
 pytorch-transformers>=1.1.0
 spacy==3.0.0
-sklearn>=0.0
+scikit-learn
 segtok==1.5.7
 supar>=1.1.2
 torch>=1.7.1
