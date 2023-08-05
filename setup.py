@@ -19,7 +19,7 @@ setuptools.setup(
 	"nltk",
 	"folium>=0.2.1",
 	"spacy>=3.0.0",
-    "sklearn>=0.0",
+    	"scikit-learn>=0.0",
 	"torch>=1.7.1",
 	"transformers>=4.9.1",
 	"h5py>=3.3.0",
