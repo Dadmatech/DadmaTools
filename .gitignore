@@ -1,0 +1,66 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.class
+*.jar
+
+*.egg
+build/
+dist/
+dadmatools.egg-info/
+web/_build
+
+# Test artifacts and coverage reports
+*.tox
+*.errs
+.hypothesis
+.noseids
+.coverage*
+model.crf.tagger
+brown.embedding
+pylintoutput
+nosetests.xml
+nosetests_scrubbed.xml
+coverage.xml
+
+# editor temporary files
+*.*.sw[op]
+.idea
+*~
+
+# git mergetools backups
+*.orig
+
+# emacs backups
+*#
+
+# spell-check backups
+*.bak
+
+# automatically built files for website
+web/api/*.rst
+web/howto/*.rst
+
+# pyenv files
+.python-version
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+#vscode
+.vscode/
+
+# Direnv
+.envrc
+
+# Mypy
+.mypy_cache
+
+# macOS
+.DS_Store
