@@ -1,3 +1,5 @@
+from typing import List, Dict
+
 import spacy
 from spacy import displacy
 from spacy import pipeline
@@ -265,17 +267,18 @@ def load_pipline(pipelines):
     nlp = language.nlp
     return nlp
 
-def to_json(pipelines, doc):
+
+def to_json(pipelines: str, doc: Doc) -> List[List[Dict]]:
     dict_list = []
-    for sent in doc._.sentences:
+    for s, sent in enumerate(doc._.sentences):
         sentence = []
         for i, d in enumerate(sent):
-            dictionary = {}
-            dictionary['id'] = i+1
-            dictionary['text'] = d.text
+            dictionary = {'id': i + 1, 'text': d.text}
             if 'lem' in pipelines: dictionary['lemma'] = d.lemma_
             if 'pos' in pipelines: dictionary['pos'] = d.pos_
-            if 'dep' in pipelines: 
+            if 'ner' in pipelines: dictionary['ner'] = doc._.ners[s][i + 1][1]
+            if 'kasreh' in pipelines: dictionary['kasreh'] = doc._.kasreh_ezafe[s][i]['tag']
+            if 'dep' in pipelines:
                 dictionary['rel'] = d.dep_
                 dictionary['root'] = d._.dep_arc
             sentence.append(dictionary)
