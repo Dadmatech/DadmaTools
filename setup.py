@@ -31,7 +31,6 @@ setuptools.setup(
         "gensim>=3.6.0",
         "conllu",
         "gdown>=4.3.1",
-        # "NERDA",
         "py7zr>=0.17.2",
         "html2text",
         "tf-estimator-nightly==2.8.0.dev2021122109",
