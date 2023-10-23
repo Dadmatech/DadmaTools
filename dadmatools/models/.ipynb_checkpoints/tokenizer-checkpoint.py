@@ -19,7 +19,7 @@ from models.tokenization.trainer import Trainer
 from models.tokenization.data import DataLoader
 from models.tokenization.utils import load_mwt_dict, eval_model, output_predictions
 # from models import _training_logging
-import pipeline.download as dl
+import pipeline_v1.download as dl
 
 logger = logging.getLogger('stanza')
 

@@ -29,9 +29,9 @@ from models.common.doc import *
 # from utils.conll import CoNLL
 # from models import _training_logging
 
-from models.common.doc import Document
+from dadmatools.models.common.doc import Document
 
-import pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 logger = logging.getLogger('stanza')
 

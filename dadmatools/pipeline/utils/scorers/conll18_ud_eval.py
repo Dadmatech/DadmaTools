@@ -37,7 +37,7 @@
 #   - XPOS: using aligned words, how well does XPOS match
 #   - UFeats: using aligned words, how well does universal FEATS match
 #   - AllTags: using aligned words, how well does UPOS+XPOS+FEATS match
-#   - Lemmas: using aligned words, how well does LEMMA match
+#   - Lemmas: using aligned words, how well does LEM match
 #   - UAS: using aligned words, how well does HEAD match
 #   - LAS: using aligned words, how well does HEAD+DEPREL(ignoring subtypes) match
 #   - CLAS: using aligned words with content DEPREL, how well does
@@ -45,7 +45,7 @@
 #   - MLAS: using aligned words with content DEPREL, how well does
 #       HEAD+DEPREL(ignoring subtypes)+UPOS+UFEATS+FunctionalChildren(DEPREL+UPOS+UFEATS) match
 #   - BLEX: using aligned words with content DEPREL, how well does
-#       HEAD+DEPREL(ignoring subtypes)+LEMMAS match
+#       HEAD+DEPREL(ignoring subtypes)+LEMS match
 # - if -c is given, raw counts of correct/gold_total/system_total/aligned words are printed
 #   instead of precision/recall/F1/AlignedAccuracy for all metrics.
 
@@ -99,7 +99,7 @@ import unicodedata
 import unittest
 
 # CoNLL-U column names
-ID, FORM, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC = range(10)
+ID, FORM, LEM, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC = range(10)
 
 # Content and functional relations
 CONTENT_DEPRELS = {
@@ -160,7 +160,7 @@ def load_conllu(file):
         def __init__(self, span, columns, is_multiword):
             # Span of this word (or MWT, see below) within ud_representation.characters.
             self.span = span
-            # 10 columns of the CoNLL-U file: ID, FORM, LEMMA,...
+            # 10 columns of the CoNLL-U file: ID, FORM, LEM,...
             self.columns = columns
             # is_multiword==True means that this word is part of a multi-word token.
             # In that case, self.span marks the span of the whole multi-word token.
@@ -473,7 +473,7 @@ def evaluate(gold_ud, system_ud):
         "XPOS": alignment_score(alignment, lambda w, _: w.columns[XPOS]),
         "UFeats": alignment_score(alignment, lambda w, _: w.columns[FEATS]),
         "AllTags": alignment_score(alignment, lambda w, _: (w.columns[UPOS], w.columns[XPOS], w.columns[FEATS])),
-        "Lemmas": alignment_score(alignment, lambda w, ga: w.columns[LEMMA] if ga(w).columns[LEMMA] != "_" else "_"),
+        "Lemmas": alignment_score(alignment, lambda w, ga: w.columns[LEM] if ga(w).columns[LEM] != "_" else "_"),
         "UAS": alignment_score(alignment, lambda w, ga: ga(w.parent)),
         "LAS": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL])),
         "CLAS": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL]),
@@ -484,7 +484,7 @@ def evaluate(gold_ud, system_ud):
                                                 for c in w.functional_children]),
                                 filter_fn=lambda w: w.is_content_deprel),
         "BLEX": alignment_score(alignment, lambda w, ga: (ga(w.parent), w.columns[DEPREL],
-                                                          w.columns[LEMMA] if ga(w).columns[LEMMA] != "_" else "_"),
+                                                          w.columns[LEM] if ga(w).columns[LEM] != "_" else "_"),
                                 filter_fn=lambda w: w.is_content_deprel),
     }
 

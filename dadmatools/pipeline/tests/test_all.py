@@ -1,5 +1,5 @@
 import os, json, sys
-import trankit
+import dadmatools.pipeline as trankit
 from time import sleep
 
 embedding = sys.argv[1]

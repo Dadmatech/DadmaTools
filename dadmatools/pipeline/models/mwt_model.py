@@ -4,9 +4,9 @@ Date: 2021/01/06
 '''
 import sys
 from copy import deepcopy
-from trankit.layers.seq2seq import Seq2SeqModel
+from dadmatools.pipeline.layers.seq2seq import Seq2SeqModel
 from ..iterators.mwt_iterators import MWTDataLoader
-from trankit.utils.mwt_lemma_utils.mwt_utils import get_mwt_expansions, set_mwt_expansions
+from dadmatools.pipeline.utils.mwt_lemma_utils.mwt_utils import get_mwt_expansions, set_mwt_expansions
 from ..utils.base_utils import *
 
 

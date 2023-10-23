@@ -3,7 +3,7 @@ Adapted from https://github.com/stanfordnlp/stanza/blob/master/stanza/models/lem
 Date: 2021/01/06
 '''
 import sys
-from trankit.layers.seq2seq import Seq2SeqModel
+from dadmatools.pipeline.layers.seq2seq import Seq2SeqModel
 from ..iterators.lemmatizer_iterators import LemmaDataLoader
 from ..utils.base_utils import *
 

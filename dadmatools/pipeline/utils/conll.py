@@ -27,6 +27,7 @@ SENTENCES = 'sentences'
 TOKENS = 'tokens'
 NER = 'ner'
 LANG = 'lang'
+POS = 'pos'
 
 FIELD_TO_IDX = {ID: 0, TEXT: 1, LEMMA: 2, UPOS: 3, XPOS: 4, FEATS: 5, HEAD: 6, DEPREL: 7, DEPS: 8, MISC: 9}
 

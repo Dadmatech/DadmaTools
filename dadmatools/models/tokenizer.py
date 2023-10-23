@@ -20,7 +20,7 @@ from dadmatools.models.tokenization.trainer import Trainer
 from dadmatools.models.tokenization.data import DataLoader
 from dadmatools.models.tokenization.utils import load_mwt_dict, eval_model, output_predictions
 # from models import _training_logging
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 logger = logging.getLogger('stanza')
 

@@ -77,15 +77,14 @@ normalized_text = normalizer.normalize(text)
 
 ## Sequence labelling with BERT
 
-For part-of-speech tagging, dependancy parsing, constituency parsing and named entity recognition, BERT models are presented. 
-
+For part-of-speech tagging, dependancy parsing, constituency parsing and named entity recognition, BERT models are presented.
 
 ```python
-import dadmatools.pipeline.language as language
+import dadmatools.pipeline_v1.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'pos,dep,cons,ner' 
+pips = 'pos,dep,cons,ner'
 nlp = language.Pipeline(pips)
 
 # you can see the pipeline with this code
@@ -95,9 +94,9 @@ print(nlp.analyze_pipes(pretty=True))
 doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
 
 dictionary = language.to_json(pips, doc)
-print(dictionary) ## to show pos tags, dependancy parses, and constituency parses
+print(dictionary)  ## to show pos tags, dependancy parses, and constituency parses
 print(doc._.ners)
-    
+
 ```
 
 

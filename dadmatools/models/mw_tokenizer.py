@@ -23,7 +23,7 @@ from dadmatools.models.common.doc import Document
 from dadmatools.utils.conll import CoNLL
 
 # logger = logging.getLogger('stanza')
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 def parse_args():
     args = {

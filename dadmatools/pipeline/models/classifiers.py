@@ -1,6 +1,6 @@
 import torch.nn.functional as F
 from .base_models import *
-from trankit.layers.crf_layer import CRFLoss, viterbi_decode
+from dadmatools.pipeline.layers.crf_layer import CRFLoss, viterbi_decode
 from ..utils.base_utils import *
 from ..utils.conll import *
 

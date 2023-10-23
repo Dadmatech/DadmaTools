@@ -8,7 +8,7 @@ import torch
 
 from pathlib import Path
 
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 if torch.cuda.is_available():
     device = torch.device('cuda')

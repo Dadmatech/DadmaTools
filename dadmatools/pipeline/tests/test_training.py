@@ -1,4 +1,4 @@
-import trankit
+import dadmatools.pipeline as trankit
 
 # initialize a trainer for the task
 trainer = trankit.TPipeline(

@@ -8,7 +8,7 @@ from dadmatools.models.flair.list_data import ListCorpus
 import torch
 from pathlib import Path
 
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 def get_config():
   config = {

@@ -2,8 +2,8 @@ import re
 from tqdm import tqdm
 import requests
 import zipfile
-from trankit.utils.mwt_lemma_utils.seq2seq_utils import *
-from trankit.utils.mwt_lemma_utils.seq2seq_vocabs import *
+from dadmatools.pipeline.utils.mwt_lemma_utils.seq2seq_utils import *
+from dadmatools.pipeline.utils.mwt_lemma_utils.seq2seq_vocabs import *
 import math
 from numbers import Number
 from .chuliu_edmonds import *

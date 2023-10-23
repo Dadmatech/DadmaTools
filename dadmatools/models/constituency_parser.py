@@ -5,7 +5,7 @@ from copy import copy
 import numpy as np
 import torch
 from pathlib import Path
-import dadmatools.pipeline.download as dl                   
+import dadmatools.pipeline_v1.download as dl
 
   
 def parse_args():

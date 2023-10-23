@@ -1,5 +1,5 @@
 import re
-from trankit.utils.conll import *
+from dadmatools.pipeline.utils.conll import *
 
 multi_word_token_misc = re.compile(r".*MWT=Yes.*")
 

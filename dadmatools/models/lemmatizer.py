@@ -32,7 +32,7 @@ from dadmatools.models.common.doc import *
 
 from dadmatools.models.common.doc import Document
 
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 
 logger = logging.getLogger('stanza')
 

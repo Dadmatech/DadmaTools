@@ -3,7 +3,7 @@ Adapted from https://github.com/stanfordnlp/stanza/blob/master/stanza/models/com
 Date: 2021/01/06
 '''
 import torch.nn.functional as F
-from trankit.utils.mwt_lemma_utils.seq2seq_utils import *
+from dadmatools.pipeline.utils.mwt_lemma_utils.seq2seq_utils import *
 
 
 class BasicAttention(nn.Module):

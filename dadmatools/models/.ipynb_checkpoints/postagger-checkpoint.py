@@ -7,7 +7,7 @@ import models.flair
 from models.flair.list_data import ListCorpus
 import torch
 
-import pipeline.download as dl
+import pipeline_v1.download as dl
 
 config = {
   "Controller": {

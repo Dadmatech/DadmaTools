@@ -2,7 +2,7 @@ import torch
 import glob
 from pathlib import Path
 from transformers import pipeline, AutoModelForTokenClassification, AutoTokenizer
-import dadmatools.pipeline.download as dl
+import dadmatools.pipeline_v1.download as dl
 import dadmatools.models.tokenizer as tokenizer
 
 device = torch.device('cpu')
