@@ -7,12 +7,10 @@ For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal
 """
 
 import logging
-import sys
 import os
 # import shutil
 # import time 
 # from datetime import datetime
-import argparse
 import numpy as np
 import random
 import torch
@@ -32,7 +30,7 @@ from dadmatools.models.common.doc import *
 
 from dadmatools.models.common.doc import Document
 
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
 logger = logging.getLogger('stanza')
 

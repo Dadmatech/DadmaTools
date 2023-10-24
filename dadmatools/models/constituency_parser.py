@@ -1,11 +1,8 @@
 from supar import Parser
 import re
 import string
-from copy import copy
-import numpy as np
 import torch
-from pathlib import Path
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
   
 def parse_args():

@@ -6,21 +6,16 @@ recurrent and convolutional architectures.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
-import argparse
-from copy import copy
 import logging
-import random
-import numpy as np
-import os
 import torch
 from pathlib import Path
 
 from dadmatools.models.common import utils
 from dadmatools.models.tokenization.trainer import Trainer
 from dadmatools.models.tokenization.data import DataLoader
-from dadmatools.models.tokenization.utils import load_mwt_dict, eval_model, output_predictions
+from dadmatools.models.tokenization.utils import load_mwt_dict, output_predictions
 # from models import _training_logging
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
 logger = logging.getLogger('stanza')
 

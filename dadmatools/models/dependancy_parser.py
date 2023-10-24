@@ -2,13 +2,10 @@ from dadmatools.models.flair import embeddings as Embeddings
 import copy
 from dadmatools.models.flair.data import Dictionary
 from dadmatools.models.flair import models as models
-from pathlib import Path
 # import models.flair as flair
-from dadmatools.models.flair.list_data import ListCorpus
-import torch
 from pathlib import Path
 
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
 def get_config():
   config = {

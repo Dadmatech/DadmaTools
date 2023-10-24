@@ -6,24 +6,15 @@ to decode the token into multiple words.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
-import logging
 import torch
-import numpy as np
-import random
-import os
 from pathlib import Path
 
 from dadmatools.models.mwt.data import DataLoader
-from dadmatools.models.mwt.vocab import Vocab
 from dadmatools.models.mwt.trainer import Trainer
-from dadmatools.models.mwt import scorer
-from dadmatools.models.common import utils
-import dadmatools.models.common.seq2seq_constant as constant
 from dadmatools.models.common.doc import Document
-from dadmatools.utils.conll import CoNLL
 
 # logger = logging.getLogger('stanza')
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
 def parse_args():
     args = {

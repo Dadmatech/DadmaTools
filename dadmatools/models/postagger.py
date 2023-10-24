@@ -3,11 +3,8 @@ import copy
 from dadmatools.models.flair.data import Dictionary
 from dadmatools.models.flair import models as model
 from pathlib import Path
-from dadmatools.models.flair.list_data import ListCorpus
-import torch
-from pathlib import Path
 
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 
 def get_config():
   config = {

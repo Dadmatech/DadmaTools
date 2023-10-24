@@ -1,5 +1,5 @@
 from pathlib import Path
-import dadmatools.pipeline_v1.download as dl
+import dadmatools.models.download as dl
 import time
 import torch
 from torch import nn
