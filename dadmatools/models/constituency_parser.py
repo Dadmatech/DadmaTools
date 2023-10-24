@@ -33,9 +33,8 @@ def load_model():
 
 
 
-def cons_parser(model,input_sentence):
-    tokens = input_sentence.split()
-    pred = model.predict(tokens,verbose=False)[0]
+def cons_parser(model,token_list):
+    pred = model.predict(token_list,verbose=False)[0]
     return pred
     
 
