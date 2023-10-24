@@ -46,6 +46,7 @@ setuptools.setup(
         'packaging',
         'sentencepiece',
         'sacremoses',
+        'fasttext',
     ],
 
     classifiers=[
