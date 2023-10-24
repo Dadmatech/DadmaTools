@@ -1,5 +1,6 @@
 import json
-from collections import Iterator
+
+from collections.abc import Iterator
 
 
 class DatasetInfo:
