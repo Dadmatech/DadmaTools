@@ -5,7 +5,7 @@ import html2text
 
 
 prefix = str(Path(__file__).parent.absolute()).replace('models', '')
-save_dir = 'models/normalize/'
+save_dir = '/utils/'
 
 
 class Normalizer:
