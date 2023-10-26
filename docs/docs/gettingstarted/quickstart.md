@@ -34,10 +34,10 @@ With DadmaTools you can try out different NLP tasks along with other pipelines t
 Perform [Part-of-Speech tagging](../tasks/pos.md), [Named Entity Recognition](../tasks/ner.md) and [dependency parsing](../tasks/dependency.md) at the same time with the DadmaTools spaCy model.
 Here is a snippet to quickly getting started: 
 
-For text normalizing you can use the `dadmatools.models.normalizer`. 
+For text normalizing you can use the `dadmatools.models.normalizer`.
 
 ```python
-from dadmatools.models.normalizer import Normalizer
+from dadmatools.normalizer import Normalizer
 
 normalizer = Normalizer(
     full_cleaning=False,
@@ -65,12 +65,12 @@ text = """
 </p>
 """
 normalized_text = normalizer.normalize(text)
-#<p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
+# <p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
 
-#full cleaning
+# full cleaning
 normalizer = Normalizer(full_cleaning=True)
 normalized_text = normalizer.normalize(text)
-#دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
+# دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
 
 ```
 

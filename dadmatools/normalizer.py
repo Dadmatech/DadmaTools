@@ -1,31 +1,30 @@
 import string
 from pathlib import Path
-from dadmatools.models.normalize.patterns import *
+from dadmatools.utils.patterns import *
 import html2text
-
-# import dadmatools.pipeline.download as dl
 
 
 prefix = str(Path(__file__).parent.absolute()).replace('models', '')
-# save_dir = 'saved_models/normalizer/normalize/'
 save_dir = 'models/normalize/'
 
+
 class Normalizer:
-    def __init__(self,
-             full_cleaning=False,
-             unify_chars=True,
-             refine_punc_spacing=True,
-             remove_extra_space=True,
-             remove_puncs=False,
-             remove_html=False,
-             remove_stop_word=False,
-             replace_email_with=None,
-             replace_number_with=None,
-             replace_url_with=None,
-             replace_mobile_number_with=None,
-             replace_emoji_with=None,
-             replace_home_number_with=None
-             ):
+    def __init__(
+        self,
+        full_cleaning=False,
+        unify_chars=True,
+        refine_punc_spacing=True,
+        remove_extra_space=True,
+        remove_puncs=False,
+        remove_html=False,
+        remove_stop_word=False,
+        replace_email_with=None,
+        replace_number_with=None,
+        replace_url_with=None,
+        replace_mobile_number_with=None,
+        replace_emoji_with=None,
+        replace_home_number_with=None
+    ):
         self.replace_patterns = []
         self.remove_html = remove_html
         self.remove_puncs = remove_puncs
@@ -92,9 +91,11 @@ def load_model():
     normalizer = Normalizer()
     return normalizer
 
+
 def normalizer(model, text):
     text = model.normalize(text)
     return text
+
 
 if __name__ == '__main__':
     text = '<p> karrabi.mohammad@gmail.com  ایمیل ۲۳۳ ۲۳.۳ . <p>'

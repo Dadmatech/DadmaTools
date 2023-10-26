@@ -123,7 +123,7 @@ cleaning text and unify characters.
 
 Note: None means no action! 
 ```python
-from dadmatools.models.normalizer import Normalizer
+from dadmatools.normalizer import Normalizer
 
 normalizer = Normalizer(
     full_cleaning=False,
@@ -151,12 +151,12 @@ text = """
 </p>
 """
 normalized_text = normalizer.normalize(text)
-#<p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
+# <p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
 
-#full cleaning
+# full cleaning
 normalizer = Normalizer(full_cleaning=True)
 normalized_text = normalizer.normalize(text)
-#دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
+# دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
 
 ```
 
@@ -164,7 +164,7 @@ normalized_text = normalizer.normalize(text)
 Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, spellcheker.
 
 ```python
-import dadmatools.pipeline_v1.language as language
+import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
