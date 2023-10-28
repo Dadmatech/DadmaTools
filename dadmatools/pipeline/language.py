@@ -189,7 +189,7 @@ class NLP():
         return doc
     
     @Language.component('chunking')
-    def constituencyparser(doc):
+    def chunking(doc):
         model = chunker_model
 
         chunks = []
@@ -208,7 +208,10 @@ class NLP():
         constitu_parses = []
         for sent in doc._.sentences:
             ## getting the constituency of the sentence
-            cons_res = conspars.cons_parser(model, sent.text)
+            tokens = [d.text for d in sent]
+            pos_tags = [d.pos_ for d in sent]
+            input_list = list(tuple(zip(tokens, pos_tags)))
+            cons_res = conspars.cons_parser(model, [input_list])
             constitu_parses.append(cons_res)
         
         doc._.constituency = constitu_parses
