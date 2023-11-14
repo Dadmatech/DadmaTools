@@ -1,6 +1,7 @@
 from .config import config as master_config
+from .iterators.sent_iterators import SentDataset
 from .models.base_models import Multilingual_Embedding
-from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier
+from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier
 from .models.mwt_model import MWTWrapper
 from .models.lemma_model import LemmaWrapper
 from .iterators.tokenizer_iterators import TokenizeDataset
@@ -67,8 +68,18 @@ class TPipeline:
             self.model_parameters = [(n, p) for n, p in self._embedding_layers.named_parameters()] + \
                                     [(n, p) for n, p in self._ner_model.named_parameters()]
 
+        elif self._task == 'sentiment':
+            self._embedding_layers = Multilingual_Embedding(self._config, model_name='sentiment_analyzer')
+            self._embedding_layers.to(self._config.device)
+
+            self._sent_model = SentenceClassifier(self._config, self._lang)
+            self._sent_model.to(self._config.device)
+
+            self.model_parameters = [(n, p) for n, p in self._embedding_layers.named_parameters()] + \
+                                    [(n, p) for n, p in self._sent_model.named_parameters()]
+
         # optimizer
-        if self._task in ['tokenize', 'posdep', 'ner']:
+        if self._task in ['tokenize', 'posdep', 'ner', 'sentiment']:
             param_groups = [
                 {
                     'params': [p for n, p in self.model_parameters if 'task_adapters' in n if
@@ -87,7 +98,17 @@ class TPipeline:
                                                             num_warmup_steps=self.batch_num * 5,
                                                             num_training_steps=self.batch_num * self._config.max_epoch)
 
-    def _detect_split_by_space_lang(self, train_txt_fpath):
+    @staticmethod
+    def _get_list_of_unique_labels(train_bio_fpath):
+        labels = set()
+        with open(train_bio_fpath) as f:
+            for line in f:
+                line = line.split('\t')
+                labels.add(line[-1].replace('\n', ''))
+        return labels
+
+    @staticmethod
+    def _detect_split_by_space_lang(train_txt_fpath):
         if train_txt_fpath is None:
             return True
         else:
@@ -128,7 +149,7 @@ class TPipeline:
         # lang and data
         self._lang = training_config['category'] if 'category' in training_config else 'customized'
         self._task = training_config['task']
-        assert self._task in ['tokenize', 'mwt', 'posdep', 'lemmatize', 'ner']
+        assert self._task in ['tokenize', 'mwt', 'posdep', 'lemmatize', 'ner', 'sentiment']
 
         # the following variables are used for UD training
         self._train_txt_fpath = training_config['train_txt_fpath'] if 'train_txt_fpath' in training_config else None
@@ -176,6 +197,7 @@ class TPipeline:
         master_config._cache_dir = self._save_dir
         ensure_dir(self._save_dir)
         self._config = master_config
+        self._config.labels = self._get_list_of_unique_labels(self._train_bio_fpath)
         self._config.training = True
         self._config.lang = self._lang
         self._config.treebank_name = treebank_name
@@ -188,7 +210,7 @@ class TPipeline:
             self._config.batch_size = training_config['batch_size']
         elif training_config['task'] == 'tokenize':
             self._config.batch_size = 4
-        elif training_config['task'] in ['posdep', 'ner']:
+        elif training_config['task'] in ['posdep', 'ner', 'sentiment']:
             self._config.batch_size = 16
         elif training_config['task'] in ['mwt', 'lemmatize']:
             self._config.batch_size = 50
@@ -286,6 +308,29 @@ class TPipeline:
     def _prepare_lemma(self):
         return None
 
+    def _prepare_sent(self):
+        self.train_set = SentDataset(
+            config=self._config,
+            bio_fpath=self._train_bio_fpath,
+            evaluate=False
+        )
+        self.train_set.numberize()
+        self.batch_num = len(self.train_set) // self._config.batch_size
+
+        self.dev_set = SentDataset(
+            config=self._config,
+            bio_fpath=self._dev_bio_fpath,
+            evaluate=True
+        )
+        self.dev_set.numberize()
+        self.dev_batch_num = len(self.dev_set) // self._config.batch_size + \
+                             (len(self.dev_set) % self._config.batch_size != 0)
+
+        # load vocab and itos
+        # self._config.ner_vocabs = {}
+        # self._config.ner_vocabs[self._config.lang] = self.train_set.vocabs
+        # self.tag_itos = {v: k for k, v in self._config.ner_vocabs[self._config.lang].items()}
+
     def _prepare_ner(self):
         self.train_set = NERDataset(
             config=self._config,
@@ -320,6 +365,8 @@ class TPipeline:
             self._prepare_lemma()
         elif self._task == 'ner':
             self._prepare_ner()
+        elif self._task == 'sentiment':
+            self._prepare_sent()
 
     def _train_tokenize(self):
         ensure_dir(os.path.join(self._config._save_dir, 'preds'))
@@ -645,6 +692,69 @@ class TPipeline:
         score = score_by_entity(predictions, golds, self.logger)
         return score
 
+    def _train_sent(self):
+        best_dev = {'p': 0, 'r': 0, 'f1': 0}
+        best_epoch = 0
+        for epoch in range(self._config.max_epoch):
+            self._printlog('*' * 30)
+            self._printlog('NER: Epoch: {}'.format(epoch))
+            # training set
+            progress = tqdm(total=self.batch_num, ncols=75,
+                            desc='Train {}'.format(epoch))
+            self._embedding_layers.train()
+            self._sent_model.train()
+            self.optimizer.zero_grad()
+            for batch_idx, batch in enumerate(DataLoader(
+                    self.train_set, batch_size=self._config.batch_size,
+                    shuffle=True, collate_fn=self.train_set.collate_fn)):
+                progress.update(1)
+                word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+                loss = self._sent_model(batch, word_reprs)
+                loss.backward()
+
+                torch.nn.utils.clip_grad_norm_(
+                    self._sent_model.parameters(), self._config.grad_clipping)
+                self.optimizer.step()
+                self.schedule.step()
+                self.optimizer.zero_grad()
+                self._printlog('NER: step: {}/{}, loss: {}'.format(batch_idx + 1, self.batch_num, loss.item()),
+                               printout=False)
+            progress.close()
+            dev_score = self._sent_model(data_set=self.dev_set, batch_num=self.dev_batch_num,
+                                       name='dev', epoch=epoch)
+
+            if dev_score['f1'] > best_dev['f1']:
+                self._save_model(ckpt_fpath=os.path.join(self._config._save_dir,
+                                                         '{}.ner.mdl'.format(self._lang)),
+                                 epoch=epoch)
+
+                best_dev = dev_score
+                best_epoch = epoch
+
+            # printout current best dev
+            self._printlog('-' * 30)
+            self._printlog('Best dev F1 score: epoch {}, F1: {:.2f}'.format(best_epoch, best_dev['f1']))
+        print('Training done!')
+
+    def _eval_sent(self, data_set, batch_num, name, epoch):
+        self._sent_model.eval()
+        # evaluate
+        progress = tqdm(total=batch_num, ncols=75,
+                        desc='{} {}'.format(name, epoch))
+        predictions = []
+        golds = []
+        for batch in DataLoader(data_set, batch_size=self._config.batch_size,
+                                shuffle=False, collate_fn=data_set.collate_fn):
+            progress.update(1)
+            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+            pred_entity_labels = self._sent_model.predict(batch, word_reprs)
+            predictions += pred_entity_labels
+            batch_entity_labels = batch.entity_label_idxs.data.cpu().numpy().tolist()
+            golds += [[self.tag_itos[l] for l in seq[:batch.word_num[i]]] for i, seq in enumerate(batch_entity_labels)]
+        progress.close()
+        score = score_by_entity(predictions, golds, self.logger)
+        return score
+
     def _save_model(self, ckpt_fpath, epoch):
         trainable_weight_names = [n for n, p in self.model_parameters if p.requires_grad]
         state = {
@@ -666,6 +776,10 @@ class TPipeline:
             for k, v in self._ner_model.state_dict().items():
                 if k in trainable_weight_names:
                     state['adapters'][k] = v
+        elif self._task == 'sentiment':
+            for k, v in self._sent_model.state_dict().items():
+                if k in trainable_weight_names:
+                    state['adapters'][k] = v
 
         torch.save(state, ckpt_fpath)
         print('Saving adapter weights to ... {} ({:.2f} MB)'.format(ckpt_fpath,
@@ -682,3 +796,5 @@ class TPipeline:
             self._train_lemma()
         elif self._task == 'ner':
             self._train_ner()
+        elif self._task == 'sentiment':
+            self._train_sent()

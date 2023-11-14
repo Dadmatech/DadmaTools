@@ -5,6 +5,61 @@ from ..utils.base_utils import *
 from ..utils.conll import *
 
 
+class SentenceClassifier(nn.Module):
+    def __init__(self, config, language):
+        super().__init__()
+        self.config = config
+        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # self.entity_label_stoi = config.ner_vocabs[language]  # BIOES tags
+        # self.entity_label_itos = {i: s for s, i in self.entity_label_stoi.items()}
+        self.entity_label_num = len(self.config.labels)
+
+        self.entity_label_ffn = Linears([self.xlmr_dim, config.hidden_num,
+                                         self.entity_label_num],
+                                        dropout_prob=config.linear_dropout,
+                                        bias=config.linear_bias,
+                                        activation=config.linear_activation)
+
+        self.crit = CRFLoss(self.entity_label_num)
+
+        if not config.training:
+            # load pretrained weights
+            self.initialized_weights = self.state_dict()
+            self.pretrained_ner_weights = torch.load(os.path.join(self.config._cache_dir, self.config.embedding_name, language,
+                                                                  '{}.ner.mdl'.format(
+                                                                      language)), map_location=self.config.device)[
+                'adapters']
+
+            for name, value in self.pretrained_ner_weights.items():
+                if name in self.initialized_weights:
+                    self.initialized_weights[name] = value
+            self.load_state_dict(self.initialized_weights)
+            print(f'Loading Sentence tagger for {language}')
+
+    def forward(self, batch, word_reprs):
+        batch_size, _, _ = word_reprs.size()
+
+        logits = self.entity_label_ffn(word_reprs)
+        loss, trans = self.crit(logits, batch.word_mask, batch.entity_label_idxs)
+        return loss
+
+    def predict(self, batch, word_reprs):
+        batch_size, _, _ = word_reprs.size()
+
+        logits = self.entity_label_ffn(word_reprs)
+        _, trans = self.crit(logits, batch.word_mask, batch.entity_label_idxs)
+        # decode
+        trans = trans.data.cpu().numpy()
+        scores = logits.data.cpu().numpy()
+        bs = logits.size(0)
+        tag_seqs = []
+        for i in range(bs):
+            tags, _ = viterbi_decode(scores[i, :batch.word_num[i]], trans)
+            tags = [self.entity_label_itos[t] for t in tags]
+            tag_seqs += [tags]
+        return tag_seqs
+
+
 class NERClassifier(nn.Module):
     def __init__(self, config, language):
         super().__init__()

@@ -19,6 +19,7 @@ class Config:
         self.grad_clipping = 4.5
         self.working_dir = os.path.dirname(os.path.realpath(__file__))
         self.lowercase = False
+        self.labels = set()
 
 
 # configuration
