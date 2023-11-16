@@ -2,6 +2,8 @@
 Borrowed from https://github.com/stanfordnlp/stanza/blob/master/stanza/models/common/crf.py
 Date: 2021/01/06
 '''
+import torch
+
 """
 CRF loss and viterbi decoding.
 """
@@ -103,87 +105,19 @@ class CELoss(nn.Module):
     Calculate log-space cross entropy loss.
     """
 
-    def __init__(self, num_tag, batch_average=True):
+    def __init__(self, num_tag):
         super().__init__()
         self._transitions = nn.Parameter(torch.zeros(num_tag, num_tag))
-        self._batch_average = batch_average  # if not batch average, average on all tokens
 
-    def forward(self, inputs, masks, tag_indices):
-        """
-        inputs: batch_size x seq_len x num_tags
-        masks: batch_size x seq_len
-        tag_indices: batch_size x seq_len
-        @return:
-            loss: CRF negative log likelihood on all instances.
-            transitions: the transition matrix
-        """
-        # TODO: handle <start> and <end> tags
+    def forward(self, inputs, tag_indices):
         self.bs, self.sl, self.nc = inputs.size()
-        unary_scores = self.crf_unary_score(inputs, masks, tag_indices)
-        binary_scores = self.crf_binary_score(inputs, masks, tag_indices)
-        log_norm = self.crf_log_norm(inputs, masks, tag_indices)
-        log_likelihood = unary_scores + binary_scores - log_norm  # batch_size
-        loss = torch.sum(-log_likelihood)
-        if self._batch_average:
-            loss = loss / self.bs
-        else:
-            total = masks.eq(0).sum()
-            loss = loss / (total + 1e-8)
+        inputs = torch.softmax(inputs, 2)[:, -1, :]
+        one_hot_tag_indexes = torch.nn.functional.one_hot(tag_indices)
+        one_hot_tag_indexes = torch.tensor(one_hot_tag_indexes, dtype=torch.float)
+        criterion = torch.nn.CrossEntropyLoss()
+        loss = criterion(inputs, one_hot_tag_indexes)
+        # loss = loss / self.bs
         return loss, self._transitions
-
-    def crf_unary_score(self, inputs, masks, tag_indices):
-        """
-        @return:
-            unary_scores: batch_size
-        """
-        flat_inputs = inputs.view(self.bs, -1)
-        flat_tag_indices = tag_indices + \
-                           set_cuda(torch.arange(self.sl).long().unsqueeze(0) * self.nc, tag_indices.is_cuda)
-        unary_scores = torch.gather(flat_inputs, 1, flat_tag_indices).view(self.bs, -1)
-        # unary_scores.masked_fill_(masks, 0)
-        return unary_scores.sum(dim=0)
-
-    def crf_binary_score(self, inputs, masks, tag_indices):
-        """
-        @return:
-            binary_scores: batch_size
-        """
-        # get number of transitions
-        nt = tag_indices.size(-1) - 1
-        start_indices = tag_indices[:nt]
-        end_indices = tag_indices[1:]
-        # flat matrices
-        flat_transition_indices = start_indices * self.nc + end_indices
-        # flat_transition_indices = flat_transition_indices.view(-1)
-        flat_transition_matrix = self._transitions.view(-1)
-        binary_scores = torch.gather(flat_transition_matrix, 0, flat_transition_indices) \
-            .view(self.bs, -1)
-        score_masks = masks[:, 1:]
-        binary_scores.masked_fill_(score_masks, 0)
-        return binary_scores.sum(dim=1)
-
-    def crf_log_norm(self, inputs, masks, tag_indices):
-        """
-        Calculate the CRF partition in log space for each instance, following:
-            http://www.cs.columbia.edu/~mcollins/fb.pdf
-        @return:
-            log_norm: batch_size
-        """
-        start_inputs = inputs[:, 0, :]  # bs x nc
-        rest_inputs = inputs[:, 1:, :]
-        rest_masks = masks[:, 1:]
-        alphas = start_inputs  # bs x nc
-        trans = self._transitions.unsqueeze(0)  # 1 x nc x nc
-        # accumulate alphas in log space
-        for i in range(rest_inputs.size(1)):
-            transition_scores = alphas.unsqueeze(2) + trans  # bs x nc x nc
-            new_alphas = rest_inputs[:, i, :] + log_sum_exp(transition_scores, dim=1)
-            m = rest_masks[:, i].unsqueeze(1).expand_as(new_alphas)  # bs x nc, 1 for padding idx
-            # apply masks
-            new_alphas.masked_scatter_(m, alphas.masked_select(m))
-            alphas = new_alphas
-        log_norm = log_sum_exp(alphas, dim=1)
-        return log_norm
 
 
 def viterbi_decode(scores, transition_params):

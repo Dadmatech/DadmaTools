@@ -40,25 +40,15 @@ class SentenceClassifier(nn.Module):
         batch_size, _, _ = word_reprs.size()
 
         logits = self.entity_label_ffn(word_reprs)
-        loss, trans = self.crit(logits, batch.word_mask, batch.entity_label_idxs)
+        loss, trans = self.crit(logits, batch.entity_label_idxs)
         return loss
 
     def predict(self, batch, word_reprs):
         batch_size, _, _ = word_reprs.size()
 
         logits = self.entity_label_ffn(word_reprs)
-        _, trans = self.crit(logits, batch.word_mask, batch.entity_label_idxs)
-        # decode
-        trans = trans.data.cpu().numpy()
-        scores = logits.data.cpu().numpy()
-        bs = logits.size(0)
-        tag_seqs = []
-        for i in range(bs):
-            tags, _ = viterbi_decode(scores[i, :batch.word_num[i]], trans)
-            # tags = [self.entity_label_itos[t] for t in tags]
-            # tag_seqs += [tags]
-            tag_seqs.append(tags[0])
-        return tag_seqs
+        logits = torch.softmax(logits, 2)[:, -1, :]
+        return torch.argmax(input=logits, axis=1)
 
 
 class NERClassifier(nn.Module):

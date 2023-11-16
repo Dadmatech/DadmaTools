@@ -752,9 +752,7 @@ class TPipeline:
             predictions += pred_entity_labels
             batch_entity_labels = batch.entity_label_idxs.data.cpu().numpy().tolist()
             golds += batch_entity_labels
-            # golds += [[self.tag_itos[l] for l in seq[:batch.word_num[i]]] for i, seq in enumerate(batch_entity_labels)]
         progress.close()
-        # score = score_by_entity(predictions, golds, self.logger)
         score = score_by_sent(predictions, golds, self.logger)
         return score
 
