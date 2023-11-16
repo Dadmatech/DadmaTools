@@ -9,6 +9,7 @@ from .iterators.tagger_iterators import TaggerDataset
 from .iterators.ner_iterators import NERDataset
 from .utils.tokenizer_utils import *
 from .utils.scorers.ner_scorer import score_by_entity
+from .utils.scorers.sent_scorer import score_by_sent
 from collections import defaultdict
 from .utils.conll import *
 from .utils.tbinfo import tbname2training_id, lang2treebank
@@ -709,7 +710,7 @@ class TPipeline:
                     shuffle=True, collate_fn=self.train_set.collate_fn)):
                 progress.update(1)
                 word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
-                loss = self._sent_model(batch, word_reprs)
+                loss = self._sent_model(batch, cls_reprs)
                 loss.backward()
 
                 torch.nn.utils.clip_grad_norm_(
@@ -720,7 +721,7 @@ class TPipeline:
                 self._printlog('NER: step: {}/{}, loss: {}'.format(batch_idx + 1, self.batch_num, loss.item()),
                                printout=False)
             progress.close()
-            dev_score = self._sent_model(data_set=self.dev_set, batch_num=self.dev_batch_num,
+            dev_score = self._eval_sent(data_set=self.dev_set, batch_num=self.dev_batch_num,
                                        name='dev', epoch=epoch)
 
             if dev_score['f1'] > best_dev['f1']:
@@ -747,12 +748,14 @@ class TPipeline:
                                 shuffle=False, collate_fn=data_set.collate_fn):
             progress.update(1)
             word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
-            pred_entity_labels = self._sent_model.predict(batch, word_reprs)
+            pred_entity_labels = self._sent_model.predict(batch, cls_reprs)
             predictions += pred_entity_labels
             batch_entity_labels = batch.entity_label_idxs.data.cpu().numpy().tolist()
-            golds += [[self.tag_itos[l] for l in seq[:batch.word_num[i]]] for i, seq in enumerate(batch_entity_labels)]
+            golds += batch_entity_labels
+            # golds += [[self.tag_itos[l] for l in seq[:batch.word_num[i]]] for i, seq in enumerate(batch_entity_labels)]
         progress.close()
-        score = score_by_entity(predictions, golds, self.logger)
+        # score = score_by_entity(predictions, golds, self.logger)
+        score = score_by_sent(predictions, golds, self.logger)
         return score
 
     def _save_model(self, ckpt_fpath, epoch):

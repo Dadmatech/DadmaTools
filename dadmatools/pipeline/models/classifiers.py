@@ -1,6 +1,6 @@
 import torch.nn.functional as F
 from .base_models import *
-from dadmatools.pipeline.layers.crf_layer import CRFLoss, viterbi_decode
+from dadmatools.pipeline.layers.crf_layer import CRFLoss, viterbi_decode, CELoss
 from ..utils.base_utils import *
 from ..utils.conll import *
 
@@ -20,7 +20,7 @@ class SentenceClassifier(nn.Module):
                                         bias=config.linear_bias,
                                         activation=config.linear_activation)
 
-        self.crit = CRFLoss(self.entity_label_num)
+        self.crit = CELoss(self.entity_label_num)
 
         if not config.training:
             # load pretrained weights
@@ -55,8 +55,9 @@ class SentenceClassifier(nn.Module):
         tag_seqs = []
         for i in range(bs):
             tags, _ = viterbi_decode(scores[i, :batch.word_num[i]], trans)
-            tags = [self.entity_label_itos[t] for t in tags]
-            tag_seqs += [tags]
+            # tags = [self.entity_label_itos[t] for t in tags]
+            # tag_seqs += [tags]
+            tag_seqs.append(tags[0])
         return tag_seqs
 
 

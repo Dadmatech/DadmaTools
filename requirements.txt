@@ -30,3 +30,4 @@ regex != 2019.12.17
 packaging
 sentencepiece
 sacremoses
+pandas
