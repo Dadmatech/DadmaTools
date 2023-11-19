@@ -89,7 +89,7 @@ class SentDatasetLive(Dataset):
         self.data = new_data
 
         # load vocab
-        self.vocabs = self.config.ner_vocabs[self.config.active_lang]
+        self.vocabs = list(self.config.vocabs.values())[0]['sent']
 
     def __len__(self):
         return len(self.data)

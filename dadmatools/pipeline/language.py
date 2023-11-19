@@ -2,12 +2,13 @@ from typing import List
 
 from .config import config as master_config
 from .models.base_models import Multilingual_Embedding
-from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier
+from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier
 from .models.mwt_model import MWTWrapper
 from .models.lemma_model import LemmaWrapper
 from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
+from .iterators.sent_iterators import SentDatasetLive
 from .utils.tokenizer_utils import *
 from collections import defaultdict
 from .utils.conll import *
@@ -134,6 +135,17 @@ class Pipeline:
                     if self._use_gpu:
                         self._ner_model[lang].half()
                     self._ner_model[lang].eval()
+
+        # sentiment if possible
+        if SENT in self.pipelines:
+            self._sent_model = {}
+            for lang in self.added_langs:
+                if lang in langwithsent:
+                    self._sent_model[lang] = SentenceClassifier(self._config, lang)
+                    self._sent_model[lang].to(self._config.device)
+                    if self._use_gpu:
+                        self._sent_model[lang].half()
+                    self._sent_model[lang].eval()
 
         # load and hold the pretrained weights
         self._embedding_weights = self._embedding_layers.state_dict()
@@ -306,11 +318,13 @@ class Pipeline:
     def _load_adapter_weights(self, model_name):
         if model_name not in self.pipelines:
             return
-        assert model_name in ['tokenizer', 'pos', 'ner']
+        assert model_name in ['tokenizer', 'pos', 'ner', 'sent']
         if model_name == 'tokenizer':
             pretrained_weights = self._tokenizer[self._config.active_lang].pretrained_tokenizer_weights
         elif model_name == 'pos':
             pretrained_weights = self._tagger[self._config.active_lang].pretrained_tagger_weights
+        elif model_name == 'sent':
+            pretrained_weights = self._sent_model[self._config.active_lang].pretrained_sent_weights
         else:
             assert model_name == 'ner'
             pretrained_weights = self._ner_model[self._config.active_lang].pretrained_ner_weights
@@ -1034,7 +1048,7 @@ class Pipeline:
             in_doc = self._tokenize_doc(in_doc)
         dner_doc = deepcopy(in_doc)
         sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dner_doc]
-        test_set = NERDatasetLive(
+        test_set = SentDatasetLive(
             config=self._config,
             tokenized_sentences=sentences
         )
@@ -1064,6 +1078,71 @@ class Pipeline:
         torch.cuda.empty_cache()
         return dner_doc
 
+
+    def _sent_sent(self, in_sent):  # assuming input is a document
+        if type(in_sent) == str:
+            in_sent = self._tokenize_sent(in_sent)
+
+        dner_doc = [{ID: 1, TOKENS: deepcopy(in_sent)}]
+        sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dner_doc]
+        test_set = SentDatasetLive(
+            config=self._config,
+            tokenized_sentences=sentences
+        )
+        test_set.numberize()
+        # load ner adapter weights
+        self._load_adapter_weights(model_name='sent')
+        eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
+        if self._config.embedding_name == 'xlm-roberta-large':
+            eval_batch_size = int(eval_batch_size / 3)
+
+        for batch in DataLoader(test_set,
+                                batch_size=eval_batch_size,
+                                shuffle=False, collate_fn=test_set.collate_fn):
+            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+            pred_entity_labels = self._ner_model[self._config.active_lang].predict(batch, word_reprs)
+
+            batch_size = len(batch.word_num)
+
+            for bid in range(batch_size):
+                sentid = batch.sent_index[bid]
+                for i in range(batch.word_num[bid]):
+                    wordid = batch.word_ids[bid][i]
+
+                    # NER tag
+                    dner_doc[sentid][TOKENS][wordid][NER] = pred_entity_labels[bid][i]
+
+        torch.cuda.empty_cache()
+        return dner_doc[0][TOKENS]
+
+    def _sent_doc(self, in_doc):  # assuming input is a document
+        if SENT not in self.pipelines:
+            return in_doc
+        if type(in_doc) == str:
+            in_doc = self._tokenize_doc(in_doc)
+        dsent_doc = deepcopy(in_doc)
+        sentences = [[t[TEXT] for sentence in dsent_doc for t in sentence[TOKENS] ]]
+        test_set = SentDatasetLive(
+            config=self._config,
+            tokenized_sentences=sentences
+        )
+        test_set.numberize()
+        # load ner adapter weights
+        self._load_adapter_weights(model_name='sent')
+        eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
+        if self._config.embedding_name == 'xlm-roberta-large':
+            eval_batch_size = int(eval_batch_size / 3)
+        pred_labels = None
+        for batch in DataLoader(test_set,
+                                batch_size=eval_batch_size,
+                                shuffle=False, collate_fn=test_set.collate_fn):
+            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+            pred_labels = self._sent_model[self._config.active_lang].predict_persent(cls_reprs)
+
+
+        torch.cuda.empty_cache()
+        return pred_labels
+
     def __call__(self, input, is_sent=False):
         if is_sent:
             assert is_string(input) or is_list_strings(
@@ -1079,6 +1158,8 @@ class Pipeline:
                 out = self._lemmatize_sent(tagged_sent)
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_sent(out)
+                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
+                    out = self._sent_sent(out)
                 final = {TOKENS: out, LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
@@ -1090,6 +1171,8 @@ class Pipeline:
                 out = self._lemmatize_sent(tagged_sent)
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_sent(out)
+                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
+                    out = self._sent_sent(out)
                 final = {TEXT: ori_text, TOKENS: out, LANG: self.active_lang}
         else:
             assert is_string(input) or is_list_list_strings(
@@ -1106,6 +1189,8 @@ class Pipeline:
                 out = self._lemmatize_doc(tagged_doc)
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_doc(out)
+                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
+                    out = self._sent_doc(out)
                 final = {SENTENCES: out, LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
@@ -1121,6 +1206,9 @@ class Pipeline:
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_doc(out)
                 final = {TEXT: ori_text, SENTENCES: out, LANG: self.active_lang}
+                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # ner if possible
+                    sentiment = self._sent_doc(out)
+                    final['sentiment'] = sentiment
         return final
 
     def _conllu_predict(self, text_fpath):

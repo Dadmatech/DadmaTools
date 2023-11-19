@@ -10,9 +10,11 @@ class SentenceClassifier(nn.Module):
         super().__init__()
         self.config = config
         self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
-        # self.entity_label_stoi = config.ner_vocabs[language]  # BIOES tags
-        # self.entity_label_itos = {i: s for s, i in self.entity_label_stoi.items()}
-        self.entity_label_num = len(self.config.labels)
+        if not self.config.labels:
+            self.entity_label = list(self.config.vocabs.values())[0]['sent']
+        else:
+            self.entity_label = self.config.labels
+        self.entity_label_num = len(self.entity_label)
 
         self.entity_label_ffn = Linears([self.xlmr_dim, config.hidden_num,
                                          self.entity_label_num],
@@ -25,15 +27,15 @@ class SentenceClassifier(nn.Module):
         if not config.training:
             # load pretrained weights
             self.initialized_weights = self.state_dict()
-            self.pretrained_ner_weights = torch.load(os.path.join(self.config._cache_dir, self.config.embedding_name, language,
-                                                                  '{}.ner.mdl'.format(
+            self.pretrained_sent_weights = torch.load(os.path.join(self.config._cache_dir, self.config.embedding_name, language,
+                                                                  '{}.sent.mdl'.format(
                                                                       language)), map_location=self.config.device)[
                 'adapters']
 
-            for name, value in self.pretrained_ner_weights.items():
+            for name, value in self.pretrained_sent_weights.items():
                 if name in self.initialized_weights:
                     self.initialized_weights[name] = value
-            self.load_state_dict(self.initialized_weights)
+            self.load_state_dict(self.initialized_weights, strict=False)
             print(f'Loading Sentence tagger for {language}')
 
     def forward(self, batch, word_reprs):
@@ -43,12 +45,15 @@ class SentenceClassifier(nn.Module):
         loss, trans = self.crit(logits, batch.entity_label_idxs)
         return loss
 
-    def predict(self, batch, word_reprs):
-        batch_size, _, _ = word_reprs.size()
-
-        logits = self.entity_label_ffn(word_reprs)
+    def predict(self, batch, cls_reprs):
+        logits = self.entity_label_ffn(cls_reprs)
         logits = torch.softmax(logits, 2)[:, -1, :]
         return torch.argmax(input=logits, axis=1)
+
+    def predict_persent(self, cls_reprs):
+        logits = self.entity_label_ffn(cls_reprs)
+        logits = torch.softmax(logits, 2)[:, -1, :]
+        return {label: round(logits[0][index].item(), 2) for label, index in self.entity_label.items()}
 
 
 class NERClassifier(nn.Module):

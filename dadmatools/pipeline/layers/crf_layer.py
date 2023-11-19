@@ -107,16 +107,16 @@ class CELoss(nn.Module):
 
     def __init__(self, num_tag):
         super().__init__()
+        self.num_tag = num_tag
+        self.loss_func = torch.nn.CrossEntropyLoss()
         self._transitions = nn.Parameter(torch.zeros(num_tag, num_tag))
 
     def forward(self, inputs, tag_indices):
         self.bs, self.sl, self.nc = inputs.size()
-        inputs = torch.softmax(inputs, 2)[:, -1, :]
-        one_hot_tag_indexes = torch.nn.functional.one_hot(tag_indices)
+        softmax_inputs = torch.softmax(inputs, 2)[:, -1, :]
+        one_hot_tag_indexes = torch.nn.functional.one_hot(tag_indices, num_classes=self.num_tag)
         one_hot_tag_indexes = torch.tensor(one_hot_tag_indexes, dtype=torch.float)
-        criterion = torch.nn.CrossEntropyLoss()
-        loss = criterion(inputs, one_hot_tag_indexes)
-        # loss = loss / self.bs
+        loss = self.loss_func(softmax_inputs, one_hot_tag_indexes)
         return loss, self._transitions
 
 

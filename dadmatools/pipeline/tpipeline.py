@@ -698,7 +698,7 @@ class TPipeline:
         best_epoch = 0
         for epoch in range(self._config.max_epoch):
             self._printlog('*' * 30)
-            self._printlog('NER: Epoch: {}'.format(epoch))
+            self._printlog('SENT: Epoch: {}'.format(epoch))
             # training set
             progress = tqdm(total=self.batch_num, ncols=75,
                             desc='Train {}'.format(epoch))
@@ -718,7 +718,7 @@ class TPipeline:
                 self.optimizer.step()
                 self.schedule.step()
                 self.optimizer.zero_grad()
-                self._printlog('NER: step: {}/{}, loss: {}'.format(batch_idx + 1, self.batch_num, loss.item()),
+                self._printlog('SENT: step: {}/{}, loss: {}'.format(batch_idx + 1, self.batch_num, loss.item()),
                                printout=False)
             progress.close()
             dev_score = self._eval_sent(data_set=self.dev_set, batch_num=self.dev_batch_num,
@@ -726,7 +726,7 @@ class TPipeline:
 
             if dev_score['f1'] > best_dev['f1']:
                 self._save_model(ckpt_fpath=os.path.join(self._config._save_dir,
-                                                         '{}.ner.mdl'.format(self._lang)),
+                                                         '{}.sent.mdl'.format(self._lang)),
                                  epoch=epoch)
 
                 best_dev = dev_score

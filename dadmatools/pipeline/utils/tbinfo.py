@@ -2,6 +2,10 @@ supported_embeddings = ['xlm-roberta-base', 'xlm-roberta-large']
 
 saved_model_version = 'v1.0.0'
 
+langwithsent = {
+    'persian',
+}
+
 langwithner = {
     'arabic',
     'chinese',
@@ -232,6 +236,7 @@ lang2treebank = {
     'customized': 'UD_Customized',
     'customized-mwt': 'UD_Customized-MWT',
     'customized-ner': 'UD_Customized-NER',
+    'customized-sentiment': 'UD_Customized-SENT',
     'customized-mwt-ner': 'UD_Customized-MWT-NER',
 }
 
