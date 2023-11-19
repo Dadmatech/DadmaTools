@@ -11,6 +11,9 @@ import pickle
 import numpy as np
 import transformers
 import re
+import shutil
+from huggingface_hub import hf_hub_download
+
 ################### helpers   ###################
 from transformers import BertConfig, AutoModel
 
@@ -342,7 +345,7 @@ class SubwordBert(nn.Module):
         ###################
         ###################
         ### here is the bug
-        config = BertConfig.from_pretrained('DadmaTools-main/dadmatools/saved_models/spellchecker/nevise/')
+        config = BertConfig.from_pretrained('Dadmatech/Nevise')
         ##################
 
         self.bert_model = AutoModel.from_config(config)
@@ -602,19 +605,26 @@ def spell_checking_on_sents(model, BERT_TOKENIZER, vocab, device, txt):
 
 def get_config():
     config = {
-        'save_model': 'saved_models/spellchecker/nevise/state_dict_nevise.pt',
-        'save_vocab': 'saved_models/spellchecker/nevise/vocab.pkl',
-        'config_tokenizer': 'saved_models/spellchecker/nevise/'
+        'save_model': 'saved_models/spellchecker/nevise/Nevise/state_dict_nevise.pt',
+        'save_vocab': 'saved_models/spellchecker/nevise/Nevise/vocab.pkl',
+        'config_tokenizer': 'saved_models/spellchecker/nevise/Nevise'
     }
     return config
 
 
 def load_model():
     dl.download_model('spellchecker', process_func=dl._unzip_process_func)
-
     config = get_config()
     prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    print(f'config1 {config}')
+    hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.pkl", local_dir="./DadmaTools-main/dadmatools/saved_models/spellchecker/nevise/Nevise")
 
+
+    # print(a)
+    # hf_hub_download(repo_id="Dadmatech/Nevise", filename="state_dict_nevise.pt")
+    # hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.pkl")
+    # config = BertConfig.from_pretrained('Dadmatech/Nevise')
+    # print(f'config2 {config}')
     model_path = prefix + config['save_model']
     vocab_path = prefix + config['save_vocab']
     tokenizer_config_path = prefix + config['config_tokenizer']
@@ -625,7 +635,6 @@ def load_model():
     # normalizer = Normalizer(punctuation_spacing=False, remove_extra_spaces=False)
     model, vocab, device = load_pre_model(vocab_path=vocab_path, model_checkpoint_path=model_path,
                                           tokenizer_config_path=tokenizer_config_path)
-
     BERT_TOKENIZER = transformers.BertTokenizer.from_pretrained(tokenizer_config_path,
                                                                 do_lower_case=False)
     BERT_TOKENIZER.do_basic_tokenize = False
@@ -640,11 +649,11 @@ def spellchecker(nlp, sentence):
     model, vocab, device, BERT_TOKENIZER = nlp
     output = spell_checking_on_sents(model, BERT_TOKENIZER, vocab, device, sentence)
     # output_dict = {'correct':output[0][1].replace("*","")}
-    checked = output[1].replace('*','')
+    checked = output[1].replace('*', '')
     # print(sentence)
     # print(checked)
     # print(create_output(output))
-    return {'orginal':sentence, 'corrected':checked, 'checked_words': create_output(output)}
+    return {'orginal': sentence, 'corrected': checked, 'checked_words': create_output(output)}
 
 
 # print(spellchecker(load_model(), 'جمله تستی برای نویسه اسست'))
