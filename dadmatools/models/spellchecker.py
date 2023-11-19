@@ -605,34 +605,38 @@ def spell_checking_on_sents(model, BERT_TOKENIZER, vocab, device, txt):
 
 def get_config():
     config = {
-        'save_model': 'saved_models/spellchecker/nevise/Nevise/state_dict_nevise.pt',
-        'save_vocab': 'saved_models/spellchecker/nevise/Nevise/vocab.pkl',
-        'config_tokenizer': 'saved_models/spellchecker/nevise/Nevise'
+        'save_model': 'spellchecker/state_dict_nevise.pt',
+        'save_vocab': 'spellchecker/vocab.pkl',
+        'config_tokenizer': 'spellchecker'
     }
     return config
 
 
+def create_saved_model_dir():
+    if not os.path.isdir("./saved_models"):
+        os.makedirs("path/to/demo_folder2")
+
+
+def download_from_hf():
+    hf_hub_download(repo_id="Dadmatech/Nevise", filename="config.json", local_dir="./saved_models/spellchecker")
+    hf_hub_download(repo_id="Dadmatech/Nevise", filename="state_dict_nevise.pt",
+                    local_dir="./saved_models/spellchecker")
+    hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.pkl", local_dir="./saved_models/spellchecker")
+    hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.txt", local_dir="./saved_models/spellchecker")
+
+
 def load_model():
-    dl.download_model('spellchecker', process_func=dl._unzip_process_func)
+    # prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+    create_saved_model_dir()
+    download_from_hf()
+
     config = get_config()
-    prefix = str(Path(__file__).parent.absolute()).replace('models', '')
-    print(f'config1 {config}')
-    hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.pkl", local_dir="./DadmaTools-main/dadmatools/saved_models/spellchecker/nevise/Nevise")
+    prefix = './saved_models/'
 
-
-    # print(a)
-    # hf_hub_download(repo_id="Dadmatech/Nevise", filename="state_dict_nevise.pt")
-    # hf_hub_download(repo_id="Dadmatech/Nevise", filename="vocab.pkl")
-    # config = BertConfig.from_pretrained('Dadmatech/Nevise')
-    # print(f'config2 {config}')
     model_path = prefix + config['save_model']
     vocab_path = prefix + config['save_vocab']
     tokenizer_config_path = prefix + config['config_tokenizer']
-    # tokenizer_config_path = 'nevise'
-    # vocab_path = 'nevise/vocab.pkl'
-    # model_path = 'nevise/state_dict_nevise.pt'
 
-    # normalizer = Normalizer(punctuation_spacing=False, remove_extra_spaces=False)
     model, vocab, device = load_pre_model(vocab_path=vocab_path, model_checkpoint_path=model_path,
                                           tokenizer_config_path=tokenizer_config_path)
     BERT_TOKENIZER = transformers.BertTokenizer.from_pretrained(tokenizer_config_path,
