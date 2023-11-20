@@ -14,6 +14,7 @@ import time
 from datetime import datetime
 import shutil
 from .scorers import conll18_ud_eval as ud_eval
+from huggingface_hub import hf_hub_download
 
 SPACE_RE = re.compile(r'\s')
 
@@ -117,6 +118,27 @@ def download(cache_dir, language, saved_model_version, embedding_name):  # put a
         else:
             with open(os.path.join(lang_dir, '{}.downloaded'.format(language)), 'w') as f:
                 f.write('')
+
+
+def download_hf(save_dir: str, pipelines):
+    if not os.path.exists(save_dir): os.makedirs(save_dir, exist_ok=True)
+
+    hf_hub_download(repo_id=f"Dadmatech/Vocab", filename='persian.vocabs.json', local_dir=save_dir)
+    hf_hub_download(repo_id=f"Dadmatech/Lemmatizer", filename='persian_lemmatizer.pt', local_dir=save_dir)
+    hf_hub_download(repo_id=f"Dadmatech/mwt_expander", filename='persian_mwt_expander.pt', local_dir=save_dir)
+    hf_hub_download(repo_id=f"Dadmatech/POS", filename='persian.tagger.mdl', local_dir=save_dir)
+    hf_hub_download(repo_id=f"Dadmatech/tokenizer", filename='persian.tokenizer.mdl', local_dir=save_dir)
+
+    if KASREH in pipelines:
+        hf_hub_download(repo_id=f"Dadmatech/Kasreh_ezafe", filename='persian.kasreh.mdl', local_dir=save_dir)
+        hf_hub_download(repo_id=f"Dadmatech/Kasreh_ezafe", filename='persian.kasreh-vocab.json', local_dir=save_dir)
+
+    if NER in pipelines:
+        hf_hub_download(repo_id=f"Dadmatech/NER", filename='persian.ner.mdl', local_dir=save_dir)
+        hf_hub_download(repo_id=f"Dadmatech/NER", filename='persian.ner-vocab.json', local_dir=save_dir)
+
+    if SENT in pipelines:
+        hf_hub_download(repo_id=f"Dadmatech/Sent", filename='persian.sent.mdl', local_dir=save_dir)
 
 
 def tget_output_doc(conllu_doc):

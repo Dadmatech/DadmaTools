@@ -7,6 +7,7 @@ langwithsent = {
 }
 
 langwithner = {
+    'persian',
     'arabic',
     'chinese',
     'traditional-chinese',

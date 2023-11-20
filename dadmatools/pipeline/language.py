@@ -76,16 +76,12 @@ class Pipeline:
         self._config.training = False
         self.added_langs = [lang]
         for lang in self.added_langs:
-            assert lang in lang2treebank, '{} has not been supported. Currently supported languages: {}'.format(lang,
-                                                                                                                list(
-                                                                                                                    lang2treebank.keys()))
-        # download saved model for initial language
-        download(
-            cache_dir=self._config._cache_dir,
-            language=lang,
-            saved_model_version=saved_model_version,  # manually set this to avoid duplicated storage
-            embedding_name=master_config.embedding_name
-        )
+            assert lang in lang2treebank, '{} has not been supported. Currently supported languages: {}'.format(
+                lang,
+                list(lang2treebank.keys())
+            )
+
+        download_hf(f'{self._config._cache_dir}/{master_config.embedding_name}/{lang}', self.pipelines)
 
         # load ALL vocabs
         self._load_vocabs()
@@ -106,7 +102,7 @@ class Pipeline:
                 self._tokenizer[lang].half()
             self._tokenizer[lang].eval()
 
-        if POS in self.pipelines:
+        if POS in self.pipelines or DEP in self.pipelines:
             # taggers
             self._tagger = {}
             for lang in self.added_langs:
@@ -122,10 +118,13 @@ class Pipeline:
             treebank_name = lang2treebank[lang]
             if tbname2training_id[treebank_name] % 2 == 1:
                 self._mwt_model[lang] = MWTWrapper(self._config, treebank_name=treebank_name, use_gpu=self._use_gpu)
-        self._lemma_model = {}
-        for lang in self.added_langs:
-            treebank_name = lang2treebank[lang]
-            self._lemma_model[lang] = LemmaWrapper(self._config, treebank_name=treebank_name, use_gpu=self._use_gpu)
+
+        if LEMMA in self.pipelines:
+            self._lemma_model = {}
+            for lang in self.added_langs:
+                treebank_name = lang2treebank[lang]
+                self._lemma_model[lang] = LemmaWrapper(self._config, treebank_name=treebank_name, use_gpu=self._use_gpu)
+
         # ner if possible
         if NER in self.pipelines:
             self._ner_model = {}
@@ -182,7 +181,7 @@ class Pipeline:
             self._tagbatchsize = 12
 
         if self._cache_dir is None:
-            master_config._cache_dir = 'cache/trankit'
+            master_config._cache_dir = 'cache/dadmatools'
         else:
             master_config._cache_dir = self._cache_dir
 
@@ -1208,7 +1207,7 @@ class Pipeline:
                     final[SPELLLCHECKER] = spellchecker_result
                     input = spellchecker_result['corrected']
                 out = self._tokenize_doc(input)
-                if POS in self.pipelines:
+                if POS in self.pipelines or DEP in self.pipelines:
                     out = self._posdep_doc(out)
                 if LEMMA in self.pipelines:
                     out = self._lemmatize_doc(out)
