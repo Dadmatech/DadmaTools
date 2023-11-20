@@ -5,6 +5,7 @@ from .models.base_models import Multilingual_Embedding
 from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier
 from .models.mwt_model import MWTWrapper
 from .models.lemma_model import LemmaWrapper
+from .models.spellchecker import load_model as load_spellchecker_model, spellchecker
 from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
@@ -146,6 +147,9 @@ class Pipeline:
                     if self._use_gpu:
                         self._sent_model[lang].half()
                     self._sent_model[lang].eval()
+
+        if SPELLLCHECKER in self.pipelines:
+            self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)
 
         # load and hold the pretrained weights
         self._embedding_weights = self._embedding_layers.state_dict()
@@ -1198,6 +1202,11 @@ class Pipeline:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
+                final = {SENTENCES: ori_text}
+                if SPELLLCHECKER in self.pipelines:
+                    spellchecker_result = spellchecker(self._spellchecker_model, input)
+                    final[SPELLLCHECKER] = spellchecker_result
+                    input = spellchecker_result['corrected']
                 out = self._tokenize_doc(input)
                 if POS in self.pipelines:
                     out = self._posdep_doc(out)
@@ -1205,7 +1214,7 @@ class Pipeline:
                     out = self._lemmatize_doc(out)
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_doc(out)
-                final = {TEXT: ori_text, SENTENCES: out, LANG: self.active_lang}
+                final.update({SENTENCES: out, LANG: self.active_lang})
                 if self._config.active_lang in langwithsent and SENT in self.pipelines:  # ner if possible
                     sentiment = self._sent_doc(out)
                     final['sentiment'] = sentiment
