@@ -11,13 +11,13 @@ from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
 from .iterators.sent_iterators import SentDatasetLive
+from .persian_tokenization.tokenizer import tokenizer, load_tokenizer_model
 from .utils.tokenizer_utils import *
 from collections import defaultdict
 from .utils.conll import *
 from .utils.tbinfo import tbname2training_id, lang2treebank
 from .utils.chuliu_edmonds import *
 from .adapter_transformers import XLMRobertaTokenizer
-from datetime import datetime
 import langid
 
 
@@ -95,6 +95,7 @@ class Pipeline:
             self._embedding_layers.half()
         self._embedding_layers.eval()
         # tokenizers
+        self.persian_tokenizer = load_tokenizer_model(self._config._cache_dir)
         self._tokenizer = {}
         for lang in self.added_langs:
             self._tokenizer[lang] = TokenizerClassifier(self._config, treebank_name=lang2treebank[lang])
@@ -1105,7 +1106,6 @@ class Pipeline:
         torch.cuda.empty_cache()
         return dner_doc
 
-
     def _kasreh_doc(self, in_doc):  # assuming input is a document
         if KASREH not in self.pipelines:
             return in_doc
@@ -1263,12 +1263,16 @@ class Pipeline:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                final = {SENTENCES: ori_text}
+                final = {}
                 if SPELLLCHECKER in self.pipelines:
                     spellchecker_result = spellchecker(self._spellchecker_model, input)
                     final[SPELLLCHECKER] = spellchecker_result
                     input = spellchecker_result['corrected']
-                out = self._tokenize_doc(input)
+                if self.active_lang == 'persian':
+                    input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
+                    out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in enumerate(input)]
+                else:
+                    out = self._tokenize_doc(input)
                 if POS in self.pipelines or DEP in self.pipelines:
                     out = self._posdep_doc(out)
                 if LEMMA in self.pipelines:

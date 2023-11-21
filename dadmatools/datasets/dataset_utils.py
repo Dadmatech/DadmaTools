@@ -13,7 +13,7 @@ import py7zr
 DATASETS_INFO_ADDR = os.path.join(os.path.dirname(__file__), 'datasets_info.py')
 DATASETS_DIR = os.path.join(os.path.dirname(__file__), 'datasets')
 DATASET_INFO = json.load(open(DATASETS_INFO_ADDR, 'r'))
-DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
+# DEFAULT_DESTINATION = os.path.join(str(Path(__file__).parent.absolute()).replace('/pipeline', ''), 'saved_models')
 DEFAULT_CACHE_DIR = os.path.join(str(Path.home()), '.dadmatools', 'datasets')
 def unzip_dataset(from_path: str, to_path: str, zip_format=None) -> Path:
     """Unzip archive.
