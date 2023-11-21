@@ -1,0 +1,6 @@
+pandas
+hazm
+datasets
+PyYAML
+kenlm
+git+https://github.com/kpu/kenlm@master#egg=kenlm

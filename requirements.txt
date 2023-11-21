@@ -31,3 +31,5 @@ packaging
 sentencepiece
 sacremoses
 pandas
+hazm
+kenlm

@@ -1,6 +1,7 @@
 from typing import List
 
 from .config import config as master_config
+from .informal2formal.main import Informal2Formal
 from .models.base_models import Multilingual_Embedding
 from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier, \
     KasrehClassifier
@@ -162,6 +163,9 @@ class Pipeline:
 
         if SPELLLCHECKER in self.pipelines:
             self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)
+
+        if ITF in self.pipelines:
+            self._itf_model = Informal2Formal(self._config._cache_dir)
 
         # load and hold the pretrained weights
         self._embedding_weights = self._embedding_layers.state_dict()
@@ -1262,12 +1266,13 @@ class Pipeline:
                 if self.auto_mode:
                     self._detect_lang_and_switch(text=input)
 
-                ori_text = deepcopy(input)
                 final = {}
                 if SPELLLCHECKER in self.pipelines:
                     spellchecker_result = spellchecker(self._spellchecker_model, input)
                     final[SPELLLCHECKER] = spellchecker_result
-                    input = spellchecker_result['corrected']
+                if ITF in self.pipelines:
+                    itf_result = self._itf_model.translate(input)
+                    final[ITF] = itf_result
                 if self.active_lang == 'persian':
                     input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
                     out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in enumerate(input)]
