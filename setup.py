@@ -48,6 +48,7 @@ setuptools.setup(
         'sacremoses',
         'fasttext',
         'hazm',
+        'kenlm',
     ],
 
     dependency_links = [
