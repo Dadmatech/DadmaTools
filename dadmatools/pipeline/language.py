@@ -2,7 +2,8 @@ from typing import List
 
 from .config import config as master_config
 from .models.base_models import Multilingual_Embedding
-from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier
+from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier, \
+    KasrehClassifier
 from .models.mwt_model import MWTWrapper
 from .models.lemma_model import LemmaWrapper
 from .models.spellchecker import load_model as load_spellchecker_model, spellchecker
@@ -136,6 +137,17 @@ class Pipeline:
                         self._ner_model[lang].half()
                     self._ner_model[lang].eval()
 
+        # kasreh if possible
+        if KASREH in self.pipelines:
+            self._kasreh_model = {}
+            for lang in self.added_langs:
+                if lang in langwithkasreh:
+                    self._kasreh_model[lang] = KasrehClassifier(self._config, lang)
+                    self._kasreh_model[lang].to(self._config.device)
+                    if self._use_gpu:
+                        self._kasreh_model[lang].half()
+                    self._kasreh_model[lang].eval()
+
         # sentiment if possible
         if SENT in self.pipelines:
             self._sent_model = {}
@@ -264,6 +276,10 @@ class Pipeline:
             with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
                                    '{}/{}.ner-vocab.json'.format(lang, lang))) as f:
                 self._config.ner_vocabs[lang] = json.load(f)
+        if lang in langwithkasreh:
+            with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
+                                   '{}/{}.kasreh-vocab.json'.format(lang, lang))) as f:
+                self._config.kasreh_vocabs[lang] = json.load(f)
         self._config.itos[lang][UPOS] = {v: k for k, v in vocabs[UPOS].items()}
         self._config.itos[lang][XPOS] = {v: k for k, v in vocabs[XPOS].items()}
         self._config.itos[lang][FEATS] = {v: k for k, v in vocabs[FEATS].items()}
@@ -301,6 +317,7 @@ class Pipeline:
     def _load_vocabs(self):
         self._config.vocabs = {}
         self._config.ner_vocabs = {}
+        self._config.kasreh_vocabs = {}
         self._config.itos = defaultdict(dict)
         for lang in self.added_langs:
             treebank_name = lang2treebank[lang]
@@ -317,17 +334,24 @@ class Pipeline:
                 with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
                                        '{}/{}.ner-vocab.json'.format(lang, lang))) as f:
                     self._config.ner_vocabs[lang] = json.load(f)
+            # kasreh vocabs
+            if lang in langwithkasreh:
+                with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
+                                       '{}/{}.kasreh-vocab.json'.format(lang, lang))) as f:
+                    self._config.kasreh_vocabs[lang] = json.load(f)
 
     def _load_adapter_weights(self, model_name):
         if model_name not in self.pipelines:
             return
-        assert model_name in ['tokenizer', 'pos', 'ner', 'sent']
+        assert model_name in ['tokenizer', 'pos', 'ner', 'sent', 'kasreh']
         if model_name == 'tokenizer':
             pretrained_weights = self._tokenizer[self._config.active_lang].pretrained_tokenizer_weights
         elif model_name == 'pos':
             pretrained_weights = self._tagger[self._config.active_lang].pretrained_tagger_weights
         elif model_name == 'sent':
             pretrained_weights = self._sent_model[self._config.active_lang].pretrained_sent_weights
+        elif model_name == 'kasreh':
+            pretrained_weights = self._kasreh_model[self._config.active_lang].pretrained_kasreh_weights
         else:
             assert model_name == 'ner'
             pretrained_weights = self._ner_model[self._config.active_lang].pretrained_ner_weights
@@ -1082,6 +1106,44 @@ class Pipeline:
         return dner_doc
 
 
+    def _kasreh_doc(self, in_doc):  # assuming input is a document
+        if KASREH not in self.pipelines:
+            return in_doc
+        if type(in_doc) == str:
+            in_doc = self._tokenize_doc(in_doc)
+        dkasreh_doc = deepcopy(in_doc)
+        sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dkasreh_doc]
+        test_set = SentDatasetLive(
+            config=self._config,
+            tokenized_sentences=sentences
+        )
+        test_set.numberize()
+        # load ner adapter weights
+        self._load_adapter_weights(model_name='ner')
+        eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
+        if self._config.embedding_name == 'xlm-roberta-large':
+            eval_batch_size = int(eval_batch_size / 3)
+
+        for batch in DataLoader(test_set,
+                                batch_size=eval_batch_size,
+                                shuffle=False, collate_fn=test_set.collate_fn):
+            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+            pred_entity_labels = self._kasreh_model[self._config.active_lang].predict(batch, word_reprs)
+
+            batch_size = len(batch.word_num)
+
+            for bid in range(batch_size):
+                sentid = batch.sent_index[bid]
+                for i in range(batch.word_num[bid]):
+                    wordid = batch.word_ids[bid][i]
+
+                    # NER tag
+                    dkasreh_doc[sentid][TOKENS][wordid][KASREH] = pred_entity_labels[bid][i]
+
+        torch.cuda.empty_cache()
+        return dkasreh_doc
+
+
     def _sent_sent(self, in_sent):  # assuming input is a document
         if type(in_sent) == str:
             in_sent = self._tokenize_sent(in_sent)
@@ -1213,8 +1275,10 @@ class Pipeline:
                     out = self._lemmatize_doc(out)
                 if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
                     out = self._ner_doc(out)
+                if self._config.active_lang in langwithkasreh and KASREH in self.pipelines:  # kasreh if possible
+                    out = self._kasreh_doc(out)
                 final.update({SENTENCES: out, LANG: self.active_lang})
-                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # ner if possible
+                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
                     sentiment = self._sent_doc(out)
                     final['sentiment'] = sentiment
         return final

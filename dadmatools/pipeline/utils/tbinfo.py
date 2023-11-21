@@ -6,6 +6,10 @@ langwithsent = {
     'persian',
 }
 
+langwithkasreh = {
+    'persian',
+}
+
 langwithner = {
     'persian',
     'arabic',
