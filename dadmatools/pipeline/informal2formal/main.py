@@ -72,7 +72,7 @@ def load_config(config_file):
 
 
 class Informal2Formal:
-    def __init__(self, cache_dir) -> None:
+    def __init__(self, cache_dir: str = 'cache') -> None:
         #download or load files
         config = load_config(f'{os.path.dirname(os.path.realpath(__file__))}/config.yml')
         file_urls = config['files'].values()

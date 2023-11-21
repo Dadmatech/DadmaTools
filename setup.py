@@ -48,7 +48,10 @@ setuptools.setup(
         'sacremoses',
         'fasttext',
         'hazm',
-        'kenlm',
+    ],
+
+    dependency_links = [
+        'git+https://github.com/kpu/kenlm@master#egg=kenlm',
     ],
 
     classifiers=[
