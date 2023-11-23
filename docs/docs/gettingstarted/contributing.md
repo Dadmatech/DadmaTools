@@ -9,8 +9,9 @@ If you want to contribute to the DadmaTools project, your help is very welcome. 
 You can add also your own pipeline using `add_pipe` when you have created `dadmatools.pipeline.language.pipeline`.
 
 ```python
-import dadmatools.pipeline.language as language
-pips = '<choose whatever you want for pipelion>' 
+import dadmatools.pipeline_v1.language as language
+
+pips = '<choose whatever you want for pipelion>'
 nlp = language.Pipeline(pips)
 nlp.add_pipe('<your own OR spaCy default pipeline>')
 ```

@@ -34,10 +34,10 @@ With DadmaTools you can try out different NLP tasks along with other pipelines t
 Perform [Part-of-Speech tagging](../tasks/pos.md), [Named Entity Recognition](../tasks/ner.md) and [dependency parsing](../tasks/dependency.md) at the same time with the DadmaTools spaCy model.
 Here is a snippet to quickly getting started: 
 
-For text normalizing you can use the `dadmatools.models.normalizer`. 
+For text normalizing you can use the `dadmatools.models.normalizer`.
 
 ```python
-from dadmatools.models.normalizer import Normalizer
+from dadmatools.normalizer import Normalizer
 
 normalizer = Normalizer(
     full_cleaning=False,
@@ -65,27 +65,26 @@ text = """
 </p>
 """
 normalized_text = normalizer.normalize(text)
-#<p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
+# <p> دادماتولز اولین نسخش سال 1400 منتشر شده. امیدواریم که این تولز بتونه کار با متن رو براتون شیرین‌تر و راحت‌تر کنه لطفا با ایمیل <EMAIL> با ما در ارتباط باشید آدرس گیت‌هاب هم که خب معرف حضور مبارک هست: </p>
 
-#full cleaning
+# full cleaning
 normalizer = Normalizer(full_cleaning=True)
 normalized_text = normalizer.normalize(text)
-#دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
+# دادماتولز نسخش سال منتشر تولز بتونه کار متن براتون شیرین‌تر راحت‌تر کنه ایمیل ارتباط آدرس گیت‌هاب معرف حضور مبارک
 
 ```
 
 
 ## Sequence labelling with BERT
 
-For part-of-speech tagging, dependancy parsing, constituency parsing and named entity recognition, BERT models are presented. 
-
+For part-of-speech tagging, dependancy parsing, constituency parsing and named entity recognition, BERT models are presented.
 
 ```python
-import dadmatools.pipeline.language as language
+import dadmatools.pipeline_v1.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'pos,dep,cons,ner' 
+pips = 'pos,dep,cons,ner'
 nlp = language.Pipeline(pips)
 
 # you can see the pipeline with this code
@@ -95,9 +94,9 @@ print(nlp.analyze_pipes(pretty=True))
 doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
 
 dictionary = language.to_json(pips, doc)
-print(dictionary) ## to show pos tags, dependancy parses, and constituency parses
+print(dictionary)  ## to show pos tags, dependancy parses, and constituency parses
 print(doc._.ners)
-    
+
 ```
 
 

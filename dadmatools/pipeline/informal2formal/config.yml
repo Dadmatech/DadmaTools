@@ -1,0 +1,5 @@
+files:
+  lm: https://huggingface.co/datasets/Dadmatech/informal2formal/resolve/main/3gram.bin
+  assets: https://huggingface.co/datasets/Dadmatech/informal2formal/resolve/main/assets.pkl
+  irregular_verb: https://huggingface.co/datasets/Dadmatech/informal2formal/raw/main/irregular_verb_mapper.csv
+  verbs: https://huggingface.co/datasets/Dadmatech/informal2formal/raw/main/verbs.csv
