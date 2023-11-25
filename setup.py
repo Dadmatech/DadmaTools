@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dadmatools",
-    version="1.5.2",
+    version="2.0.0",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -35,7 +35,7 @@ setuptools.setup(
         "html2text",
         "tf-estimator-nightly==2.8.0.dev2021122109",
         "scikit-learn>=0.24.2",
-        'numpy',
+        'numpy>=1.24.3',
         'protobuf',
         'requests',
         'tqdm>=4.27',
