@@ -341,7 +341,7 @@ class Pipeline:
                 with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
                                        '{}/{}.ner-vocab.json'.format(lang, lang))) as f:
                     self._config.ner_vocabs[lang] = json.load(f)
-p
+
             # kasreh vocabs
             if lang in langwithkasreh and KASREH in pipelines:
 
