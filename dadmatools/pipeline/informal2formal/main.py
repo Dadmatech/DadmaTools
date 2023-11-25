@@ -7,6 +7,12 @@ import dadmatools.pipeline.informal2formal.utils as utils
 from .formality_transformer import FormalityTransformer
 from hazm import SentenceTokenizer
 
+FILE_URLS = [
+    'https://huggingface.co/datasets/Dadmatech/informal2formal/resolve/main/3gram.bin',
+    'https://huggingface.co/datasets/Dadmatech/informal2formal/resolve/main/assets.pkl',
+    'https://huggingface.co/datasets/Dadmatech/informal2formal/raw/main/irregular_verb_mapper.csv',
+    'https://huggingface.co/datasets/Dadmatech/informal2formal/raw/main/verbs.csv'
+]
 
 def translate_short_sent(model, sent):
     out_dict = {}
@@ -73,21 +79,19 @@ def load_config(config_file):
 
 class Informal2Formal:
     def __init__(self, cache_dir: str = 'cache') -> None:
-        #download or load files
-        config = load_config(f'{os.path.dirname(os.path.realpath(__file__))}/config.yml')
-        file_urls = config['files'].values()
-        download_dataset(file_urls, cache_dir, filename=None)
-        
+        # download or load files
+
+        download_dataset(FILE_URLS, cache_dir, filename=None)
+
         # set assets files address
         verbs_csv_addr = os.path.join(cache_dir, 'verbs.csv')
         irregular_verbs_mapper = os.path.join(cache_dir, 'irregular_verb_mapper.csv')
-        lm_addr = os.path.join(cache_dir,'3gram.bin')
-        assets_file_addr = os.path.join(cache_dir,'assets.pkl')
+        lm_addr = os.path.join(cache_dir, '3gram.bin')
+        assets_file_addr = os.path.join(cache_dir, 'assets.pkl')
         self.sentence_tokenizer = SentenceTokenizer()
-        self.model = FormalityTransformer(asset_file_addr=assets_file_addr, 
-                                    irregular_verbs_mapper_addr=irregular_verbs_mapper, verbs_csv_addr=verbs_csv_addr, lm_addr=lm_addr)
+        self.model = FormalityTransformer(asset_file_addr=assets_file_addr,
+                                          irregular_verbs_mapper_addr=irregular_verbs_mapper,
+                                          verbs_csv_addr=verbs_csv_addr, lm_addr=lm_addr)
+
     def translate(self, txt):
-
         return translate(self.model, self.sentence_tokenizer, txt)
-
-
