@@ -97,6 +97,7 @@ Each task has its abbreviation as follows:
 -  Tokenizing: ```tok```
 -  Spellchecker: ```spellchecker```
 -  Normalizing
+-  informal2formal: ```itf```
 
 **Note** that the normalizer can be used outside of the pipeline as there are several configs (the default config is in the pipeline with the name of def-norm).
 **Note** that if no pipeline is passed to the model, the tokenizer will be loaded as default.
@@ -114,6 +115,7 @@ Each task has its abbreviation as following:
 -  ```spellchecker```: SpellChecker
 -  ```lem```: Lemmatizing
 -  ```tok```: Tokenizing
+-  ```itf```: informal to formal
 
 Note that the normalizer can be used outside of the pipeline as there are several configs.
 Note that if no pipeline is passed to the model the tokenizer will be load as default. -->
