@@ -86,7 +86,7 @@ class Pipeline:
         download_hf(f'{self._config._cache_dir}/{master_config.embedding_name}/{lang}', self.pipelines)
 
         # load ALL vocabs
-        self._load_vocabs()
+        self._load_vocabs(self.pipelines)
 
         # shared multilingual embeddings
         print('Loading pretrained XLM-Roberta, this may take a while...')
@@ -319,7 +319,8 @@ class Pipeline:
             self._ner_model[lang].eval()
         self.added_langs.append(lang)
 
-    def _load_vocabs(self):
+    def _load_vocabs(self, pipelines):
+
         self._config.vocabs = {}
         self._config.ner_vocabs = {}
         self._config.kasreh_vocabs = {}
@@ -334,13 +335,16 @@ class Pipeline:
             self._config.itos[lang][XPOS] = {v: k for k, v in vocabs[XPOS].items()}
             self._config.itos[lang][FEATS] = {v: k for k, v in vocabs[FEATS].items()}
             self._config.itos[lang][DEPREL] = {v: k for k, v in vocabs[DEPREL].items()}
+
             # ner vocabs
-            if lang in langwithner:
+            if lang in langwithner and NER in pipelines:
                 with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
                                        '{}/{}.ner-vocab.json'.format(lang, lang))) as f:
                     self._config.ner_vocabs[lang] = json.load(f)
+p
             # kasreh vocabs
-            if lang in langwithkasreh:
+            if lang in langwithkasreh and KASREH in pipelines:
+
                 with open(os.path.join(self._config._cache_dir, master_config.embedding_name,
                                        '{}/{}.kasreh-vocab.json'.format(lang, lang))) as f:
                     self._config.kasreh_vocabs[lang] = json.load(f)
