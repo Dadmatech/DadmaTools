@@ -18,6 +18,8 @@
       Part of Speech Tagging
     <span> | </span>
       Dependency Parsing
+    <span> | </span>
+      Informal To Formal
   </h5>
   <h5>
       Constituency Parsing
