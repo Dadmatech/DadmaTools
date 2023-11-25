@@ -1,5 +1,6 @@
 import itertools
-import dadmatools.pipeline.informal2formal.utils as utils
+import dadmatools.pipeline.informal2formal.utils as utilss
+
 
 class InformalTokenizer:
     def __init__(self, vocab, postfixes):
@@ -118,11 +119,9 @@ class InformalTokenizer:
             return True
         return False
 
-
-
     def seperate_conjs(self, word, validator):
         conjs = ['و', 'در', 'با', 'تا', 'که', 'از', 'تو', 'من', 'شما']
-        cnds = utils.split_conj_words(word, conjs)
+        cnds = utilss.split_conj_words(word, conjs)
         valid_cnds = [c for c in cnds if validator(c)]
         if valid_cnds:
             return valid_cnds
