@@ -163,14 +163,14 @@ normalized_text = normalizer.normalize(text)
 ```
 
 ### Pipeline
-Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, spellcheker.
+Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, Spellcheker, Infromal To Formal, Name Entity Recognation.
 
 ```python
 import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf'
+pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf, ner'
 nlp = language.Pipeline(pips)
 
 # doc is an SpaCy object
