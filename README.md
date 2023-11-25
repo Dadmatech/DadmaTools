@@ -174,7 +174,7 @@ pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf'
 nlp = language.Pipeline(pips)
 
 # doc is an SpaCy object
-doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
+doc = nlp('از قصهٔ کودکیشون که می‌گفت، گاحی حرص می‌خورد!')
 ```
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there are ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extensions. Note that we defined our own extension as well in DadmaTools. If any pipeline related to the specific extensions is not called, that extension will have no value.
 
