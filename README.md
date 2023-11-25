@@ -316,24 +316,6 @@ print(dictionary)
 
 ```
 
-```python
-sentences = doc._.sentences
-for sentence in sentences:
-    text = sentence.text
-    for token in sentence:
-        token_text = token.text
-        lemma = token.lemma_ ## this has value only if lem is called
-        pos_tag = token.pos_ ## this has value only if pos is called
-        dep = token.dep_ ## this has value only if dep is called
-        dep_arc = token._.dep_arc ## this has value only if dep is called
-sent_constituency = doc._.constituency ## this has value only if cons is called
-sent_chunks = doc._.chunks ## this has value only if cons is called
-ners = doc._.ners ## this has value only if ner is called
-spellchekers = doc._.spellchecker ## this has value only if spellchecker is called
-kasreh = doc._.kasreh_ezafe ## this has value only if kasreh is called
-```
-
-**Note** that ```_.constituency``` and ```_.chunks``` are the object of [SuPar](https://parser.yzhang.site/en/latest/) class.
 
 ## Loading Persian NLP Datasets
 We provide an easy-to-use way to load some popular Persian NLP datasets
