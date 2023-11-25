@@ -97,6 +97,7 @@ Each task has its abbreviation as follows:
 -  Tokenizing: ```tok```
 -  Spellchecker: ```spellchecker```
 -  Normalizing
+-  informal2formal: ```itf```
 
 **Note** that the normalizer can be used outside of the pipeline as there are several configs (the default config is in the pipeline with the name of def-norm).
 **Note** that if no pipeline is passed to the model, the tokenizer will be loaded as default.
@@ -114,6 +115,7 @@ Each task has its abbreviation as following:
 -  ```spellchecker```: SpellChecker
 -  ```lem```: Lemmatizing
 -  ```tok```: Tokenizing
+-  ```itf```: informal to formal
 
 Note that the normalizer can be used outside of the pipeline as there are several configs.
 Note that if no pipeline is passed to the model the tokenizer will be load as default. -->
@@ -161,21 +163,18 @@ normalized_text = normalizer.normalize(text)
 ```
 
 ### Pipeline
-Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, spellcheker.
+Containing Tokenizer, Lemmatizer, POS Tagger, Dependancy Parser, Constituency Parser, Kasreh, Spellcheker, Infromal To Formal, Name Entity Recognation.
 
 ```python
 import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok,lem,pos,dep,chunk,cons,spellchecker,kasreh'
+pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf, ner'
 nlp = language.Pipeline(pips)
 
-# you can see the pipeline with this code
-print(nlp.analyze_pipes(pretty=True))
-
 # doc is an SpaCy object
-doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
+doc = nlp(' ایران در قرب آسیا وجود داره و خلیج فارس توش قرار داره')
 ```
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there are ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extensions. Note that we defined our own extension as well in DadmaTools. If any pipeline related to the specific extensions is not called, that extension will have no value.
 
@@ -188,7 +187,130 @@ print(dictionary)
 ```
 
 ```python
-[[{'id': 1, 'text': 'از', 'lemma': 'از', 'pos': 'ADP', 'rel': 'case', 'root': 2}, {'id': 2, 'text': 'قصهٔ', 'lemma': 'قصه', 'pos': 'NOUN', 'rel': 'obl', 'root': 10}, {'id': 3, 'text': 'کودکی', 'lemma': 'کودکی', 'pos': 'NOUN', 'rel': 'nmod', 'root': 2}, {'id': 4, 'text': 'شان', 'lemma': 'آنها', 'pos': 'PRON', 'rel': 'nmod', 'root': 3}, {'id': 5, 'text': 'که', 'lemma': 'که', 'pos': 'SCONJ', 'rel': 'mark', 'root': 6}, {'id': 6, 'text': 'می\u200cگفت', 'lemma': 'گفت#گو', 'pos': 'VERB', 'rel': 'acl', 'root': 2}, {'id': 7, 'text': '،', 'lemma': '،', 'pos': 'PUNCT', 'rel': 'punct', 'root': 6}, {'id': 8, 'text': 'گاهی', 'lemma': 'گاه', 'pos': 'NOUN', 'rel': 'obl', 'root': 10}, {'id': 9, 'text': 'حرص', 'lemma': 'حرص', 'pos': 'NOUN', 'rel': 'compound:lvc', 'root': 10}, {'id': 10, 'text': 'می\u200cخورد', 'lemma': 'خورد#خور', 'pos': 'VERB', 'rel': 'root', 'root': 0}, {'id': 11, 'text': '!', 'lemma': '!', 'pos': 'PUNCT', 'rel': 'punct', 'root': 10}]]
+{'spellchecker': {'orginal': ' ایران در قرب آسیا وجود داره و خلیج فارس توش قرار داره',
+  'corrected': 'ایران در غرب آسیا وجود داره و خلیج فارس توش قرار داره',
+  'checked_words': [('قرب', 'غرب')]},
+ 'itf': ' ایران در قرب آسیا وجود دارد و خلیج\u200cفارس درش قرار دارد',
+ 'sentences': [{'id': 1,
+   'tokens': [{'id': 1,
+     'text': 'ایران',
+     'upos': 'PRON',
+     'xpos': 'PRO',
+     'feats': 'Number=Sing',
+     'head': 6,
+     'deprel': 'nsubj',
+     'lemma': 'ایران',
+     'ner': 'S-loc',
+     'kasreh': 'O'},
+    {'id': 2,
+     'text': 'در',
+     'upos': 'ADP',
+     'xpos': 'P',
+     'head': 6,
+     'deprel': 'case',
+     'lemma': 'در',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 3,
+     'text': 'قرب',
+     'upos': 'SCONJ',
+     'xpos': 'CON',
+     'feats': 'Number=Plur|Person=2|Tense=Past',
+     'head': 2,
+     'deprel': 'fixed',
+     'lemma': 'قرب',
+     'ner': 'O',
+     'kasreh': 'S-kasreh'},
+    {'id': 4,
+     'text': 'آسیا',
+     'upos': 'SCONJ',
+     'xpos': 'CON',
+     'feats': 'Case=Loc',
+     'head': 8,
+     'deprel': 'nmod:poss',
+     'lemma': 'آسیا',
+     'ner': 'S-loc',
+     'kasreh': 'O'},
+    {'id': 5,
+     'text': 'وجود',
+     'upos': 'SCONJ',
+     'xpos': 'CON',
+     'feats': 'Number=Sing|Person=3|Tense=Pres',
+     'head': 2,
+     'deprel': 'fixed',
+     'lemma': 'وجود',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 6,
+     'text': 'داره',
+     'upos': 'VERB',
+     'xpos': 'V_PRS',
+     'feats': 'Number=Sing|Person=3|Tense=Pres',
+     'head': 0,
+     'deprel': 'root',
+     'lemma': 'داره',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 7,
+     'text': 'و',
+     'upos': 'CCONJ',
+     'xpos': 'CON',
+     'head': 6,
+     'deprel': 'cc',
+     'lemma': 'و',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 8,
+     'text': 'خلیج',
+     'upos': 'SCONJ',
+     'xpos': 'CON',
+     'feats': 'Number=Sing',
+     'head': 6,
+     'deprel': 'nsubj',
+     'lemma': 'خلیج',
+     'ner': 'B-loc',
+     'kasreh': 'S-kasreh'},
+    {'id': 9,
+     'text': 'فارس',
+     'upos': 'X',
+     'xpos': 'FW',
+     'feats': 'Mood=Sub|Number=Sing|Person=3|Tense=Pres',
+     'head': 8,
+     'deprel': 'nmod:poss',
+     'lemma': 'فارس',
+     'ner': 'E-loc',
+     'kasreh': 'O'},
+    {'id': 10,
+     'text': 'توش',
+     'upos': 'PRON',
+     'xpos': 'PRO',
+     'feats': 'Number=Sing|Person=2|PronType=Prs',
+     'head': 6,
+     'deprel': 'obj',
+     'lemma': 'توش',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 11,
+     'text': 'قرار',
+     'upos': 'NOUN',
+     'xpos': 'N_SING',
+     'feats': 'Number=Sing|Person=3|Tense=Pres',
+     'head': 6,
+     'deprel': 'compound:lvc',
+     'lemma': 'قرار',
+     'ner': 'O',
+     'kasreh': 'O'},
+    {'id': 12,
+     'text': 'داره',
+     'upos': 'VERB',
+     'xpos': 'V_PRS',
+     'feats': 'Number=Sing|Person=3|Tense=Pres',
+     'head': 6,
+     'deprel': 'aux',
+     'lemma': 'داره',
+     'ner': 'O',
+     'kasreh': 'O'}]}],
+ 'lang': 'persian'}
 
 ```
 
