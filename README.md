@@ -170,11 +170,8 @@ import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok,lem,pos,dep,chunk,cons,spellchecker,kasreh'
+pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf'
 nlp = language.Pipeline(pips)
-
-# you can see the pipeline with this code
-print(nlp.analyze_pipes(pretty=True))
 
 # doc is an SpaCy object
 doc = nlp('از قصهٔ کودکیشان که می‌گفت، گاهی حرص می‌خورد!')
