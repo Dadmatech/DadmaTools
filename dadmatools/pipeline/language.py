@@ -46,7 +46,7 @@ def is_list_list_strings(input):
     return False
 
 
-def map_dadmatools_pipeline_to_trankit(pipelines: str) -> List[str]:d
+def map_dadmatools_pipeline_to_trankit(pipelines: str) -> List[str]:
     pipelines = pipelines.split(',')
     pipelines = [LEMMA if p.strip() == 'lem' else p.strip() for p in pipelines]
     if LEMMA in pipelines and POS not in pipelines:
