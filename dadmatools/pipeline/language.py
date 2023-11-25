@@ -46,9 +46,9 @@ def is_list_list_strings(input):
     return False
 
 
-def map_dadmatools_pipeline_to_trankit(pipelines: str) -> List[str]:
+def map_dadmatools_pipeline_to_trankit(pipelines: str) -> List[str]:d
     pipelines = pipelines.split(',')
-    pipelines = [LEMMA if p == 'lem' else p for p in pipelines]
+    pipelines = [LEMMA if p.strip() == 'lem' else p.strip() for p in pipelines]
     if LEMMA in pipelines and POS not in pipelines:
         pipelines.append(POS)
     return pipelines
@@ -943,7 +943,8 @@ class Pipeline:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True), LANG: self.active_lang}
+                return {TEXT: ori_text, TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True),
+                        LANG: self.active_lang}
 
         else:
             assert is_string(input) or is_list_list_strings(
@@ -963,7 +964,8 @@ class Pipeline:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True), LANG: self.active_lang}
+                return {TEXT: ori_text, SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True),
+                        LANG: self.active_lang}
 
     def _lemmatize_sent(self, in_sent, obmit_tag=False):
         if type(in_sent) == str:
@@ -1147,7 +1149,6 @@ class Pipeline:
         torch.cuda.empty_cache()
         return dkasreh_doc
 
-
     def _sent_sent(self, in_sent):  # assuming input is a document
         if type(in_sent) == str:
             in_sent = self._tokenize_sent(in_sent)
@@ -1190,7 +1191,7 @@ class Pipeline:
         if type(in_doc) == str:
             in_doc = self._tokenize_doc(in_doc)
         dsent_doc = deepcopy(in_doc)
-        sentences = [[t[TEXT] for sentence in dsent_doc for t in sentence[TOKENS] ]]
+        sentences = [[t[TEXT] for sentence in dsent_doc for t in sentence[TOKENS]]]
         test_set = SentDatasetLive(
             config=self._config,
             tokenized_sentences=sentences
@@ -1207,7 +1208,6 @@ class Pipeline:
                                 shuffle=False, collate_fn=test_set.collate_fn):
             word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
             pred_labels = self._sent_model[self._config.active_lang].predict_persent(cls_reprs)
-
 
         torch.cuda.empty_cache()
         return pred_labels
@@ -1275,7 +1275,8 @@ class Pipeline:
                     final[ITF] = itf_result
                 if self.active_lang == 'persian':
                     input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
-                    out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in enumerate(input)]
+                    out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent
+                           in enumerate(input)]
                 else:
                     out = self._tokenize_doc(input)
                 if POS in self.pipelines or DEP in self.pipelines:
