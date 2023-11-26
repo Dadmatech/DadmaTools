@@ -21,6 +21,8 @@ from .utils.chuliu_edmonds import *
 from .adapter_transformers import XLMRobertaTokenizer
 import langid
 
+from transformers import pipeline
+
 
 def is_string(input):
     if type(input) == str and len(input.strip()) > 0:
@@ -152,14 +154,17 @@ class Pipeline:
 
         # sentiment if possible
         if SENT in self.pipelines:
-            self._sent_model = {}
-            for lang in self.added_langs:
-                if lang in langwithsent:
-                    self._sent_model[lang] = SentenceClassifier(self._config, lang)
-                    self._sent_model[lang].to(self._config.device)
-                    if self._use_gpu:
-                        self._sent_model[lang].half()
-                    self._sent_model[lang].eval()
+            model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+            self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+
+            # self._sent_model = {}
+            # for lang in self.added_langs:
+            #     if lang in langwithsent:
+            #         self._sent_model[lang] = SentenceClassifier(self._config, lang)
+            #         self._sent_model[lang].to(self._config.device)
+            #         if self._use_gpu:
+            #             self._sent_model[lang].half()
+            #         self._sent_model[lang].eval()
 
         if SPELLLCHECKER in self.pipelines:
             self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)
@@ -1278,9 +1283,9 @@ class Pipeline:
                     itf_result = self._itf_model.translate(input)
                     final[ITF] = itf_result
                 if self.active_lang == 'persian':
-                    input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
+                    tokenized_input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
                     out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent
-                           in enumerate(input)]
+                           in enumerate(tokenized_input)]
                 else:
                     out = self._tokenize_doc(input)
                 if POS in self.pipelines or DEP in self.pipelines:
@@ -1293,8 +1298,8 @@ class Pipeline:
                     out = self._kasreh_doc(out)
                 final.update({SENTENCES: out, LANG: self.active_lang})
                 if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    sentiment = self._sent_doc(out)
-                    final['sentiment'] = sentiment
+                    # sentiment = self._sent_doc(out)
+                    final['sentiment'] = self._sent_model(input)
         return final
 
     def _conllu_predict(self, text_fpath):
