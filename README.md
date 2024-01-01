@@ -176,11 +176,11 @@ import dadmatools.pipeline.language as language
 
 # here lemmatizer and pos tagger will be loaded
 # as tokenizer is the default tool, it will be loaded as well even without calling
-pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf, ner'
+pips = 'tok, lem, pos, dep, chunk, cons, spellchecker, kasreh, itf, ner, sent'
 nlp = language.Pipeline(pips)
-
 # doc is an SpaCy object
-doc = nlp(' ایران در قرب آسیا وجود داره و خلیج فارس توش قرار داره')
+doc = nlp('کشور بزرگ ایران توانسته در طی سال‌ها اغشار مختلفی از قومیت‌های گوناگون رو به خوبی تو خودش  جا بده')
+
 ```
 [```doc```](https://spacy.io/api/doc) object has different extensions. First, there are ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extensions. Note that we defined our own extension as well in DadmaTools. If any pipeline related to the specific extensions is not called, that extension will have no value.
 
