@@ -36,6 +36,8 @@
       Tokenizer
     <span> | </span>
       Lemmatizer
+    <span> | </span>
+      Sentiment Analysis
   </h5>
   <h5>
   </h5>
