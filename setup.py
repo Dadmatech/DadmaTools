@@ -47,7 +47,6 @@ setuptools.setup(
         'sentencepiece',
         'sacremoses',
         'fasttext',
-        'hazm',
         'kenlm',
     ],
 
