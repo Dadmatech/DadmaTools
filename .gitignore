@@ -7,6 +7,7 @@ __pycache__/
 *.egg
 build/
 dist/
+cache/
 dadmatools.egg-info/
 web/_build
 
