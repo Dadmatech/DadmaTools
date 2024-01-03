@@ -103,3 +103,41 @@ def tokenizer(trainer, args, input_sentence):
     preds = output_predictions(args['conll_file'], trainer, batches, vocab, mwt_dict, args['max_seqlen'])
 
     return [[word['text'] for word in sent] for sent in preds]
+
+
+class Tokenizer:
+    def __init__(self, cache_dir: str) -> None:
+        self.trainer, self.args = load_tokenizer_model(cache_dir)
+
+    def load_tokenizer_model(self):
+        ## donwload the model (if it is not exist it'll download otherwise it dose not)
+        download_model('fa_tokenizer', cache_dir=self.cache_dir)
+
+        args = parse_args(self.cache_dir)
+
+        if args['cpu']:
+            args['cuda'] = False
+        set_random_seed(args['seed'], args['cuda'])
+
+        use_cuda = args['cuda'] and not args['cpu']
+        trainer = Trainer(model_file=args['save_dir'], use_cuda=use_cuda)
+        loaded_args, vocab = trainer.args, trainer.vocab
+
+        for k in loaded_args:
+            if not k.endswith('_file') and k not in ['cuda', 'mode', 'save_dir', 'load_name', 'save_name']:
+                args[k] = loaded_args[k]
+
+        return (trainer, args)
+
+    def tokenize(self, text):
+        mwt_dict = load_mwt_dict(self.args['mwt_json_file'])
+        loaded_args, vocab = self.trainer.args, self.trainer.vocab
+
+        for k in loaded_args:
+            if not k.endswith('_file') and k not in ['cuda', 'mode', 'save_dir', 'load_name', 'save_name']:
+                self.args[k] = loaded_args[k]
+
+        batches = DataLoader(self.args, input_text=text, vocab=vocab, evaluation=True)
+        preds = output_predictions(self.args['conll_file'], self.trainer, batches, vocab, mwt_dict, self.args['max_seqlen'])
+
+        return [[word['text'] for word in sent] for sent in preds]

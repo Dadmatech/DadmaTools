@@ -12,7 +12,7 @@ from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
 from .iterators.sent_iterators import SentDatasetLive
-from .persian_tokenization.tokenizer import tokenizer, load_tokenizer_model
+from .persian_tokenization.tokenizer import Tokenizer
 from .utils.tokenizer_utils import *
 from collections import defaultdict
 from .utils.conll import *
@@ -98,7 +98,7 @@ class Pipeline:
             self._embedding_layers.half()
         self._embedding_layers.eval()
         # tokenizers
-        self.persian_tokenizer = load_tokenizer_model(self._config._cache_dir)
+        self.persian_tokenizer = Tokenizer(self._config._cache_dir)
         self._tokenizer = {}
         for lang in self.added_langs:
             self._tokenizer[lang] = TokenizerClassifier(self._config, treebank_name=lang2treebank[lang])
@@ -1283,7 +1283,7 @@ class Pipeline:
                     itf_result = self._itf_model.translate(input)
                     final[ITF] = itf_result
                 if self.active_lang == 'persian':
-                    tokenized_input = tokenizer(self.persian_tokenizer[0], self.persian_tokenizer[1], input)
+                    tokenized_input = self.persian_tokenizer.tokenize(input)
                     out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent
                            in enumerate(tokenized_input)]
                 else:
