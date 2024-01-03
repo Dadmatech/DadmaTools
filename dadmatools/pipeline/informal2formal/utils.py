@@ -4,10 +4,12 @@ import json
 import re
 import string
 import pandas as pd
-from hazm import Normalizer, WordTokenizer
+from dadmatools.pipeline.persian_tokenization.tokenizer import WordTokenizer
+from dadmatools.normalizer import Normalizer
 
 normalizer = Normalizer()
-tokenizer = WordTokenizer(separate_emoji=True)
+tokenizer = WordTokenizer('cache/dadmatools')
+# tokenizer = WordTokenizer(separate_emoji=True)
 
 
 def seprate_emoji_string(txt):
@@ -35,7 +37,7 @@ def cleanify(txt):
     txt = re.sub(' ‌', ' ', txt)
     txt = normalizer.normalize(txt)
     txt = seprate_emoji_string(txt)
-    txt = ' '.join(tokenizer.tokenize(txt))
+    txt = ' '.join([word for sent in tokenizer.tokenize(txt) for word in sent])
     return txt
 
 

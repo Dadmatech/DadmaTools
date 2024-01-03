@@ -5,7 +5,7 @@ import yaml
 from .download_utils import download_dataset
 import dadmatools.pipeline.informal2formal.utils as utils
 from .formality_transformer import FormalityTransformer
-from hazm import SentenceTokenizer
+from dadmatools.pipeline.persian_tokenization.tokenizer import SentenceTokenizer
 
 FILE_URLS = [
     'https://huggingface.co/datasets/Dadmatech/informal2formal/resolve/main/3gram.bin',
@@ -88,7 +88,7 @@ class Informal2Formal:
         irregular_verbs_mapper = os.path.join(cache_dir, 'irregular_verb_mapper.csv')
         lm_addr = os.path.join(cache_dir, '3gram.bin')
         assets_file_addr = os.path.join(cache_dir, 'assets.pkl')
-        self.sentence_tokenizer = SentenceTokenizer()
+        self.sentence_tokenizer = SentenceTokenizer('cache/dadmatools')
         self.model = FormalityTransformer(asset_file_addr=assets_file_addr,
                                           irregular_verbs_mapper_addr=irregular_verbs_mapper,
                                           verbs_csv_addr=verbs_csv_addr, lm_addr=lm_addr)

@@ -12,7 +12,7 @@ from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
 from .iterators.sent_iterators import SentDatasetLive
-from .persian_tokenization.tokenizer import Tokenizer
+from .persian_tokenization.tokenizer import WordTokenizer
 from .utils.tokenizer_utils import *
 from collections import defaultdict
 from .utils.conll import *
@@ -98,7 +98,7 @@ class Pipeline:
             self._embedding_layers.half()
         self._embedding_layers.eval()
         # tokenizers
-        self.persian_tokenizer = Tokenizer(self._config._cache_dir)
+        self.persian_tokenizer = WordTokenizer(self._config._cache_dir)
         self._tokenizer = {}
         for lang in self.added_langs:
             self._tokenizer[lang] = TokenizerClassifier(self._config, treebank_name=lang2treebank[lang])

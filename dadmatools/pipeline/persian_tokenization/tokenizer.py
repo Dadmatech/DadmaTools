@@ -105,7 +105,7 @@ def tokenizer(trainer, args, input_sentence):
     return [[word['text'] for word in sent] for sent in preds]
 
 
-class Tokenizer:
+class WordTokenizer:
     def __init__(self, cache_dir: str) -> None:
         self.trainer, self.args = load_tokenizer_model(cache_dir)
 
@@ -141,3 +141,17 @@ class Tokenizer:
         preds = output_predictions(self.args['conll_file'], self.trainer, batches, vocab, mwt_dict, self.args['max_seqlen'])
 
         return [[word['text'] for word in sent] for sent in preds]
+
+
+class SentenceTokenizer(WordTokenizer):
+    def tokenize(self, text):
+        mwt_dict = load_mwt_dict(self.args['mwt_json_file'])
+        loaded_args, vocab = self.trainer.args, self.trainer.vocab
+
+        for k in loaded_args:
+            if not k.endswith('_file') and k not in ['cuda', 'mode', 'save_dir', 'load_name', 'save_name']:
+                self.args[k] = loaded_args[k]
+
+        batches = DataLoader(self.args, input_text=text, vocab=vocab, evaluation=True)
+        preds = output_predictions(self.args['conll_file'], self.trainer, batches, vocab, mwt_dict, self.args['max_seqlen'])
+        return [' '.join([word['text'] for word in sent]) for sent in preds]

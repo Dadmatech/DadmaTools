@@ -10,6 +10,7 @@ dist/
 cache/
 dadmatools.egg-info/
 web/_build
+test.py
 
 # Test artifacts and coverage reports
 *.tox

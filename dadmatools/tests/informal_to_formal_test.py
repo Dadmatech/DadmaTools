@@ -1,5 +1,8 @@
+from utils import set_root_dir
+
+set_root_dir()
+
 from dadmatools.pipeline import Pipeline
-from dadmatools.pipeline.persian_tokenization.tokenizer import tokenizer, load_tokenizer_model
 
 nlp = Pipeline('lem,pos,ner,dep,cons,spellchecker,kasreh,sent')
 

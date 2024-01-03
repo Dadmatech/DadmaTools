@@ -1,6 +1,6 @@
 import re
 from enum import Enum
-from hazm import Normalizer
+from dadmatools.normalizer import Normalizer
 import pandas as pd
 
 
