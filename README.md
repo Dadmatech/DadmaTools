@@ -437,7 +437,7 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 ## How to use
 You can see the codes and the output in colab.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1re_7tr-U6XOmzptkb-s-_lK2H9Kb0Y6l?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1BEhOA9Ju0ZyY81MAM_IT9ADz1MFeXF7S?usp=sharing)
 
 
 ## Cite
