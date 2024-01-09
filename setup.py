@@ -35,7 +35,7 @@ setuptools.setup(
         "html2text",
         "tf-estimator-nightly==2.8.0.dev2021122109",
         "scikit-learn>=0.24.2",
-        'numpy>=1.24.3',
+        'numpy',
         'protobuf',
         'requests',
         'tqdm>=4.27',
