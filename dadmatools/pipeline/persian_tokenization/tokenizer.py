@@ -9,6 +9,7 @@ For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal
 import logging
 import torch
 from pathlib import Path
+import emoji
 
 
 from .trainer import Trainer
@@ -70,44 +71,22 @@ def parse_args(cache_dir):
     return args
 
 
-def load_tokenizer_model(cache_dir: str):
-    ## donwload the model (if it is not exist it'll download otherwise it dose not)
-    download_model('fa_tokenizer', cache_dir=cache_dir)
-
-    args = parse_args(cache_dir)
-
-    if args['cpu']:
-        args['cuda'] = False
-    set_random_seed(args['seed'], args['cuda'])
-
-    use_cuda = args['cuda'] and not args['cpu']
-    trainer = Trainer(model_file=args['save_dir'], use_cuda=use_cuda)
-    loaded_args, vocab = trainer.args, trainer.vocab
-
-    for k in loaded_args:
-        if not k.endswith('_file') and k not in ['cuda', 'mode', 'save_dir', 'load_name', 'save_name']:
-            args[k] = loaded_args[k]
-
-    return (trainer, args)
-
-
-def tokenizer(trainer, args, input_sentence):
-    mwt_dict = load_mwt_dict(args['mwt_json_file'])
-    loaded_args, vocab = trainer.args, trainer.vocab
-
-    for k in loaded_args:
-        if not k.endswith('_file') and k not in ['cuda', 'mode', 'save_dir', 'load_name', 'save_name']:
-            args[k] = loaded_args[k]
-
-    batches = DataLoader(args, input_text=input_sentence, vocab=vocab, evaluation=True)
-    preds = output_predictions(args['conll_file'], trainer, batches, vocab, mwt_dict, args['max_seqlen'])
-
-    return [[word['text'] for word in sent] for sent in preds]
-
-
 class WordTokenizer:
     def __init__(self, cache_dir: str) -> None:
-        self.trainer, self.args = load_tokenizer_model(cache_dir)
+        self.trainer, self.args = self.load_tokenizer_model(cache_dir)
+        self.emoji_chars = emoji.unicode_codes.get_emoji_unicode_dict('en').values()
+
+    def tokenize_with_emojis(self, tokens):
+        emoji_tokens = []
+
+        for token in tokens:
+            if any(char in self.emoji_chars for char in token):
+                emoji_parts = [char for char in token if char in self.emoji_chars]
+                emoji_tokens.extend(emoji_parts)
+            else:
+                emoji_tokens.append(token)
+
+        return emoji_tokens
 
     def load_tokenizer_model(self):
         ## donwload the model (if it is not exist it'll download otherwise it dose not)
@@ -140,7 +119,8 @@ class WordTokenizer:
         batches = DataLoader(self.args, input_text=text, vocab=vocab, evaluation=True)
         preds = output_predictions(self.args['conll_file'], self.trainer, batches, vocab, mwt_dict, self.args['max_seqlen'])
 
-        return [[word['text'] for word in sent] for sent in preds]
+        tokens =  [[word['text'] for word in sent] for sent in preds]
+        return [self.tokenize_with_emojis(words) for words in tokens]
 
 
 class SentenceTokenizer(WordTokenizer):
