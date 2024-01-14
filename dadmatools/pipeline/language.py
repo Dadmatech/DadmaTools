@@ -57,7 +57,7 @@ def map_dadmatools_pipeline_to_trankit(pipelines: str) -> List[str]:
 
 
 class Pipeline:
-    def __init__(self, pipelines, lang='persian', cache_dir=None, gpu=True, embedding='xlm-roberta-base'):
+    def __init__(self, pipelines, lang='persian', cache_dir=None, gpu=True, embedding='xlm-roberta-base', download=True):
         super(Pipeline, self).__init__()
         # auto detection of lang
         if lang == 'auto':
@@ -85,7 +85,8 @@ class Pipeline:
                 list(lang2treebank.keys())
             )
 
-        download_hf(f'{self._config._cache_dir}/{master_config.embedding_name}/{lang}', self.pipelines)
+        if download:
+            download_hf(f'{self._config._cache_dir}/{master_config.embedding_name}/{lang}', self.pipelines)
 
         # load ALL vocabs
         self._load_vocabs(self.pipelines)
