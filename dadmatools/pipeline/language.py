@@ -154,17 +154,17 @@ class Pipeline:
 
         # sentiment if possible
         if SENT in self.pipelines:
-            model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-            self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+            # model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+            # self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
 
-            # self._sent_model = {}
-            # for lang in self.added_langs:
-            #     if lang in langwithsent:
-            #         self._sent_model[lang] = SentenceClassifier(self._config, lang)
-            #         self._sent_model[lang].to(self._config.device)
-            #         if self._use_gpu:
-            #             self._sent_model[lang].half()
-            #         self._sent_model[lang].eval()
+            self._sent_model = {}
+            for lang in self.added_langs:
+                if lang in langwithsent:
+                    self._sent_model[lang] = SentenceClassifier(self._config, lang)
+                    self._sent_model[lang].to(self._config.device)
+                    if self._use_gpu:
+                        self._sent_model[lang].half()
+                    self._sent_model[lang].eval()
 
         if SPELLLCHECKER in self.pipelines:
             self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)
@@ -1298,8 +1298,8 @@ class Pipeline:
                     out = self._kasreh_doc(out)
                 final.update({SENTENCES: out, LANG: self.active_lang})
                 if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    # sentiment = self._sent_doc(out)
-                    final['sentiment'] = self._sent_model(input)
+                    final['sentiment'] = self._sent_doc(out)
+                    # final['sentiment'] = self._sent_model(input)
         return final
 
     def _conllu_predict(self, text_fpath):
