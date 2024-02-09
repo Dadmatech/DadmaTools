@@ -292,7 +292,7 @@ class SentDatasetLive(SentDataset):
         # load data
         # for inference time we don't know the actual label of input, so for running the code with set it the first
         # label in the self.vocabs.
-        default_label = list(self.config.vocabs.keys())[0]['sent']
+        default_label = list(self.config.vocabs.keys())[0]['sent'][0]
         self.data = [{'words': sentence, 'label': default_label} for sentence in tokenized_sentences]
                      
 
