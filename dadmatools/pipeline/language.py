@@ -1159,40 +1159,62 @@ class Pipeline:
         return dkasreh_doc
 
     def _sent_sent(self, in_sent):  # assuming input is a document
-        if type(in_sent) == str:
-            in_sent = self._tokenize_sent(in_sent)
+        pass
+        # if type(in_sent) == str:
+        #     in_sent = self._tokenize_sent(in_sent)
 
-        dner_doc = [{ID: 1, TOKENS: deepcopy(in_sent)}]
-        sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dner_doc]
-        test_set = SentDatasetLive(
-            config=self._config,
-            tokenized_sentences=sentences
-        )
-        test_set.numberize()
-        # load ner adapter weights
-        self._load_adapter_weights(model_name='sent')
-        eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
-        if self._config.embedding_name == 'xlm-roberta-large':
-            eval_batch_size = int(eval_batch_size / 3)
+        # dner_doc = [{ID: 1, TOKENS: deepcopy(in_sent)}]
+        # sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dner_doc]
+        # test_set = SentDatasetLive(
+        #     config=self._config,
+        #     tokenized_sentences=sentences
+        # )
+        # test_set.numberize()
+        # # load ner adapter weights
+        # self._load_adapter_weights(model_name='sent')
+        # eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
+        # if self._config.embedding_name == 'xlm-roberta-large':
+        #     eval_batch_size = int(eval_batch_size / 3)
 
-        for batch in DataLoader(test_set,
-                                batch_size=eval_batch_size,
-                                shuffle=False, collate_fn=test_set.collate_fn):
-            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
-            pred_entity_labels = self._ner_model[self._config.active_lang].predict(batch, word_reprs)
+        # for batch in DataLoader(test_set,
+        #                         batch_size=eval_batch_size,
+        #                         shuffle=False, collate_fn=test_set.collate_fn):
+        #     word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+        #     pred_entity_labels = self._ner_model[self._config.active_lang].predict(batch, word_reprs)
 
-            batch_size = len(batch.word_num)
+        #     batch_size = len(batch.word_num)
 
-            for bid in range(batch_size):
-                sentid = batch.sent_index[bid]
-                for i in range(batch.word_num[bid]):
-                    wordid = batch.word_ids[bid][i]
+        #     for bid in range(batch_size):
+        #         sentid = batch.sent_index[bid]
+        #         for i in range(batch.word_num[bid]):
+        #             wordid = batch.word_ids[bid][i]
 
-                    # NER tag
-                    dner_doc[sentid][TOKENS][wordid][NER] = pred_entity_labels[bid][i]
+        #             # NER tag
+        #             dner_doc[sentid][TOKENS][wordid][NER] = pred_entity_labels[bid][i]
 
-        torch.cuda.empty_cache()
-        return dner_doc[0][TOKENS]
+        # torch.cuda.empty_cache()
+        # return dner_doc[0][TOKENS]
+    
+
+
+
+        # self._sent_model.eval()
+        # # evaluate
+        # progress = tqdm(total=batch_num, ncols=75,
+        #                 desc='{} {}'.format(name, epoch))
+        # predictions = []
+        # golds = []
+        # for batch in DataLoader(data_set, batch_size=self._config.batch_size,
+        #                         shuffle=False, collate_fn=data_set.collate_fn):
+        #     progress.update(1)
+        #     word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+        #     pred_entity_labels = self._sent_model.predict(batch, cls_reprs)
+        #     predictions += pred_entity_labels
+        #     batch_entity_labels = batch.entity_label_idxs.data.cpu().numpy().tolist()
+        #     golds += batch_entity_labels
+        # progress.close()
+        # score = score_by_sent(predictions, golds, self.logger)
+        # return score
 
     def _sent_doc(self, in_doc):  # assuming input is a document
         if SENT not in self.pipelines:
@@ -1206,7 +1228,6 @@ class Pipeline:
             tokenized_sentences=sentences
         )
         test_set.numberize()
-        # load ner adapter weights
         self._load_adapter_weights(model_name='sent')
         eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
         if self._config.embedding_name == 'xlm-roberta-large':

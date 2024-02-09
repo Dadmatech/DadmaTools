@@ -43,139 +43,139 @@ Train_Instance = namedtuple('Train_Instance', field_names=train_instance_fields)
 Train_Batch = namedtuple('Train_Batch', field_names=train_batch_fields)
 
 
-class SentDatasetLive(Dataset):
-    def __init__(self, config, tokenized_sentences):
-        self.config = config
-        self.wordpiece_splitter = config.wordpiece_splitter
-        self.max_input_length = 512
-        # load data
-        self.data = [{'sent_index': sid, 'words': sentence, 'word_ids': list(range(len(sentence)))} for sid, sentence in
-                     enumerate(tokenized_sentences)]
+# class SentDatasetLive(Dataset):
+#     def __init__(self, config, tokenized_sentences):
+#         self.config = config
+#         self.wordpiece_splitter = config.wordpiece_splitter
+#         self.max_input_length = 512
+#         # load data
+#         self.data = [{'sent_index': sid, 'words': sentence, 'word_ids': list(range(len(sentence)))} for sid, sentence in
+#                      enumerate(tokenized_sentences)]
 
-        # split long sentences into 512-length chunks
-        new_data = []
-        for inst in self.data:
-            words = inst['words']
-            pieces = [[p for p in self.wordpiece_splitter.tokenize(w) if p != '▁'] for w in words]
-            for ps in pieces:
-                if len(ps) == 0:
-                    ps += ['-']
-            flat_pieces = [p for ps in pieces for p in ps]
-            if len(flat_pieces) > self.max_input_length - 2:
-                sub_insts = []
-                cur_inst = deepcopy(inst)
-                for key in ['words', 'word_ids', 'flat_pieces']:
-                    cur_inst[key] = []
+#         # split long sentences into 512-length chunks
+#         new_data = []
+#         for inst in self.data:
+#             words = inst['words']
+#             pieces = [[p for p in self.wordpiece_splitter.tokenize(w) if p != '▁'] for w in words]
+#             for ps in pieces:
+#                 if len(ps) == 0:
+#                     ps += ['-']
+#             flat_pieces = [p for ps in pieces for p in ps]
+#             if len(flat_pieces) > self.max_input_length - 2:
+#                 sub_insts = []
+#                 cur_inst = deepcopy(inst)
+#                 for key in ['words', 'word_ids', 'flat_pieces']:
+#                     cur_inst[key] = []
 
-                for i in range(len(inst['words'])):
-                    for key in ['words', 'word_ids']:
-                        cur_inst[key].append(inst[key][i])
-                    cur_inst['flat_pieces'].extend(pieces[i])
-                    if len(cur_inst['flat_pieces']) >= self.max_input_length - 10:
-                        sub_insts.append(cur_inst)
+#                 for i in range(len(inst['words'])):
+#                     for key in ['words', 'word_ids']:
+#                         cur_inst[key].append(inst[key][i])
+#                     cur_inst['flat_pieces'].extend(pieces[i])
+#                     if len(cur_inst['flat_pieces']) >= self.max_input_length - 10:
+#                         sub_insts.append(cur_inst)
 
-                        cur_inst = deepcopy(inst)
-                        for key in ['words', 'word_ids', 'flat_pieces']:
-                            cur_inst[key] = []
+#                         cur_inst = deepcopy(inst)
+#                         for key in ['words', 'word_ids', 'flat_pieces']:
+#                             cur_inst[key] = []
 
-                if len(cur_inst['flat_pieces']) > 0:
-                    sub_insts.append(cur_inst)
+#                 if len(cur_inst['flat_pieces']) > 0:
+#                     sub_insts.append(cur_inst)
 
-                # all sub instances share the same sent_index,
-                # 'word_ids' is used for later filling predictions into the right place
-                new_data.extend(sub_insts)
-            else:
-                new_data.append(inst)
-        self.data = new_data
+#                 # all sub instances share the same sent_index,
+#                 # 'word_ids' is used for later filling predictions into the right place
+#                 new_data.extend(sub_insts)
+#             else:
+#                 new_data.append(inst)
+#         self.data = new_data
 
-        # load vocab
-        self.vocabs = list(self.config.vocabs.values())[0]['sent']
+#         # load vocab
+#         self.vocabs = list(self.config.vocabs.values())[0]['sent']
 
-    def __len__(self):
-        return len(self.data)
+#     def __len__(self):
+#         return len(self.data)
 
-    def __getitem__(self, item):
-        return self.data[item]
+#     def __getitem__(self, item):
+#         return self.data[item]
 
-    def numberize(self):
-        data = []
-        for inst in self.data:
-            words = inst['words']
-            # lowercase
-            if self.config.lowercase:
-                words = [w.lower() for w in words]
-            # ---------------------
-            pieces = [[p for p in self.wordpiece_splitter.tokenize(w) if p != '▁'] for w in words]
-            for ps in pieces:
-                if len(ps) == 0:
-                    ps += ['-']
-            word_lens = [len(x) for x in pieces]
-            flat_pieces = [p for ps in pieces for p in ps]
-            # Pad word pieces with special tokens
-            piece_idxs = self.wordpiece_splitter.encode(
-                flat_pieces,
-                add_special_tokens=True,
-                max_length=self.max_input_length,
-                truncation=True
-            )
+#     def numberize(self):
+#         data = []
+#         for inst in self.data:
+#             words = inst['words']
+#             # lowercase
+#             if self.config.lowercase:
+#                 words = [w.lower() for w in words]
+#             # ---------------------
+#             pieces = [[p for p in self.wordpiece_splitter.tokenize(w) if p != '▁'] for w in words]
+#             for ps in pieces:
+#                 if len(ps) == 0:
+#                     ps += ['-']
+#             word_lens = [len(x) for x in pieces]
+#             flat_pieces = [p for ps in pieces for p in ps]
+#             # Pad word pieces with special tokens
+#             piece_idxs = self.wordpiece_splitter.encode(
+#                 flat_pieces,
+#                 add_special_tokens=True,
+#                 max_length=self.max_input_length,
+#                 truncation=True
+#             )
 
-            attn_masks = [1] * len(piece_idxs)
-            piece_idxs = piece_idxs
+#             attn_masks = [1] * len(piece_idxs)
+#             piece_idxs = piece_idxs
 
-            instance = Instance(
-                sent_index=inst['sent_index'],
-                word_ids=inst['word_ids'],
-                words=inst['words'],
-                word_num=len(inst['words']),
-                piece_idxs=piece_idxs,
-                attention_masks=attn_masks,
-                word_lens=word_lens,
-                entity_label_idxs=[0 for _ in inst['words']]
-            )
-            data.append(instance)
-        self.data = data
+#             instance = Instance(
+#                 sent_index=inst['sent_index'],
+#                 word_ids=inst['word_ids'],
+#                 words=inst['words'],
+#                 word_num=len(inst['words']),
+#                 piece_idxs=piece_idxs,
+#                 attention_masks=attn_masks,
+#                 word_lens=word_lens,
+#                 entity_label_idxs=[0 for _ in inst['words']]
+#             )
+#             data.append(instance)
+#         self.data = data
 
-    def collate_fn(self, batch):
-        batch_sent_index = [inst.sent_index for inst in batch]
-        batch_word_ids = [inst.word_ids for inst in batch]
+#     def collate_fn(self, batch):
+#         batch_sent_index = [inst.sent_index for inst in batch]
+#         batch_word_ids = [inst.word_ids for inst in batch]
 
-        batch_words = [inst.words for inst in batch]
-        batch_word_num = [inst.word_num for inst in batch]
+#         batch_words = [inst.words for inst in batch]
+#         batch_word_num = [inst.word_num for inst in batch]
 
-        batch_piece_idxs = []
-        batch_attention_masks = []
-        batch_word_lens = []
+#         batch_piece_idxs = []
+#         batch_attention_masks = []
+#         batch_word_lens = []
 
-        max_word_num = max(batch_word_num)
-        max_wordpiece_num = max([len(inst.piece_idxs) for inst in batch])
-        batch_word_mask = []
-        batch_entity_label_idxs = []
+#         max_word_num = max(batch_word_num)
+#         max_wordpiece_num = max([len(inst.piece_idxs) for inst in batch])
+#         batch_word_mask = []
+#         batch_entity_label_idxs = []
 
-        for inst in batch:
-            batch_piece_idxs.append(inst.piece_idxs + [0] * (max_wordpiece_num - len(inst.piece_idxs)))
-            batch_attention_masks.append(inst.attention_masks + [0] * (max_wordpiece_num - len(inst.piece_idxs)))
-            batch_word_lens.append(inst.word_lens)
-            batch_word_mask.append([1] * inst.word_num + [0] * (max_word_num - inst.word_num))
-            batch_entity_label_idxs.append(inst.entity_label_idxs +
-                                           [0] * (max_word_num - inst.word_num))
+#         for inst in batch:
+#             batch_piece_idxs.append(inst.piece_idxs + [0] * (max_wordpiece_num - len(inst.piece_idxs)))
+#             batch_attention_masks.append(inst.attention_masks + [0] * (max_wordpiece_num - len(inst.piece_idxs)))
+#             batch_word_lens.append(inst.word_lens)
+#             batch_word_mask.append([1] * inst.word_num + [0] * (max_word_num - inst.word_num))
+#             batch_entity_label_idxs.append(inst.entity_label_idxs +
+#                                            [0] * (max_word_num - inst.word_num))
 
-        batch_piece_idxs = torch.LongTensor(batch_piece_idxs).to(self.config.device)
-        batch_attention_masks = torch.FloatTensor(batch_attention_masks).to(self.config.device)
-        batch_word_num = torch.LongTensor(batch_word_num).to(self.config.device)
-        batch_word_mask = torch.LongTensor(batch_word_mask).eq(0).to(self.config.device)
-        batch_entity_label_idxs = torch.LongTensor(batch_entity_label_idxs).to(self.config.device)
+#         batch_piece_idxs = torch.LongTensor(batch_piece_idxs).to(self.config.device)
+#         batch_attention_masks = torch.FloatTensor(batch_attention_masks).to(self.config.device)
+#         batch_word_num = torch.LongTensor(batch_word_num).to(self.config.device)
+#         batch_word_mask = torch.LongTensor(batch_word_mask).eq(0).to(self.config.device)
+#         batch_entity_label_idxs = torch.LongTensor(batch_entity_label_idxs).to(self.config.device)
 
-        return Batch(
-            sent_index=batch_sent_index,
-            word_ids=batch_word_ids,
-            words=batch_words,
-            word_num=batch_word_num,
-            word_mask=batch_word_mask,
-            piece_idxs=batch_piece_idxs,
-            attention_masks=batch_attention_masks,
-            word_lens=batch_word_lens,
-            entity_label_idxs=batch_entity_label_idxs
-        )
+#         return Batch(
+#             sent_index=batch_sent_index,
+#             word_ids=batch_word_ids,
+#             words=batch_words,
+#             word_num=batch_word_num,
+#             word_mask=batch_word_mask,
+#             piece_idxs=batch_piece_idxs,
+#             attention_masks=batch_attention_masks,
+#             word_lens=batch_word_lens,
+#             entity_label_idxs=batch_entity_label_idxs
+#         )
 
 
 class SentDataset(Dataset):
@@ -278,3 +278,20 @@ class SentDataset(Dataset):
             word_lens=batch_word_lens,
             entity_label_idxs=batch_entity_label_idxs
         )
+
+
+class SentDatasetLive(SentDataset):
+    def __init__(self, config, tokenized_sentences):
+        self.config = config
+        self.wordpiece_splitter = config.wordpiece_splitter
+        self.max_input_length = 512
+
+        # load vocab
+        self.vocabs = list(self.config.vocabs.values())[0]['sent']
+
+        # load data
+        # for inference time we don't know the actual label of input, so for running the code with set it the first
+        # label in the self.vocabs.
+        self.data = [{'words': sentence, 'label': self.vocabs[0]} for sentence in tokenized_sentences]
+                     
+
