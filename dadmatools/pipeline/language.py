@@ -1222,85 +1222,46 @@ class Pipeline:
         torch.cuda.empty_cache()
         return pred_labels
 
-    def __call__(self, input, is_sent=False):
-        if is_sent:
-            assert is_string(input) or is_list_strings(
-                input), 'Input must be one of the following:\n(i) A non-empty string.\n(ii) A list of non-empty strings.'
+    def __call__(self, input):        
+        if is_list_list_strings(input):
+            text = '\n'.join([' '.join(sent) for sent in input])
+            # switch to detected lang if auto mode is on
+            if self.auto_mode:
+                self._detect_lang_and_switch(text=text)
 
-            if is_list_strings(input):
-                # switch to detected lang if auto mode is on
-                if self.auto_mode:
-                    self._detect_lang_and_switch(text=' '.join(input))
-
-                tokenized_sent = [{ID: k + 1, TEXT: w} for k, w in enumerate(input)]
-                tagged_sent = self._posdep_sent(tokenized_sent)
-                out = self._lemmatize_sent(tagged_sent)
-                if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
-                    out = self._ner_sent(out)
-                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    out = self._sent_sent(out)
-                final = {TOKENS: out, LANG: self.active_lang}
-            else:
-                # switch to detected lang if auto mode is on
-                if self.auto_mode:
-                    self._detect_lang_and_switch(text=input)
-
-                ori_text = deepcopy(input)
-                tagged_sent = self._posdep_sent(input)
-                out = self._lemmatize_sent(tagged_sent)
-                if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
-                    out = self._ner_sent(out)
-                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    out = self._sent_sent(out)
-                final = {TEXT: ori_text, TOKENS: out, LANG: self.active_lang}
+            out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in
+                        enumerate(input)]
         else:
-            assert is_string(input) or is_list_list_strings(
-                input), 'Input must be one of the following:\n(i) A non-empty string.\n(ii) A list of lists of non-empty strings.'
-
-            if is_list_list_strings(input):
-                # switch to detected lang if auto mode is on
-                if self.auto_mode:
-                    self._detect_lang_and_switch(text='\n'.join([' '.join(sent) for sent in input]))
-
-                input = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in
-                         enumerate(input)]
-                tagged_doc = self._posdep_doc(input)
-                out = self._lemmatize_doc(tagged_doc)
-                if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
-                    out = self._ner_doc(out)
-                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    out = self._sent_doc(out)
-                final = {SENTENCES: out, LANG: self.active_lang}
+            # switch to detected lang if auto mode is on
+            text = input
+            if self.auto_mode:
+                self._detect_lang_and_switch(text=text)
+            if self.active_lang == 'persian':
+                tokenized_input = self.persian_tokenizer.tokenize(input)
+                out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent
+                        in enumerate(tokenized_input)]
             else:
-                # switch to detected lang if auto mode is on
-                if self.auto_mode:
-                    self._detect_lang_and_switch(text=input)
+                out = self._tokenize_doc(input)
 
-                final = {}
-                if SPELLLCHECKER in self.pipelines:
-                    spellchecker_result = spellchecker(self._spellchecker_model, input)
-                    final[SPELLLCHECKER] = spellchecker_result
-                if ITF in self.pipelines:
-                    itf_result = self._itf_model.translate(input)
-                    final[ITF] = itf_result
-                if self.active_lang == 'persian':
-                    tokenized_input = self.persian_tokenizer.tokenize(input)
-                    out = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent
-                           in enumerate(tokenized_input)]
-                else:
-                    out = self._tokenize_doc(input)
-                if POS in self.pipelines or DEP in self.pipelines:
-                    out = self._posdep_doc(out)
-                if LEMMA in self.pipelines:
-                    out = self._lemmatize_doc(out)
-                if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
-                    out = self._ner_doc(out)
-                if self._config.active_lang in langwithkasreh and KASREH in self.pipelines:  # kasreh if possible
-                    out = self._kasreh_doc(out)
-                final.update({SENTENCES: out, LANG: self.active_lang})
-                if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
-                    # sentiment = self._sent_doc(out)
-                    final['sentiment'] = self._sent_model(input)
+        final = {}
+        if SPELLLCHECKER in self.pipelines:
+            spellchecker_result = spellchecker(self._spellchecker_model, text)
+            final[SPELLLCHECKER] = spellchecker_result
+        if ITF in self.pipelines:
+            itf_result = self._itf_model.translate(text)
+            final[ITF] = itf_result        
+        if POS in self.pipelines or DEP in self.pipelines:
+            out = self._posdep_doc(out)
+        if LEMMA in self.pipelines:
+            out = self._lemmatize_doc(out)
+        if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
+            out = self._ner_doc(out)
+        if self._config.active_lang in langwithkasreh and KASREH in self.pipelines:  # kasreh if possible
+            out = self._kasreh_doc(out)
+        final.update({SENTENCES: out, LANG: self.active_lang})
+        if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
+            # sentiment = self._sent_doc(out)
+            final['sentiment'] = self._sent_model(text)
         return final
 
     def _conllu_predict(self, text_fpath):
