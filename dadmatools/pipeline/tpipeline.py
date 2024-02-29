@@ -105,7 +105,10 @@ class TPipeline:
         with open(train_bio_fpath) as f:
             for line in f:
                 line = line.split('\t')
-                labels.add(line[-1].replace('\n', ''))
+                label = line[-1].replace('\n', '')
+                if label == '':
+                    continue
+                labels.add(label)
         return labels
 
     @staticmethod
