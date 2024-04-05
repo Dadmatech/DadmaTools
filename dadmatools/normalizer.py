@@ -29,7 +29,7 @@ class Normalizer:
         self.remove_html = remove_html
         self.remove_puncs = remove_puncs
         self.remove_stop_word = remove_stop_word
-        self.STOPWORDS = open(prefix+save_dir+'stopwords-fa.py').read().splitlines()
+        self.STOPWORDS = open(prefix+save_dir+'stopwords-fa.py', encoding='utf-8', errors='ignore').read().splitlines()
         self.PUNCS = string.punctuation.replace('<', '').replace('>', '') + '،؟'
         if full_cleaning:
             self.remove_html = True
