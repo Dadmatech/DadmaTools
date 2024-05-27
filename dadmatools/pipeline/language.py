@@ -156,7 +156,7 @@ class Pipeline:
         # sentiment if possible
         if SENT in self.pipelines:
             model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-            self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path)
+            self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path, max_length=512, truncation=True)
 
             # self._sent_model = {}
             # for lang in self.added_langs:
