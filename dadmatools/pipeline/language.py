@@ -1222,7 +1222,12 @@ class Pipeline:
         torch.cuda.empty_cache()
         return pred_labels
 
-    def __call__(self, input):        
+    def __call__(self, input, pipelines: str = None):
+        if pipelines is not None:
+            pipelines = map_dadmatools_pipeline_to_trankit(pipelines)
+            pipelines = list(set(pipelines).intersection(self.pipelines))
+        else:
+            pipelines = self.pipelines
         if is_list_list_strings(input):
             text = '\n'.join([' '.join(sent) for sent in input])
             # switch to detected lang if auto mode is on
@@ -1244,22 +1249,22 @@ class Pipeline:
                 out = self._tokenize_doc(input)
 
         final = {}
-        if SPELLLCHECKER in self.pipelines:
+        if SPELLLCHECKER in pipelines:
             spellchecker_result = spellchecker(self._spellchecker_model, text)
             final[SPELLLCHECKER] = spellchecker_result
-        if ITF in self.pipelines:
+        if ITF in pipelines:
             itf_result = self._itf_model.translate(text)
             final[ITF] = itf_result        
-        if POS in self.pipelines or DEP in self.pipelines:
+        if POS in pipelines or DEP in pipelines:
             out = self._posdep_doc(out)
-        if LEMMA in self.pipelines:
+        if LEMMA in pipelines:
             out = self._lemmatize_doc(out)
-        if self._config.active_lang in langwithner and NER in self.pipelines:  # ner if possible
+        if self._config.active_lang in langwithner and NER in pipelines:  # ner if possible
             out = self._ner_doc(out)
-        if self._config.active_lang in langwithkasreh and KASREH in self.pipelines:  # kasreh if possible
+        if self._config.active_lang in langwithkasreh and KASREH in pipelines:  # kasreh if possible
             out = self._kasreh_doc(out)
         final.update({SENTENCES: out, LANG: self.active_lang})
-        if self._config.active_lang in langwithsent and SENT in self.pipelines:  # sent if possible
+        if self._config.active_lang in langwithsent and SENT in pipelines:  # sent if possible
             # sentiment = self._sent_doc(out)
             final['sentiment'] = self._sent_model(text)
         return final
