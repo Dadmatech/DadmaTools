@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dadmatools",
-    version="2.0.7",
+    version="2.0.8",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -46,7 +46,7 @@ setuptools.setup(
         'packaging',
         'sentencepiece',
         'sacremoses',
-        'fasttext',
+        'fasttext-wheel',
         'kenlm',
         'emoji==2.10.0',
     ],
