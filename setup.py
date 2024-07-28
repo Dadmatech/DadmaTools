@@ -18,7 +18,7 @@ setuptools.setup(
         "nltk",
         "folium>=0.2.1",
         "spacy>=3.0.0",
-        "torch<=2.0.1",
+        "torch>=2.3.1",
         "transformers>=4.9.1",
         "h5py>=3.3.0",
         "Deprecated==1.2.6",
