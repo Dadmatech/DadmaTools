@@ -33,3 +33,4 @@ sacremoses
 fasttext
 kenlm
 emoji==2.10.0
+pandas
