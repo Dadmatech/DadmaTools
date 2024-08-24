@@ -16,7 +16,7 @@ def SnappfoodSentiment(dest_dir=DEFAULT_CACHE_DIR):
 
     def get_snf_sa_item(dir_addr, fname):
         f_addr = os.path.join(dir_addr, fname)
-        keys = ['index', 'comment', 'label', 'label_id']
+        keys = ['index', 'text', 'label', 'label_id']
         f = open(f_addr, encoding="utf8")
         reader = csv.reader(f)
         try:
@@ -43,7 +43,8 @@ def SnappfoodSentiment(dest_dir=DEFAULT_CACHE_DIR):
     test_iterator = BaseIterator(test_iterator, num_lines=sizes['test'])
     dev_iterator = BaseIterator(dev_iterator, num_lines=sizes['dev'])
     iterators = {'train': train_iterator, 'test': test_iterator, 'dev': dev_iterator}
-    dataset = BaseDataset(info)
+    tagset = ['SAD', 'HAPPY']
+    dataset = BaseDataset(info, tagset)
     dataset.set_iterators(iterators)
     return dataset
 

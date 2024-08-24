@@ -1,5 +1,5 @@
 from .config import config as master_config
-from .iterators.sent_iterators import SentDataset
+# from .iterators.sent_iterators import SentDataset
 from .models.base_models import Multilingual_Embedding
 from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier
 from .models.mwt_model import MWTWrapper
@@ -69,8 +69,8 @@ class TPipeline:
             self.model_parameters = [(n, p) for n, p in self._embedding_layers.named_parameters()] + \
                                     [(n, p) for n, p in self._ner_model.named_parameters()]
 
-        elif self._task == 'sentiment':
-            self._embedding_layers = Multilingual_Embedding(self._config, model_name='sentiment_analyzer')
+        elif self._task == 'document_classification':
+            self._embedding_layers = Multilingual_Embedding(self._config, model_name='document_classifier')
             self._embedding_layers.to(self._config.device)
 
             self._sent_model = SentenceClassifier(self._config, self._lang)
@@ -80,7 +80,7 @@ class TPipeline:
                                     [(n, p) for n, p in self._sent_model.named_parameters()]
 
         # optimizer
-        if self._task in ['tokenize', 'posdep', 'ner', 'sentiment']:
+        if self._task in ['tokenize', 'posdep', 'ner', 'document_classification']:
             param_groups = [
                 {
                     'params': [p for n, p in self.model_parameters if 'task_adapters' in n if
@@ -153,7 +153,7 @@ class TPipeline:
         # lang and data
         self._lang = training_config['category'] if 'category' in training_config else 'customized'
         self._task = training_config['task']
-        assert self._task in ['tokenize', 'mwt', 'posdep', 'lemmatize', 'ner', 'sentiment']
+        assert self._task in ['tokenize', 'mwt', 'posdep', 'lemmatize', 'ner', 'document_classification']
 
         # the following variables are used for UD training
         self._train_txt_fpath = training_config['train_txt_fpath'] if 'train_txt_fpath' in training_config else None
@@ -164,6 +164,7 @@ class TPipeline:
         # the following variables are used for NER training
         self._train_bio_fpath = training_config['train_bio_fpath'] if 'train_bio_fpath' in training_config else None
         self._dev_bio_fpath = training_config['dev_bio_fpath'] if 'dev_bio_fpath' in training_config else None
+        self._document_classification_dataset = training_config['document_classification_dataset']
 
         master_config.train_conllu_fpath = self._train_conllu_fpath
         master_config.dev_conllu_fpath = self._dev_conllu_fpath
@@ -201,7 +202,10 @@ class TPipeline:
         master_config._cache_dir = self._save_dir
         ensure_dir(self._save_dir)
         self._config = master_config
-        self._config.labels = self._get_list_of_unique_labels(self._train_bio_fpath)
+        if self._train_bio_fpath:
+            self._config.labels = self._get_list_of_unique_labels(self._train_bio_fpath)
+        else:
+            self._config.labels = self._document_classification_dataset.tagset
         self._config.training = True
         self._config.lang = self._lang
         self._config.treebank_name = treebank_name
@@ -214,7 +218,7 @@ class TPipeline:
             self._config.batch_size = training_config['batch_size']
         elif training_config['task'] == 'tokenize':
             self._config.batch_size = 4
-        elif training_config['task'] in ['posdep', 'ner', 'sentiment']:
+        elif training_config['task'] in ['posdep', 'ner', 'document_classification']:
             self._config.batch_size = 16
         elif training_config['task'] in ['mwt', 'lemmatize']:
             self._config.batch_size = 50
@@ -313,26 +317,28 @@ class TPipeline:
         return None
 
     def _prepare_sent(self):
-        self.train_set = SentDataset(
-            config=self._config,
-            bio_fpath=self._train_bio_fpath,
-            evaluate=False
-        )
-        self.train_set.numberize()
+        # self.train_set = SentDataset(
+        #     config=self._config,
+        #     bio_fpath=self._train_bio_fpath,
+        #     evaluate=False
+        # )
+        self.train_set = list(self._document_classification_dataset.train)
+        # self.train_set.numberize()
         self.batch_num = len(self.train_set) // self._config.batch_size
 
-        self.dev_set = SentDataset(
-            config=self._config,
-            bio_fpath=self._dev_bio_fpath,
-            evaluate=True
-        )
-        self.dev_set.numberize()
+        # self.dev_set = SentDataset(
+        #     config=self._config,
+        #     bio_fpath=self._dev_bio_fpath,
+        #     evaluate=True
+        # )
+        self.dev_set = list(self._document_classification_dataset.dev)
+        # self.dev_set.numberize()
         self.dev_batch_num = len(self.dev_set) // self._config.batch_size + \
                              (len(self.dev_set) % self._config.batch_size != 0)
 
         # load vocab and itos
-        # self._config.ner_vocabs = {}
-        # self._config.ner_vocabs[self._config.lang] = self.train_set.vocabs
+        self._config.doc_vocabs = {}
+        self._config.doc_vocabs[self._config.lang] = self._document_classification_dataset.tagset
         # self.tag_itos = {v: k for k, v in self._config.ner_vocabs[self._config.lang].items()}
 
     def _prepare_ner(self):
@@ -369,7 +375,7 @@ class TPipeline:
             self._prepare_lemma()
         elif self._task == 'ner':
             self._prepare_ner()
-        elif self._task == 'sentiment':
+        elif self._task == 'document_classification':
             self._prepare_sent()
 
     def _train_tokenize(self):
@@ -780,7 +786,7 @@ class TPipeline:
             for k, v in self._ner_model.state_dict().items():
                 if k in trainable_weight_names:
                     state['adapters'][k] = v
-        elif self._task == 'sentiment':
+        elif self._task == 'document_classification':
             for k, v in self._sent_model.state_dict().items():
                 if k in trainable_weight_names:
                     state['adapters'][k] = v
@@ -800,5 +806,5 @@ class TPipeline:
             self._train_lemma()
         elif self._task == 'ner':
             self._train_ner()
-        elif self._task == 'sentiment':
+        elif self._task == 'document_classification':
             self._train_sent()

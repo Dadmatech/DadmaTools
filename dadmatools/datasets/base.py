@@ -55,8 +55,9 @@ class BaseDataset:
         data (list, array, tuple): dataset-like object
     """
 
-    def __init__(self, info):
+    def __init__(self, info, tagset):
         self.info = info
+        self.tagset = tagset
 
     def set_iterators(self, iterators_dict):
         if type(iterators_dict) != dict:

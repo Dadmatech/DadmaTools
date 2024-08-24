@@ -9,14 +9,15 @@ class SentenceClassifier(nn.Module):
     def __init__(self, config, language):
         super().__init__()
         self.config = config
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
         if not self.config.labels:
             self.entity_label = list(self.config.vocabs.values())[0]['sent']
         else:
             self.entity_label = self.config.labels
         self.entity_label_num = len(self.entity_label)
 
-        self.entity_label_ffn = Linears([self.xlmr_dim, config.hidden_num,
+        self.entity_label_ffn = Linears([self.pretrained_model_dim, config.hidden_num,
                                          self.entity_label_num],
                                         dropout_prob=config.linear_dropout,
                                         bias=config.linear_bias,
@@ -60,12 +61,13 @@ class NERClassifier(nn.Module):
     def __init__(self, config, language):
         super().__init__()
         self.config = config
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
         self.entity_label_stoi = config.ner_vocabs[language]  # BIOES tags
         self.entity_label_itos = {i: s for s, i in self.entity_label_stoi.items()}
         self.entity_label_num = len(self.entity_label_stoi)
 
-        self.entity_label_ffn = Linears([self.xlmr_dim, config.hidden_num,
+        self.entity_label_ffn = Linears([self.pretrained_model_dim, config.hidden_num,
                                          self.entity_label_num],
                                         dropout_prob=config.linear_dropout,
                                         bias=config.linear_bias,
@@ -115,12 +117,13 @@ class KasrehClassifier(nn.Module):
     def __init__(self, config, language):
         super().__init__()
         self.config = config
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
         self.entity_label_stoi = config.kasreh_vocabs[language]  # BIOES tags
         self.entity_label_itos = {i: s for s, i in self.entity_label_stoi.items()}
         self.entity_label_num = len(self.entity_label_stoi)
 
-        self.entity_label_ffn = Linears([self.xlmr_dim, config.hidden_num,
+        self.entity_label_ffn = Linears([self.pretrained_model_dim, config.hidden_num,
                                          self.entity_label_num],
                                         dropout_prob=config.linear_dropout,
                                         bias=config.linear_bias,
@@ -171,18 +174,19 @@ class PosDepClassifier(nn.Module):
         super().__init__()
         self.config = config
         self.vocabs = config.vocabs[treebank_name]
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
         self.upos_embedding = nn.Embedding(
             num_embeddings=len(self.vocabs[UPOS]),
             embedding_dim=50
         )
         # pos tagging
-        self.upos_ffn = nn.Linear(self.xlmr_dim, len(self.vocabs[UPOS]))
-        self.xpos_ffn = nn.Linear(self.xlmr_dim + 50, len(self.vocabs[XPOS]))
-        self.feats_ffn = nn.Linear(self.xlmr_dim, len(self.vocabs[FEATS]))
+        self.upos_ffn = nn.Linear(self.pretrained_model_dim, len(self.vocabs[UPOS]))
+        self.xpos_ffn = nn.Linear(self.pretrained_model_dim + 50, len(self.vocabs[XPOS]))
+        self.feats_ffn = nn.Linear(self.pretrained_model_dim, len(self.vocabs[FEATS]))
 
-        self.down_dim = self.xlmr_dim // 4
-        self.down_project = nn.Linear(self.xlmr_dim, self.down_dim)
+        self.down_dim = self.pretrained_model_dim // 4
+        self.down_project = nn.Linear(self.pretrained_model_dim, self.down_dim)
         # dependency parsing
         self.unlabeled = Deep_Biaffine(self.down_dim, self.down_dim,
                                        self.down_dim, 1)
@@ -290,8 +294,9 @@ class TokenizerClassifier(nn.Module):
     def __init__(self, config, treebank_name):
         super().__init__()
         self.config = config
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
-        self.tokenizer_ffn = nn.Linear(self.xlmr_dim, 5)
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
+        self.tokenizer_ffn = nn.Linear(self.pretrained_model_dim, 5)
 
         # loss function
         self.criteria = torch.nn.CrossEntropyLoss()

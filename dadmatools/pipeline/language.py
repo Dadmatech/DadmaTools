@@ -155,17 +155,17 @@ class Pipeline:
 
         # sentiment if possible
         if SENT in self.pipelines:
-            model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
-            self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path, max_length=512, truncation=True)
+            # model_path = "cardiffnlp/twitter-xlm-roberta-base-sentiment"
+            # self._sent_model = pipeline("sentiment-analysis", model=model_path, tokenizer=model_path, max_length=512, truncation=True)
 
-            # self._sent_model = {}
-            # for lang in self.added_langs:
-            #     if lang in langwithsent:
-            #         self._sent_model[lang] = SentenceClassifier(self._config, lang)
-            #         self._sent_model[lang].to(self._config.device)
-            #         if self._use_gpu:
-            #             self._sent_model[lang].half()
-            #         self._sent_model[lang].eval()
+            self._sent_model = {}
+            for lang in self.added_langs:
+                if lang in langwithsent:
+                    self._sent_model[lang] = SentenceClassifier(self._config, lang)
+                    self._sent_model[lang].to(self._config.device)
+                    if self._use_gpu:
+                        self._sent_model[lang].half()
+                    self._sent_model[lang].eval()
 
         if SPELLLCHECKER in self.pipelines:
             self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)

@@ -8,8 +8,9 @@ class Base_Model(nn.Module):  # currently assuming the pretrained transformer is
         super().__init__()
         self.config = config
         self.task_name = task_name
-        # xlmr encoder
-        self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        # pretrained encoder
+        # self.xlmr_dim = 768 if config.embedding_name == 'xlm-roberta-base' else 1024
+        self.pretrained_model_dim = supported_embeddings[config.embedding_name]
         self.xlmr = XLMRobertaModel.from_pretrained(config.embedding_name,
                                                     cache_dir=os.path.join(config._cache_dir, config.embedding_name),
                                                     output_hidden_states=True)
@@ -38,11 +39,11 @@ class Base_Model(nn.Module):  # currently assuming the pretrained transformer is
 
         # average all pieces for multi-piece words
         idxs, masks, token_num, token_len = word_lens_to_idxs_fast(word_lens)
-        idxs = piece_idxs.new(idxs).unsqueeze(-1).expand(batch_size, -1, self.xlmr_dim) + 1
+        idxs = piece_idxs.new(idxs).unsqueeze(-1).expand(batch_size, -1, self.pretrained_model_dim) + 1
         masks = xlmr_outputs.new(masks).unsqueeze(-1)
         xlmr_outputs = torch.gather(xlmr_outputs, 1,
                                     idxs) * masks
-        xlmr_outputs = xlmr_outputs.view(batch_size, token_num, token_len, self.xlmr_dim)
+        xlmr_outputs = xlmr_outputs.view(batch_size, token_num, token_len, self.pretrained_model_dim)
         xlmr_outputs = xlmr_outputs.sum(2)
         return xlmr_outputs, cls_reprs
 

@@ -1,4 +1,7 @@
-supported_embeddings = ['xlm-roberta-base', 'xlm-roberta-large']
+supported_embeddings = {
+    'xlm-roberta-base': 768,
+    'xlm-roberta-large': 1024,
+}
 
 saved_model_version = 'v1.0.0'
 
