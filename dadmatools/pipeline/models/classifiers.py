@@ -39,14 +39,14 @@ class SentenceClassifier(nn.Module):
             self.load_state_dict(self.initialized_weights, strict=False)
             print(f'Loading Sentence tagger for {language}')
 
-    def forward(self, batch, word_reprs):
-        batch_size, _, _ = word_reprs.size()
+    def forward(self, batch, cls_reprs):
+        batch_size, _, _ = cls_reprs.size()
 
-        logits = self.entity_label_ffn(word_reprs)
-        loss, trans = self.crit(logits, batch.entity_label_idxs)
+        logits = self.entity_label_ffn(cls_reprs)
+        loss, trans = self.crit(logits, batch.label_ids)
         return loss
 
-    def predict(self, batch, cls_reprs):
+    def predict(self, cls_reprs):
         logits = self.entity_label_ffn(cls_reprs)
         logits = torch.softmax(logits, 2)[:, -1, :]
         return torch.argmax(input=logits, axis=1)

@@ -1,3 +1,4 @@
+from dadmatools.pipeline.iterators.sent_iterators import DocumentDataset
 from .config import config as master_config
 # from .iterators.sent_iterators import SentDataset
 from .models.base_models import Multilingual_Embedding
@@ -322,8 +323,12 @@ class TPipeline:
         #     bio_fpath=self._train_bio_fpath,
         #     evaluate=False
         # )
-        self.train_set = list(self._document_classification_dataset.train)
-        # self.train_set.numberize()
+        # self.train_set = list(self._document_classification_dataset.train)
+        self.train_set = DocumentDataset(
+            config=self._config,
+            documents=list(self._document_classification_dataset.train)
+        )
+        self.train_set.numberize()
         self.batch_num = len(self.train_set) // self._config.batch_size
 
         # self.dev_set = SentDataset(
@@ -331,7 +336,12 @@ class TPipeline:
         #     bio_fpath=self._dev_bio_fpath,
         #     evaluate=True
         # )
-        self.dev_set = list(self._document_classification_dataset.dev)
+        # self.dev_set = list(self._document_classification_dataset.dev)
+        self.dev_set = DocumentDataset(
+            config=self._config,
+            documents=list(self._document_classification_dataset.dev)
+        )
+        self.dev_set.numberize()
         # self.dev_set.numberize()
         self.dev_batch_num = len(self.dev_set) // self._config.batch_size + \
                              (len(self.dev_set) % self._config.batch_size != 0)
@@ -757,9 +767,9 @@ class TPipeline:
                                 shuffle=False, collate_fn=data_set.collate_fn):
             progress.update(1)
             word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
-            pred_entity_labels = self._sent_model.predict(batch, cls_reprs)
+            pred_entity_labels = self._sent_model.predict(cls_reprs)
             predictions += pred_entity_labels
-            batch_entity_labels = batch.entity_label_idxs.data.cpu().numpy().tolist()
+            batch_entity_labels = batch.label_ids.data.cpu().numpy().tolist()
             golds += batch_entity_labels
         progress.close()
         score = score_by_sent(predictions, golds, self.logger)

@@ -89,7 +89,7 @@ class NERDatasetLive(Dataset):
         self.data = new_data
 
         # load vocab
-        self.vocabs = self.config.ner_vocabs[self.config.active_lang]
+        # self.vocabs = self.config.ner_vocabs[self.config.active_lang]
 
     def __len__(self):
         return len(self.data)
