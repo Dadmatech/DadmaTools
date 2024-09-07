@@ -1,5 +1,7 @@
 from typing import List
 
+from dadmatools.pipeline.iterators.sent_iterators import DocumentDataset
+
 from .config import config as master_config
 from .informal2formal.main import Informal2Formal
 from .models.base_models import Multilingual_Embedding
@@ -11,7 +13,7 @@ from .models.spellchecker import load_model as load_spellchecker_model, spellche
 from .iterators.tokenizer_iterators import TokenizeDatasetLive
 from .iterators.tagger_iterators import TaggerDatasetLive
 from .iterators.ner_iterators import NERDatasetLive
-from .iterators.sent_iterators import SentDatasetLive
+# from .iterators.sent_iterators import SentDatasetLive
 from .persian_tokenization.tokenizer import WordTokenizer
 from .utils.tokenizer_utils import *
 from collections import defaultdict
@@ -504,6 +506,24 @@ class Pipeline:
 
         torch.cuda.empty_cache()
         return {TEXT: in_doc, SENTENCES: sentences, LANG: self.active_lang}
+    
+    def get_cls_reprs(self, sentences):
+        sample = {
+            'index': '0',
+            'text': ' '.join([t for s in sentences for t in s]),
+            'label': 'SAD',
+            'label_id': '1'
+        }
+        test_set = DocumentDataset(
+            config=self._config,
+            documents=[sample]
+        )
+        test_set.numberize()
+        for batch in DataLoader(test_set,
+                                batch_size=1000,
+                                shuffle=False, collate_fn=test_set.collate_fn):
+            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
+            return cls_reprs
 
     def tokenize(self, input, is_sent=False):
         assert is_string(input), 'Input must be a non-empty string.'
@@ -1092,7 +1112,7 @@ class Pipeline:
             in_doc = self._tokenize_doc(in_doc)
         dner_doc = deepcopy(in_doc)
         sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dner_doc]
-        test_set = SentDatasetLive(
+        test_set = NERDatasetLive(
             config=self._config,
             tokenized_sentences=sentences
         )
@@ -1129,7 +1149,7 @@ class Pipeline:
             in_doc = self._tokenize_doc(in_doc)
         dkasreh_doc = deepcopy(in_doc)
         sentences = [[t[TEXT] for t in sentence[TOKENS]] for sentence in dkasreh_doc]
-        test_set = SentDatasetLive(
+        test_set = NERDatasetLive(
             config=self._config,
             tokenized_sentences=sentences
         )
@@ -1202,22 +1222,10 @@ class Pipeline:
             in_doc = self._tokenize_doc(in_doc)
         dsent_doc = deepcopy(in_doc)
         sentences = [[t[TEXT] for sentence in dsent_doc for t in sentence[TOKENS]]]
-        test_set = SentDatasetLive(
-            config=self._config,
-            tokenized_sentences=sentences
-        )
-        test_set.numberize()
-        # load ner adapter weights
+        cls_reprs = self.get_cls_reprs(sentences)
+        # load sent adapter weights
         self._load_adapter_weights(model_name='sent')
-        eval_batch_size = tbname2tagbatchsize.get(self._config.treebank_name, self._tagbatchsize)
-        if self._config.embedding_name == 'xlm-roberta-large':
-            eval_batch_size = int(eval_batch_size / 3)
-        pred_labels = None
-        for batch in DataLoader(test_set,
-                                batch_size=eval_batch_size,
-                                shuffle=False, collate_fn=test_set.collate_fn):
-            word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
-            pred_labels = self._sent_model[self._config.active_lang].predict_persent(cls_reprs)
+        pred_labels = self._sent_model[self._config.active_lang].predict_persent(cls_reprs)
 
         torch.cuda.empty_cache()
         return pred_labels
@@ -1266,7 +1274,8 @@ class Pipeline:
         final.update({SENTENCES: out, LANG: self.active_lang})
         if self._config.active_lang in langwithsent and SENT in pipelines:  # sent if possible
             # sentiment = self._sent_doc(out)
-            final['sentiment'] = self._sent_model(text)
+            out = self._sent_doc(out)
+            # final['sentiment'] = self._sent_model[self.active_lang](text)
         return final
 
     def _conllu_predict(self, text_fpath):
