@@ -1,9 +1,21 @@
-dataset_info = {
-    "name": "ArmanTextEmotion",
+{
+    "name": "armanRayanSentiment",
     "version": "1.0.0",
-    "task": "Text Emotion Classification",
-    "splits": ["train", "test", "dev"],
-    "description": "ArmanTextEmotion dataset contains text data labeled with different emotions. The dataset is used for training and evaluating emotion classification models.",
-    "filenames": ["train.txt", "test.txt", "dev.txt"],
-    "size": {"train": 13825, "test": 3456, "dev": 1536}  # Update these sizes with the actual sizes of your splits
+    "task": "Sentiment-Analysis",
+    "splits": [
+        "train",
+        "test",
+        "dev"
+    ],
+    "description": "Arman Text Emotion Dataset",
+    "size": {
+        "train": 5513,
+        "dev": 612,
+        "test": 1151
+    },
+    "filenames": [
+        "arman-text-emotion/train.csv",
+        "arman-text-emotion/test.csv",
+        "arman-text-emotion/dev.csv"
+    ]
 }
