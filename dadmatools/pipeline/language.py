@@ -520,7 +520,7 @@ class Pipeline:
         )
         test_set.numberize()
         for batch in DataLoader(test_set,
-                                batch_size=1000,
+                                batch_size=1,
                                 shuffle=False, collate_fn=test_set.collate_fn):
             word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
             return cls_reprs
@@ -1225,6 +1225,8 @@ class Pipeline:
         cls_reprs = self.get_cls_reprs(sentences)
         # load sent adapter weights
         self._load_adapter_weights(model_name='sent')
+        # self._sent_model[self._config.active_lang].eval()
+        # word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
         pred_labels = self._sent_model[self._config.active_lang].predict_persent(cls_reprs)
 
         torch.cuda.empty_cache()
