@@ -1,0 +1,13 @@
+  {
+    "name": "persianDataset",
+    "version": "1.0.0",
+    "task": "Sentiment-Analysis",
+    "splits": ["train", "test", "dev"],
+    "description": "Persian text dataset with emotion labels including sadness, praise, happiness, and more.",
+    "size": {
+      "train": 64460,
+      "dev": 8058,
+      "test": 8058
+    },
+    "filenames": ["tenLabeled/train.txt", "tenLabeled/test.txt", "tenLabeled/dev.txt"]
+  }
