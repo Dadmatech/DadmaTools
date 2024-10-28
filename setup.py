@@ -17,7 +17,6 @@ setuptools.setup(
         "bpemb>=0.3.3",
         "nltk",
         "folium>=0.2.1",
-        "spacy>=3.0.0",
         "torch>=2.3.1",
         "transformers>=4.9.1",
         "h5py>=3.3.0",
