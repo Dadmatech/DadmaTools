@@ -59,23 +59,23 @@ Contents:
 - [How to use in colab](#how-to-use)
 - [Cite us](#cite)
 
-
 ## Installation
 
-To get started using DadmaTools in your python project, simply install via the pip package. Note that installing the default pip package 
-will not install all NLP libraries because we want you to have the freedom to limit the dependency on what you use. Instead, we provide you with an installation option if you want to install all the required dependencies. 
+To get started using DadmaTools, install the project with pip:
 
-### Install with pip
+- **Full Version**  
+  Includes all features, including transformers and trainable modules:  
+  ```bash
+  pip install dadmatools
+  ```
 
-To get started using DadmaTools, simply install the project with pip:
+- **Light Version**  
+  For users who prefer only datasets and non-trainable modules without transformers:  
+  ```bash
+  pip install dadmatools[light]
+  ```
 
-```bash
-pip install dadmatools 
-```
 
-Note that the default installation of DadmaTools **does** install other NLP libraries such as SpaCy and supar.
-
-You can check the `requirements.txt` file to see what version the packages has been tested with.
 
 ### Install from github
 Alternatively you can install the latest version from github using:
