@@ -43,6 +43,7 @@ base_dependencies = [
     "fasttext-wheel",
     "kenlm",
     "emoji==2.10.0",
+    "pandas",
 ]
 
 # Combine base and heavy dependencies for the default installation
