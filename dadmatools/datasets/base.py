@@ -55,7 +55,7 @@ class BaseDataset:
         data (list, array, tuple): dataset-like object
     """
 
-    def __init__(self, info, tagset):
+    def __init__(self, info, tagset=None):
         self.info = info
         self.tagset = tagset
 
