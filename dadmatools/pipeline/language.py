@@ -1277,7 +1277,8 @@ class Pipeline:
         if self._config.active_lang in langwithsent and SENT in pipelines:  # sent if possible
             # sentiment = self._sent_doc(out)
             # out = self._sent_doc(out)
-            final['sentiment'] = self._sent_model[self.active_lang](text)
+            # final['sentiment'] = self._sent_model[self.active_lang](text)
+            final['sentiment'] = self._sent_model(text)
         return final
 
     def _conllu_predict(self, text_fpath):
