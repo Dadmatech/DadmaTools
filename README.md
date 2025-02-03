@@ -442,21 +442,12 @@ You can see the codes and the output in colab.
 
 ## Cite
 ```
-@inproceedings{etezadi-etal-2022-dadmatools,
-    title = "{D}adma{T}ools: Natural Language Processing Toolkit for {P}ersian Language",
-    author = "Etezadi, Romina  and
-      Karrabi, Mohammad  and
-      Zare, Najmeh  and
-      Sajadi, Mohamad Bagher  and
-      Pilehvar, Mohammad Taher",
-    booktitle = "Proceedings of the 2022 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies: System Demonstrations",
-    month = jul,
-    year = "2022",
-    address = "Hybrid: Seattle, Washington + Online",
-    publisher = "Association for Computational Linguistics",
-    url = "https://aclanthology.org/2022.naacl-demo.13",
-    pages = "124--130",
-    abstract = "We introduce DadmaTools, an open-source Python Natural Language Processing toolkit for the Persian language. The toolkit is a neural pipeline based on spaCy for several text processing tasks, including normalization, tokenization, lemmatization, part-of-speech, dependency parsing, constituency parsing, chunking, and ezafe detecting. DadmaTools relies on fine-tuning of ParsBERT using the PerDT dataset for most of the tasks. Dataset module and embedding module are included in DadmaTools that support different Persian datasets, embeddings, and commonly used functions for them. Our evaluations show that DadmaTools can attain state-of-the-art performance on multiple NLP tasks. The source code is freely available at https://github.com/Dadmatech/DadmaTools.",
+@inproceedings{jafari2025dadmatools,
+  title={DadmaTools V2: an Adapter-Based Natural Language Processing Toolkit for the Persian Language},
+  author={Jafari, Sadegh and Farsi, Farhan and Ebrahimi, Navid and Sajadi, Mohamad Bagher and Eetemadi, Sauleh},
+  booktitle={Proceedings of the 1st Workshop on NLP for Languages Using Arabic Script},
+  pages={37--43},
+  year={2025}
 }
 ``` 
 
