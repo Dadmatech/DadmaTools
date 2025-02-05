@@ -40,6 +40,13 @@ class InvertibleAdapterConfig(Mapping):
 
 
 @dataclass
+class InvertibleAdapterConfig:
+    block_type: str
+    non_linearity: str
+    reduction_factor: int
+
+
+@dataclass
 class AdapterConfig(Mapping):
     """Base class that models the architecture of an adapter."""
 
@@ -53,7 +60,7 @@ class AdapterConfig(Mapping):
     output_adapter: bool
     non_linearity: str
     reduction_factor: int
-    invertible_adapter: Optional[InvertibleAdapterConfig] = None
+    invertible_adapter: Optional[InvertibleAdapterConfig] = field(default_factory=lambda: None)
     leave_out: List[int] = field(default_factory=list)
 
     # We want to emulate a simple form of immutability while keeping the ability to add custom attributes.
@@ -135,8 +142,10 @@ class PfeifferConfig(AdapterConfig):
     output_adapter: bool = True
     non_linearity: str = "relu"
     reduction_factor: int = 16
-    invertible_adapter: Optional[dict] = InvertibleAdapterConfig(
-        block_type="nice", non_linearity="relu", reduction_factor=2
+    invertible_adapter: Optional[InvertibleAdapterConfig] = field(
+        default_factory=lambda: InvertibleAdapterConfig(
+            block_type="nice", non_linearity="relu", reduction_factor=2
+        )
     )
 
 
