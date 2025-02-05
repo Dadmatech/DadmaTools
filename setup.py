@@ -49,7 +49,7 @@ default_dependencies = base_dependencies + heavy_dependencies
 
 setuptools.setup(
     name="dadmatools",
-    version="2.1.6",
+    version="2.1.7",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -66,7 +66,7 @@ setuptools.setup(
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: Apache Software License ",
+        "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
-    ],
+    ]
 )
