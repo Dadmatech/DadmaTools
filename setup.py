@@ -65,7 +65,7 @@ setuptools.setup(
         "git+https://github.com/kpu/kenlm@master#egg=kenlm",
     ],
     classifiers=[
-        "Programming Language :: Python :: 3.11.7",
+        "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License ",
         "Operating System :: OS Independent",
     ],
