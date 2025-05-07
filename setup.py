@@ -61,9 +61,9 @@ setuptools.setup(
     extras_require={
         "light": base_dependencies,  # Lightweight installation option
     },
-    dependency_links=[
-        "git+https://github.com/kpu/kenlm@master#egg=kenlm",
-    ],
+    # dependency_links=[
+    #     "git+https://github.com/kpu/kenlm@master#egg=kenlm",
+    # ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
