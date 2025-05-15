@@ -3,44 +3,45 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# Heavy dependencies
+# Heavy dependencies (with transformers and deep learning frameworks)
 heavy_dependencies = [
-    "torch==1.11.0",
-    "transformers==4.47.1",
+    "torch==2.7.0",
+    "transformers==4.51.3",
     "pytorch-transformers==1.2.0",
     "tf-estimator-nightly==2.8.0.dev2021122109",
-    "supar==1.1.2",
+    "supar==1.1.4",
+    "stanza==1.10.1",
 ]
 
-# Base dependencies for lightweight installation
+# Base dependencies (lightweight installation)
 base_dependencies = [
     "bpemb==0.3.6",
     "nltk==3.9.1",
-    "folium==0.19.3",
-    "h5py==3.12.1",
-    "Deprecated==1.2.6",
+    "folium==0.19.5",
+    "h5py==3.13.0",
+    "Deprecated==1.2.18",
     "hyperopt==0.2.7",
     "pyconll==3.2.0",
-    "segtok>=1.5.7",
+    "segtok==1.5.11",
     "tabulate==0.9.0",
     "gensim==4.3.3",
     "conllu==6.0.0",
     "gdown==5.2.0",
     "py7zr==0.22.0",
-    "html2text==2024.2.26",
-    "scikit-learn==1.6.0",
+    "html2text==2025.4.15",
+    "scikit-learn==1.6.1",
     "numpy==1.26.4",
-    "protobuf==5.29.2",
+    "protobuf==6.30.2",
     "requests==2.32.3",
     "tqdm==4.67.1",
     "langid==1.1.6",
-    "filelock==3.16.1",
-    "tokenizers==0.21.0",
+    "filelock==3.18.0",
+    "tokenizers==0.21.1",
     "regex==2024.11.6",
-    "packaging==24.2",
+    "packaging==25.0",
     "sentencepiece==0.2.0",
     "sacremoses==0.1.1",
-    "emoji==2.10.0",
+    "emoji==2.14.1",
     "pandas==2.2.3",
 ]
 
@@ -49,7 +50,7 @@ default_dependencies = base_dependencies + heavy_dependencies
 
 setuptools.setup(
     name="dadmatools",
-    version="2.1.8",
+    version="2.1.9",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -61,9 +62,9 @@ setuptools.setup(
     extras_require={
         "light": base_dependencies,  # Lightweight installation option
     },
-    dependency_links=[
-        "git+https://github.com/kpu/kenlm@master#egg=kenlm",
-    ],
+    # dependency_links=[
+    #     "git+https://github.com/kpu/kenlm@master#egg=kenlm",
+    # ],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
