@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 # Heavy dependencies
 heavy_dependencies = [
-    "torch==1.11.0",
+    "torch==2.1.0",
     "transformers==4.47.1",
     "pytorch-transformers==1.2.0",
-    "tf-estimator-nightly==2.8.0.dev2021122109",
+    "tensorflow-estimator==2.8.0",
     "supar==1.1.2",
 ]
 
@@ -42,6 +42,7 @@ base_dependencies = [
     "sacremoses==0.1.1",
     "emoji==2.10.0",
     "pandas==2.2.3",
+    "py3langid==0.3.0"
 ]
 
 # Combine base and heavy dependencies for the default installation
