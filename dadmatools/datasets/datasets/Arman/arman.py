@@ -17,7 +17,7 @@ def ARMAN(dest_dir=DEFAULT_CACHE_DIR):
     def get_arman_item(dir_addr, pattern):
         pattern = os.path.join(dir_addr, pattern)
         for f_addr in glob.iglob(pattern):
-            f = open(f_addr)
+            f = open(f_addr,encoding='utf-8')
             sentence = []
             for line in f:
                 if len(line) == 0 or line.startswith('-DOCSTART') or line[0] == "\n":

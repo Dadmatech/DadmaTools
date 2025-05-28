@@ -1,9 +1,10 @@
 import json
 from enum import Enum
 from pathlib import Path
-from gensim.models import KeyedVectors
-from gensim.scripts.glove2word2vec import glove2word2vec
-import fasttext
+# from gensim.models import KeyedVectors
+# from gensim.scripts.glove2word2vec import glove2word2vec
+from sentence_transformers import SentenceTransformer, util
+# import fasttext
 import numpy as np
 import os
 from dadmatools.embeddings.embedding_utils import download_with_progress, unzip_archive

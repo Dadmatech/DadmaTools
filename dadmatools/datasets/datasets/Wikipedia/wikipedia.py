@@ -14,7 +14,7 @@ def WikipediaCorpus(dest_dir=DEFAULT_CACHE_DIR):
 
     def get_wikipedia_item(dest_dir):
         addr = os.path.join(dest_dir, "cleaned_wiki.txt")
-        f = open(addr, 'r')
+        f = open(addr, 'r',encoding='utf-8')
         for line in f:
             yield json.loads(line)
 
