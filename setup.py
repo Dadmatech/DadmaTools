@@ -3,54 +3,89 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# Heavy dependencies
-heavy_dependencies = [
-    "torch==2.1.0",
-    "transformers==4.47.1",
-    "pytorch-transformers==1.2.0",
-    "tensorflow-estimator==2.8.0",
-    "supar==1.1.2",
+# Full dependency list from requirements.txt
+default_dependencies = [
+    "adapters==1.2.0",
+    "Brotli==1.1.0",
+    "certifi==2025.4.26",
+    "charset-normalizer==3.4.2",
+    "click==8.2.1",
+    "colorama==0.4.6",
+    "conllu==6.0.0",
+    "filelock==3.18.0",
+    "fsspec==2025.5.0",
+    "html2text==2025.4.15",
+    "huggingface-hub==0.31.4",
+    "idna==3.10",
+    "inflate64==1.0.1",
+    "Jinja2==3.1.6",
+    "joblib==1.5.0",
+    "langid==1.1.6",
+    "MarkupSafe==3.0.2",
+    "mpmath==1.3.0",
+    "multivolumefile==0.2.3",
+    "networkx==3.4.2",
+    "numpy==1.26.4",
+    "packaging==25.0",
+    "pandas==2.2.3",
+    "pillow==11.2.1",
+    "protobuf==6.31.0",
+    "psutil==7.0.0",
+    "py7zr==0.22.0",
+    "pybcj==1.0.6",
+    "pycryptodomex==3.23.0",
+    "pyppmd==1.1.1",
+    "python-dateutil==2.9.0.post0",
+    "pytz==2025.2",
+    "PyYAML==6.0.2",
+    "pyzstd==0.17.0",
+    "regex==2024.11.6",
+    "requests==2.32.3",
+    "sacremoses==0.1.1",
+    "safetensors==0.5.3",
+    "scikit-learn==1.6.1",
+    "scipy==1.13.0",
+    "sentence-transformers==4.1.0",
+    "sentencepiece==0.2.0",
+    "six==1.17.0",
+    "sympy==1.14.0",
+    "texttable==1.7.0",
+    "threadpoolctl==3.6.0",
+    "tokenizers==0.21.1",
+    "torch==2.3.0",
+    "torchtext==0.18.0",
+    "tqdm==4.67.1",
+    "transformers==4.51.3",
+    "typing_extensions==4.13.2",
+    "tzdata==2025.2",
+    "urllib3==2.4.0",
+    "gensim==4.3.3",
+    "emoji==1.7.0",
+    "gdown==5.2.0",
 ]
 
-# Base dependencies for lightweight installation
-base_dependencies = [
-    "bpemb==0.3.6",
-    "nltk==3.9.1",
-    "folium==0.19.3",
-    "h5py==3.12.1",
-    "Deprecated==1.2.6",
-    "hyperopt==0.2.7",
-    "pyconll==3.2.0",
-    "segtok>=1.5.7",
-    "tabulate==0.9.0",
-    "gensim==4.3.3",
+# Optional: lightweight install with only selected deps
+light_dependencies = [
     "conllu==6.0.0",
-    "gdown==5.2.0",
-    "py7zr==0.22.0",
-    "html2text==2024.2.26",
-    "scikit-learn==1.6.0",
-    "numpy==1.26.4",
-    "protobuf==5.29.2",
-    "requests==2.32.3",
-    "tqdm==4.67.1",
+    "filelock==3.18.0",
+    "html2text==2025.4.15",
     "langid==1.1.6",
-    "filelock==3.16.1",
-    "tokenizers==0.21.0",
+    "numpy==1.26.4",
+    "pandas==2.2.3",
+    "protobuf==6.31.0",
     "regex==2024.11.6",
-    "packaging==24.2",
+    "requests==2.32.3",
     "sentencepiece==0.2.0",
     "sacremoses==0.1.1",
-    "emoji==2.10.0",
-    "pandas==2.2.3",
-    "py3langid==0.3.0"
+    "tokenizers==0.21.1",
+    "torch==2.3.0",
+    "tqdm==4.67.1",
+    "transformers==4.51.3",
 ]
-
-# Combine base and heavy dependencies for the default installation
-default_dependencies = base_dependencies + heavy_dependencies
 
 setuptools.setup(
     name="dadmatools",
-    version="2.2.0",
+    version="2.3.0",  
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
@@ -58,9 +93,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Dadmatech/DadmaTools",
     packages=setuptools.find_packages(),
-    install_requires=default_dependencies,  # Default to all dependencies
+    install_requires=default_dependencies,
     extras_require={
-        "light": base_dependencies,  # Lightweight installation option
+        "light": light_dependencies,
     },
     dependency_links=[
         "git+https://github.com/kpu/kenlm@master#egg=kenlm",
@@ -69,5 +104,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: Apache Software License",
         "Operating System :: OS Independent",
-    ]
+    ],
+    python_requires='>=3.11',
 )
