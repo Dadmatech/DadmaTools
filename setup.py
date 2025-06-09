@@ -3,7 +3,6 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# Full dependency list from requirements.txt
 default_dependencies = [
     "adapters==1.2.0",
     "Brotli==1.1.0",
@@ -13,7 +12,7 @@ default_dependencies = [
     "colorama==0.4.6",
     "conllu==6.0.0",
     "filelock==3.18.0",
-    "fsspec==2025.5.0",
+    "fsspec>=2025.3.2,<2025.5.1",
     "html2text==2025.4.15",
     "huggingface-hub==0.31.4",
     "idna==3.10",
@@ -25,11 +24,11 @@ default_dependencies = [
     "mpmath==1.3.0",
     "multivolumefile==0.2.3",
     "networkx==3.4.2",
-    "numpy==1.26.4",
-    "packaging==25.0",
-    "pandas==2.2.3",
+    "numpy>=1.24.0,<2.0.0",
+    "packaging>=23.2,<25.0",
+    "pandas>=2.2.0,<2.2.3",
     "pillow==11.2.1",
-    "protobuf==6.31.0",
+    "protobuf>=5.29.1,<6.0.0",
     "psutil==7.0.0",
     "py7zr==0.22.0",
     "pybcj==1.0.6",
@@ -44,15 +43,15 @@ default_dependencies = [
     "sacremoses==0.1.1",
     "safetensors==0.5.3",
     "scikit-learn==1.6.1",
-    "scipy==1.13.0",
+    "scipy>=1.14.0,<1.14.1",
     "sentence-transformers==4.1.0",
     "sentencepiece==0.2.0",
     "six==1.17.0",
-    "sympy==1.14.0",
+    "sympy==1.13.1",
     "texttable==1.7.0",
     "threadpoolctl==3.6.0",
     "tokenizers==0.21.1",
-    "torch==2.3.0",
+    "torch>=2.1.0,<2.6.0",
     "torchtext==0.18.0",
     "tqdm==4.67.1",
     "transformers==4.51.3",
@@ -62,30 +61,30 @@ default_dependencies = [
     "gensim==4.3.3",
     "emoji==1.7.0",
     "gdown==5.2.0",
+    "tsfresh==0.20.0",
 ]
 
-# Optional: lightweight install with only selected deps
 light_dependencies = [
     "conllu==6.0.0",
     "filelock==3.18.0",
     "html2text==2025.4.15",
     "langid==1.1.6",
-    "numpy==1.26.4",
-    "pandas==2.2.3",
-    "protobuf==6.31.0",
+    "numpy>=1.24.0,<2.0.0",
+    "pandas>=2.2.0,<2.2.3",
+    "protobuf>=5.29.1,<6.0.0",
     "regex==2024.11.6",
     "requests==2.32.3",
     "sentencepiece==0.2.0",
     "sacremoses==0.1.1",
     "tokenizers==0.21.1",
-    "torch==2.3.0",
+    "torch>=2.1.0,<2.6.0",
     "tqdm==4.67.1",
     "transformers==4.51.3",
 ]
 
 setuptools.setup(
     name="dadmatools",
-    version="2.3.0",  
+    version="2.3.1",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
