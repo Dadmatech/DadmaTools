@@ -1,10 +1,10 @@
 import json
 from enum import Enum
 from pathlib import Path
-# from gensim.models import KeyedVectors
-# from gensim.scripts.glove2word2vec import glove2word2vec
+from gensim.models import KeyedVectors
+from gensim.scripts.glove2word2vec import glove2word2vec
 from sentence_transformers import SentenceTransformer, util
-# import fasttext
+from gensim.models.fasttext import load_facebook_vectors
 import numpy as np
 import os
 from dadmatools.embeddings.embedding_utils import download_with_progress, unzip_archive
@@ -31,35 +31,38 @@ def get_embedding_info(emb_name):
 def get_embedding(emb_name):
     if emb_name not in EMBEDDINGS_INFO:
         raise KeyError(f'{emb_name} not exist! for see all supported embeddings call get_all_embeddings_info()')
-    alg = EMBEDDINGS_INFO[emb_name]['algorithm']
-    format = EMBEDDINGS_INFO[emb_name]['format']
+    
+    info = EMBEDDINGS_INFO[emb_name]
+    alg = info['algorithm']
+    format = info['format']
+    
     if alg == 'fasttext' and format == 'bin':
         emb_type = EmbeddingType.FASTTEXT_BIN
     elif alg == 'glove':
         emb_type = EmbeddingType.GLOVE
     else:
         emb_type = EmbeddingType.KeyedVector
-    url = EMBEDDINGS_INFO[emb_name]["url"]
+    url = info["url"]
     dest_dir = os.path.join(DEFAULT_CACHE_DIR, emb_name)
     os.makedirs(dest_dir, exist_ok=True)
     f_addr = os.path.join(dest_dir, EMBEDDINGS_INFO[emb_name]["filename"])
     if not os.path.exists(f_addr):
         zipped_file_name = download_with_progress(url, dest_dir)
-        _ = unzip_archive(zipped_file_name, dest_dir, EMBEDDINGS_INFO[emb_name]["filename"])
+        _ = unzip_archive(zipped_file_name, dest_dir, info["filename"])
     if emb_type == EmbeddingType.KeyedVector:
-        if EMBEDDINGS_INFO[emb_name]["format"] == 'bin':
+        if format == 'bin':
           model = KeyedVectors.load_word2vec_format(f_addr, binary=True)
         else:
-          model = KeyedVectors.load_word2vec_format(f_addr)
+          model = KeyedVectors.load_word2vec_format(f_addr,binary=False)
     elif emb_type == EmbeddingType.FASTTEXT_BIN:
-        model = fasttext.load_model(f_addr)
+        model = load_facebook_vectors(f_addr)
     elif emb_type == EmbeddingType.GLOVE:
         word2vec_addr = str(f_addr) + '_word2vec_format.vec'
         if not os.path.exists(word2vec_addr):
             _ = glove2word2vec(f_addr, word2vec_addr)
-        model = KeyedVectors.load_word2vec_format(word2vec_addr)
+        model = KeyedVectors.load_word2vec_format(word2vec_addr, binary=False)
         emb_type = EmbeddingType.KeyedVector
-    return Embedding(model, emb_type, EMBEDDINGS_INFO[emb_name]["dim"])
+    return Embedding(model, emb_type, info["dim"])
 
 class Embedding:
     def __init__(self, emb_model, emb_type, emb_dim):
@@ -97,27 +100,47 @@ class Embedding:
             if (n_words > 0):
                 feature_vec = np.divide(feature_vec, n_words)
             return feature_vec
-
+        
     def get_vocab(self):
-        if self.emb_type == EmbeddingType.KeyedVector:
-            try:
-                return self.model.index_to_key
-            except AttributeError:
-                return self.model.wv
-        else:
-            return self.model.get_words(include_freq=True)
+        """
+        Return the vocabulary.
+        For KeyedVectors (including FastTextKeyedVectors), use .index_to_key.
+        """
+        return self.model.index_to_key
 
-    def word_vector(self, word_name):
-        if self.emb_type == EmbeddingType.KeyedVector:
-            try:
-                return self.model.wv.get_vector(word_name)
-            except AttributeError:
-                return self.model[word_name]
-        if self.emb_type == EmbeddingType.FASTTEXT_BIN:
-            return self.model.get_word_vector(word_name)
+    def word_vector(self, word_name: str):
+        """
+        Return the vector for a single word. (Works for both KeyedVectors and FastTextKeyedVectors.)
+        """
+        return self.model[word_name]
 
-    def top_nearest(self, word, k):
-        if self.emb_type == EmbeddingType.FASTTEXT_BIN:
-            return self.model.get_nearest_neighbors(word, k)
-        else:
-            return self.model.most_similar(word, topn=k)
+    def top_nearest(self, word: str, k: int):
+        """
+        Return top‐k most similar words. (Works for any Gensim KeyedVectors‐based model.)
+        """
+        return self.model.most_similar(word, topn=k)
+
+    # def get_vocab(self):
+    #     if self.emb_type == EmbeddingType.KeyedVector:
+    #         try:
+    #             return self.model.index_to_key
+    #         except AttributeError:
+    #             return self.model.wv
+    #     else:
+    #         return self.model.get_words(include_freq=True)
+
+    # def word_vector(self, word_name):
+    #     if self.emb_type == EmbeddingType.KeyedVector:
+    #         try:
+    #             return self.model.wv.get_vector(word_name)
+    #         except AttributeError:
+    #             return self.model[word_name]
+    #     if self.emb_type == EmbeddingType.FASTTEXT_BIN:
+    #         return self.model.get_word_vector(word_name)
+
+    # def top_nearest(self, word, k):
+    #     if self.emb_type == EmbeddingType.FASTTEXT_BIN:
+    #         return self.model.get_nearest_neighbors(word, k)
+    #     else:
+    #         return self.model.most_similar(word, topn=k)
+    

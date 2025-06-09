@@ -3,7 +3,6 @@ from typing import List
 from dadmatools.pipeline.iterators.sent_iterators import DocumentDataset
 
 from .config import config as master_config
-from .informal2formal.main import Informal2Formal
 from .models.base_models import Multilingual_Embedding
 from .models.classifiers import TokenizerClassifier, PosDepClassifier, NERClassifier, SentenceClassifier, \
     KasrehClassifier
@@ -172,8 +171,8 @@ class Pipeline:
         if SPELLLCHECKER in self.pipelines:
             self._spellchecker_model = load_spellchecker_model(self._config._cache_dir)
 
-        if ITF in self.pipelines:
-            self._itf_model = Informal2Formal(self._config._cache_dir)
+        # if ITF in self.pipelines:
+        #     self._itf_model = Informal2Formal(self._config._cache_dir)
 
         # load and hold the pretrained weights
         self._embedding_weights = self._embedding_layers.state_dict()
@@ -1262,9 +1261,9 @@ class Pipeline:
         if SPELLLCHECKER in pipelines:
             spellchecker_result = spellchecker(self._spellchecker_model, text)
             final[SPELLLCHECKER] = spellchecker_result
-        if ITF in pipelines:
-            itf_result = self._itf_model.translate(text)
-            final[ITF] = itf_result        
+        # if ITF in pipelines:
+            # itf_result = self._itf_model.translate(text)
+            # final[ITF] = itf_result        
         if POS in pipelines or DEP in pipelines:
             out = self._posdep_doc(out)
         if LEMMA in pipelines:
