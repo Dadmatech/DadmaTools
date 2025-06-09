@@ -3,7 +3,6 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# Full dependency list from requirements.txt
 default_dependencies = [
     "adapters==1.2.0",
     "Brotli==1.1.0",
@@ -32,7 +31,6 @@ default_dependencies = [
     "protobuf>=5.29.1,<6.0.0",
     "psutil==7.0.0",
     "py7zr==0.22.0",
-    "tsfresh==0.20.0",
     "pybcj==1.0.6",
     "pycryptodomex==3.23.0",
     "pyppmd==1.1.1",
@@ -49,7 +47,7 @@ default_dependencies = [
     "sentence-transformers==4.1.0",
     "sentencepiece==0.2.0",
     "six==1.17.0",
-    "sympy==1.14.0",
+    "sympy==1.13.1",
     "texttable==1.7.0",
     "threadpoolctl==3.6.0",
     "tokenizers==0.21.1",
@@ -63,15 +61,15 @@ default_dependencies = [
     "gensim==4.3.3",
     "emoji==1.7.0",
     "gdown==5.2.0",
+    "tsfresh==0.20.0",
 ]
 
-# Optional: lightweight install with only selected deps
 light_dependencies = [
     "conllu==6.0.0",
     "filelock==3.18.0",
     "html2text==2025.4.15",
     "langid==1.1.6",
-    "numpy==1.26.4",
+    "numpy>=1.24.0,<2.0.0",
     "pandas>=2.2.0,<2.2.3",
     "protobuf>=5.29.1,<6.0.0",
     "regex==2024.11.6",
@@ -79,14 +77,14 @@ light_dependencies = [
     "sentencepiece==0.2.0",
     "sacremoses==0.1.1",
     "tokenizers==0.21.1",
-    "torch==2.3.0",
+    "torch>=2.1.0,<2.6.0",
     "tqdm==4.67.1",
     "transformers==4.51.3",
 ]
 
 setuptools.setup(
     name="dadmatools",
-    version="2.3.1",  
+    version="2.3.1",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
