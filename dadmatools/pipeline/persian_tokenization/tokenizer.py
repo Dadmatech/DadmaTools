@@ -75,7 +75,7 @@ class WordTokenizer:
     def __init__(self, cache_dir: str) -> None:
         self.cache_dir = cache_dir
         self.trainer, self.args = self.load_tokenizer_model()
-        self.emoji_chars = emoji.unicode_codes.get_emoji_unicode_dict('en').values()
+        self.emoji_chars = set(emoji.EMOJI_DATA.keys())
 
     def tokenize_with_emojis(self, tokens):
         emoji_tokens = []
