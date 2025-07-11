@@ -90,7 +90,7 @@ light_dependencies = [
 
 setuptools.setup(
     name="dadmatools",
-    version="2.3.2",
+    version="2.3.3",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
