@@ -98,7 +98,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Dadmatech/DadmaTools",
     packages=setuptools.find_packages(),
-    python_requires=">=3.11",
+    # python_requires=">=3.11",
     install_requires=default_dependencies,
     extras_require={"light": light_dependencies},
     dependency_links=[
