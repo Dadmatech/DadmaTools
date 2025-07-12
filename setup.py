@@ -76,6 +76,7 @@ colab_extra = [
     "html2text==2025.4.15",
     "py7zr==1.0.0",
     "huggingface-hub==0.33.2",
+    
 ]
 
 setuptools.setup(
