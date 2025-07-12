@@ -73,11 +73,14 @@ colab_extra = [
     "transformers>=4.30.0,<5.0",
     "sentencepiece>=0.1.99,<0.2.0",
     "torchtext>=0.17.2,<0.19.0",
+    "html2text==2025.4.15",
+    "py7zr==1.0.0",
+    "huggingface-hub==0.33.2",
 ]
 
 setuptools.setup(
     name="dadmatools",
-    version="2.3.4",
+    version="2.3.5",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
