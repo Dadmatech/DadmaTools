@@ -61,18 +61,18 @@ Contents:
 
 ## Installation
 
-To get started using DadmaTools, install the project with pip:
+To get started using DadmaTools, install the project with pip, it supports python 10 and 11:
 
 - **Full Version**  
   Includes all features, including transformers and trainable modules:  
   ```bash
-  pip install dadmatools
+  pip install dadmatools[full]
   ```
 
-- **Light Version**  
-  For users who prefer only datasets and non-trainable modules without transformers:  
+- **Colab Version**  
+  For installing in colab environment:  
   ```bash
-  pip install dadmatools[light]
+  pip install dadmatools[colab]
   ```
 
 
