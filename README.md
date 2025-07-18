@@ -61,7 +61,7 @@ Contents:
 
 ## Installation
 
-To get started using DadmaTools, install the project with pip, it supports python 10 and 11:
+To get started using DadmaTools, install the project with pip, it supports python 10, 11 and 12 :
 
 - **Full Version**  
   Includes all features, including transformers and trainable modules:  
@@ -70,20 +70,11 @@ To get started using DadmaTools, install the project with pip, it supports pytho
   ```
 
 - **Colab Version**  
-  For installing in colab environment:  
+  For installing in colab and kaggle environment:  
   ```bash
   pip install dadmatools[colab]
   ```
-
-
-
-### Install from github
-Alternatively you can install the latest version from github using:
-```bash
-pip install git+https://github.com/Dadmatech/dadmatools.git
-```
-
-
+  
 ## NLP Models
 
 Natural Language Processing is an active area of research, and it consists of many different tasks. 
@@ -437,7 +428,7 @@ We have compared our pos tagging, dependancy parsing, and lemmatization models t
 ## How to use
 You can see the codes and the output in colab.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1BEhOA9Ju0ZyY81MAM_IT9ADz1MFeXF7S?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1j1UZvfW5PG6-AJnfaVrzJnG7rUhAAQmv?usp=sharing)
 
 
 ## Cite
