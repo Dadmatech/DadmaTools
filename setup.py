@@ -39,7 +39,7 @@ install_requires = [
 
 core_extra = [
     "protobuf>=3.20.3,<6.0.0",
-    "sentencepiece>=0.1.99,<0.2.0",
+    "sentencepiece>=0.2.0,<0.3.0",
     "transformers>=4.30.0,<5.0",
     "tokenizers==0.21.1",
     "sentence-transformers>=2.2.2,<3.0",
