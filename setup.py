@@ -82,7 +82,7 @@ colab_extra = [
 
 setuptools.setup(
     name="dadmatools",
-    version="2.3.5",
+    version="2.3.6",
     author="Dadmatech AI Company",
     author_email="info@dadmatech.ir",
     description="DadmaTools is a Persian NLP toolkit",
