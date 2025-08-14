@@ -35,6 +35,7 @@ install_requires = [
     "conllu>=4.7.3,<7.0",
     "langid>=1.1.6,<2.0",
     "sacremoses>=0.1.1,<1.0",
+    "spacy>=3.0.0,<4.0",
 ]
 
 core_extra = [

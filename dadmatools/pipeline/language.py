@@ -23,6 +23,7 @@ from .adapter_transformers import XLMRobertaTokenizer
 import langid
 
 from transformers import pipeline
+from .utils.base_utils import create_spacy_doc
 
 
 def is_string(input):
@@ -524,7 +525,7 @@ class Pipeline:
             word_reprs, cls_reprs = self._embedding_layers.get_tagger_inputs(batch)
             return cls_reprs
 
-    def tokenize(self, input, is_sent=False):
+    def tokenize(self, input, is_sent=False, return_spacy_doc=True):
         assert is_string(input), 'Input must be a non-empty string.'
         # switch to detected lang if auto mode is on
         if self.auto_mode:
@@ -534,9 +535,15 @@ class Pipeline:
             return []
         ori_text = deepcopy(input)
         if is_sent:
-            return {TEXT: ori_text, TOKENS: self._tokenize_sent(in_sent=input), LANG: self.active_lang}
+            result = {TEXT: ori_text, TOKENS: self._tokenize_sent(in_sent=input), LANG: self.active_lang}
         else:
-            return {TEXT: ori_text, SENTENCES: self._tokenize_doc(in_doc=input), LANG: self.active_lang}
+            result = {TEXT: ori_text, SENTENCES: self._tokenize_doc(in_doc=input), LANG: self.active_lang}
+        
+        # Convert to spaCy Doc if requested
+        if return_spacy_doc:
+            return create_spacy_doc(result)
+        else:
+            return result
 
     def _tokenize_sent(self, in_sent):  # assuming input is a sentence
         eval_batch_size = tbname2tokbatchsize.get(lang2treebank[self.active_lang], self._tokbatchsize)
@@ -760,7 +767,7 @@ class Pipeline:
         torch.cuda.empty_cache()
         return doc
 
-    def posdep(self, input, is_sent=False):
+    def posdep(self, input, is_sent=False, return_spacy_doc=True):
         if is_sent:
             assert is_string(input) or is_list_strings(
                 input), 'Input must be one of the following:\n(i) A non-empty string.\n(ii) A list of non-empty strings.'
@@ -771,13 +778,13 @@ class Pipeline:
                     self._detect_lang_and_switch(text=' '.join(input))
 
                 input = [{ID: k + 1, TEXT: w} for k, w in enumerate(input)]
-                return {TOKENS: self._posdep_sent(in_sent=input), LANG: self.active_lang}
+                result = {TOKENS: self._posdep_sent(in_sent=input), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
                     self._detect_lang_and_switch(text=input)
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, TOKENS: self._posdep_sent(in_sent=input), LANG: self.active_lang}
+                result = {TEXT: ori_text, TOKENS: self._posdep_sent(in_sent=input), LANG: self.active_lang}
 
         else:
             assert is_string(input) or is_list_list_strings(
@@ -790,14 +797,20 @@ class Pipeline:
 
                 input = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in
                          enumerate(input)]
-                return {SENTENCES: self._posdep_doc(in_doc=input), LANG: self.active_lang}
+                result = {SENTENCES: self._posdep_doc(in_doc=input), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, SENTENCES: self._posdep_doc(in_doc=input), LANG: self.active_lang}
+                result = {TEXT: ori_text, SENTENCES: self._posdep_doc(in_doc=input), LANG: self.active_lang}
+        
+        # Convert to spaCy Doc if requested
+        if return_spacy_doc:
+            return create_spacy_doc(result)
+        else:
+            return result
 
     def _posdep_sent(self, in_sent):  # assuming input is a sentence
         if type(in_sent) == str:  # input sentence is an untokenized string in this case
@@ -954,7 +967,7 @@ class Pipeline:
         torch.cuda.empty_cache()
         return tagged_doc
 
-    def lemmatize(self, input, is_sent=False):
+    def lemmatize(self, input, is_sent=False, return_spacy_doc=True):
         if is_sent:
             assert is_string(input) or is_list_strings(
                 input), 'Input must be one of the following:\n(i) A non-empty string.\n(ii) A list of non-empty strings.'
@@ -965,14 +978,14 @@ class Pipeline:
                     self._detect_lang_and_switch(text=' '.join(input))
 
                 input = [{ID: k + 1, TEXT: w} for k, w in enumerate(input)]
-                return {TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True), LANG: self.active_lang}
+                result = {TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True),
+                result = {TEXT: ori_text, TOKENS: self._lemmatize_sent(in_sent=input, obmit_tag=True),
                         LANG: self.active_lang}
 
         else:
@@ -986,15 +999,21 @@ class Pipeline:
 
                 input = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in
                          enumerate(input)]
-                return {SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True), LANG: self.active_lang}
+                result = {SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
                     self._detect_lang_and_switch(text=input)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True),
+                result = {TEXT: ori_text, SENTENCES: self._lemmatize_doc(in_doc=input, obmit_tag=True),
                         LANG: self.active_lang}
+        
+        # Convert to spaCy Doc if requested
+        if return_spacy_doc:
+            return create_spacy_doc(result)
+        else:
+            return result
 
     def _lemmatize_sent(self, in_sent, obmit_tag=False):
         if type(in_sent) == str:
@@ -1019,7 +1038,7 @@ class Pipeline:
         expanded_doc = self._mwt_model[self._config.active_lang].predict(tokenized_doc)
         return expanded_doc
 
-    def ner(self, input, is_sent=False):
+    def ner(self, input, is_sent=False, return_spacy_doc=True):
         assert NER in self.pipelines, 'NER module is not selected in pipelines!'
         if is_sent:
             assert is_string(input) or is_list_strings(
@@ -1033,7 +1052,7 @@ class Pipeline:
                 assert self.active_lang in langwithner, 'NER module is not available for "{}"'.format(self.active_lang)
 
                 input = [{ID: k + 1, TEXT: w} for k, w in enumerate(input)]
-                return {TOKENS: self._ner_sent(in_sent=input), LANG: self.active_lang}
+                result = {TOKENS: self._ner_sent(in_sent=input), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
@@ -1042,7 +1061,7 @@ class Pipeline:
                 assert self.active_lang in langwithner, 'NER module is not available for "{}"'.format(self.active_lang)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, TOKENS: self._ner_sent(in_sent=input), LANG: self.active_lang}
+                result = {TEXT: ori_text, TOKENS: self._ner_sent(in_sent=input), LANG: self.active_lang}
 
         else:
             assert is_string(input) or is_list_list_strings(
@@ -1057,7 +1076,7 @@ class Pipeline:
 
                 input = [{ID: sid + 1, TOKENS: [{ID: tid + 1, TEXT: w} for tid, w in enumerate(sent)]} for sid, sent in
                          enumerate(input)]
-                return {SENTENCES: self._ner_doc(in_doc=input), LANG: self.active_lang}
+                result = {SENTENCES: self._ner_doc(in_doc=input), LANG: self.active_lang}
             else:
                 # switch to detected lang if auto mode is on
                 if self.auto_mode:
@@ -1066,7 +1085,13 @@ class Pipeline:
                 assert self.active_lang in langwithner, 'NER module is not available for "{}"'.format(self.active_lang)
 
                 ori_text = deepcopy(input)
-                return {TEXT: ori_text, SENTENCES: self._ner_doc(in_doc=input), LANG: self.active_lang}
+                result = {TEXT: ori_text, SENTENCES: self._ner_doc(in_doc=input), LANG: self.active_lang}
+        
+        # Convert to spaCy Doc if requested
+        if return_spacy_doc:
+            return create_spacy_doc(result)
+        else:
+            return result
 
     def _ner_sent(self, in_sent):  # assuming input is a document
         if type(in_sent) == str:
@@ -1231,7 +1256,7 @@ class Pipeline:
         torch.cuda.empty_cache()
         return pred_labels
 
-    def __call__(self, input, pipelines: str = None):
+    def __call__(self, input, pipelines: str = None, return_spacy_doc=True):
         if pipelines is not None:
             pipelines = map_dadmatools_pipeline_to_trankit(pipelines)
             pipelines = list(set(pipelines).intersection(self.pipelines))
@@ -1278,7 +1303,13 @@ class Pipeline:
             # out = self._sent_doc(out)
             # final['sentiment'] = self._sent_model[self.active_lang](text)
             final['sentiment'] = self._sent_model(text)
-        return final
+        
+        # Convert to spaCy Doc if requested
+        if return_spacy_doc:
+            from .utils.base_utils import create_spacy_doc
+            return create_spacy_doc(final)
+        else:
+            return final
 
     def _conllu_predict(self, text_fpath):
         print('Running the pipeline on device={}'.format(self._config.device))

@@ -169,16 +169,53 @@ import dadmatools.pipeline.language as language
 # as tokenizer is the default tool, it will be loaded as well even without calling
 pips = 'tok,lem,pos,dep,chunk,cons,spellchecker,kasreh,itf,ner,sent'
 nlp = language.Pipeline(pips)
-# doc is an SpaCy object
-doc = nlp('کشور بزرگ ایران توانسته در طی سال‌ها اغشار مختلفی از قومیت‌های گوناگون رو به خوبی تو خودش  جا بده')
+# doc is now a proper spaCy Doc object
+doc = nlp('کشور بزرگ ایران توانسته در طی سال‌ها اقشار مختلفی از قومیت‌های گوناگون را به خوبی در خودش جا بده')
 
 ```
-[```doc```](https://spacy.io/api/doc) object has different extensions. First, there are ```sentences``` in ```doc``` which is the list of the list of [```Token```](https://spacy.io/api/token). Each [```Token```](https://spacy.io/api/token) also has its own extensions. Note that we defined our own extension as well in DadmaTools. If any pipeline related to the specific extensions is not called, that extension will have no value.
 
-To better see the results which you can use this code:
+The pipeline now returns a proper [spaCy Doc object](https://spacy.io/api/doc) that conforms to spaCy's `Doc` type. This provides full compatibility with spaCy's ecosystem and allows you to use all spaCy features and utilities.
+
+#### Key Features of the spaCy Doc Object:
+
+- **Standard spaCy attributes**: `doc.text`, `doc.ents`, `doc.sents`, etc.
+- **Token-level annotations**: `token.pos_`, `token.lemma_`, `token.dep_`, `token.head`, etc.
+- **Custom extensions**: `token._.kasreh`, `doc._.lang`, `doc._.sentiment`, `doc._.spellchecker`
+- **Entity recognition**: Named entities are properly converted to spaCy's entity format
+- **Sentence boundaries**: Sentence segmentation is preserved
+
+#### Example Usage:
 
 ```python
-print(doc)
+# Access token information
+for token in doc:
+    print(f"Token: {token.text}, POS: {token.pos_}, Lemma: {token.lemma_}, Dep: {token.dep_}")
+
+# Access entities
+for ent in doc.ents:
+    print(f"Entity: {ent.text}, Type: {ent.label_}")
+
+# Access custom attributes
+print(f"Language: {doc._.lang}")
+print(f"Sentiment: {doc._.sentiment}")
+
+# Use spaCy utilities
+from spacy import displacy
+displacy.serve(doc, style="dep")  # Visualize dependency tree
+```
+
+#### Backward Compatibility:
+
+You can still get the original dictionary format by setting `return_spacy_doc=False`:
+
+```python
+# Get original dictionary format
+doc_dict = nlp(text, return_spacy_doc=False)
+print(type(doc_dict))  # <class 'dict'>
+
+# Get spaCy Doc object (default)
+doc = nlp(text)  # or nlp(text, return_spacy_doc=True)
+print(type(doc))  # <class 'spacy.tokens.Doc'>
 ```
 
 ```python
