@@ -18,6 +18,7 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Optional
 from urllib.parse import urlparse
+from huggingface_hub import hf_hub_download
 from zipfile import ZipFile, is_zipfile
 
 import requests
@@ -301,6 +302,49 @@ def cached_path(
         return output_path_extracted
 
     return output_path
+
+
+def modern_cached_path(
+    model_id_or_path: str,
+    filename: str,
+    cache_dir: Optional[str] = None,
+    force_download: bool = False,
+    local_files_only: bool = False,
+) -> Optional[str]:
+    """
+    Modern cached path function using huggingface_hub for downloading models.
+    
+    Args:
+        model_id_or_path: Model identifier (e.g., 'xlm-roberta-base') or local path
+        filename: Filename to download (e.g., 'pytorch_model.bin')
+        cache_dir: Directory to cache files (optional)
+        force_download: Force re-download even if cached
+        local_files_only: Only use local files, don't download
+        
+    Returns:
+        Path to the cached file or None if not found
+    """
+    # If it's a local path, handle it directly
+    if os.path.isdir(model_id_or_path):
+        local_file = os.path.join(model_id_or_path, filename)
+        if os.path.exists(local_file):
+            return local_file
+        return None
+    
+    if os.path.isfile(model_id_or_path):
+        return model_id_or_path
+    
+    try:
+        return hf_hub_download(
+            repo_id=model_id_or_path,
+            filename=filename,
+            cache_dir=cache_dir,
+            force_download=force_download,
+            local_files_only=local_files_only,
+        )
+    except Exception as e:
+        logging.warning(f"Could not download {filename} from {model_id_or_path}: {e}")
+        return None
 
 
 def http_get(url, temp_file, proxies=None, resume_size=0, user_agent=None):
