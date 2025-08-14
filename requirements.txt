@@ -41,6 +41,7 @@ scipy==1.13.0
 sentence-transformers==4.1.0
 sentencepiece==0.2.0
 six==1.17.0
+spacy>=3.0.0
 sympy==1.13.1
 texttable==1.7.0
 threadpoolctl==3.6.0

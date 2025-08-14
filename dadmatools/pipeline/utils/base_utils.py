@@ -15,6 +15,9 @@ from datetime import datetime
 import shutil
 from .scorers import conll18_ud_eval as ud_eval
 from huggingface_hub import hf_hub_download
+import spacy
+from spacy.tokens import Doc, Token, Span
+from spacy.language import Language
 
 SPACE_RE = re.compile(r'\s')
 
@@ -97,8 +100,8 @@ def download(cache_dir, language, saved_model_version, embedding_name):  # put a
     save_fpath = os.path.join(lang_dir, '{}.zip'.format(language))
 
     if not os.path.exists(os.path.join(lang_dir, '{}.downloaded'.format(language))):
-        url = "http://nlp.uoregon.edu/download/trankit/{}/{}/{}.zip".format(saved_model_version, embedding_name,
-                                                                            language)
+        # Updated to use correct UONLP repository on Hugging Face Hub
+        url = "https://huggingface.co/uonlp/trankit/resolve/main/models/{}/{}/{}.zip".format(saved_model_version, embedding_name, language)
         print(url)
 
         response = requests.get(url, stream=True)
@@ -344,3 +347,146 @@ class Linears(nn.Module):
                 inputs = self.dropout(inputs)
             inputs = layer(inputs)
         return inputs
+
+
+def create_spacy_doc(dadmatools_output, nlp=None):
+    """
+    Convert DadmaTools output to a spaCy Doc object.
+    
+    Args:
+        dadmatools_output: The output dictionary from DadmaTools pipeline
+        nlp: spaCy language model (optional, will create a blank one if not provided)
+    
+    Returns:
+        spacy.tokens.Doc: A spaCy Doc object with all the linguistic annotations
+    """
+    if nlp is None:
+        # Create a blank spaCy model for Persian
+        nlp = spacy.blank("fa")
+    
+    # Extract text and sentences from DadmaTools output
+    text = dadmatools_output.get('text', '')
+    sentences = dadmatools_output.get('sentences', [])
+    
+    if not text and sentences:
+        # If no text provided, reconstruct from sentences
+        text = ' '.join([' '.join([token.get('text', '') for token in sent.get('tokens', [])]) 
+                        for sent in sentences])
+    
+    # Create spaCy Doc object
+    doc = Doc(nlp.vocab, words=[], spaces=[])
+    
+    # Process each sentence and token
+    all_tokens = []
+    all_spaces = []
+    current_pos = 0
+    
+    for sent_idx, sentence in enumerate(sentences):
+        sent_tokens = sentence.get('tokens', [])
+        
+        for token_idx, token_data in enumerate(sent_tokens):
+            token_text = token_data.get('text', '')
+            
+            # Add token to the document
+            all_tokens.append(token_text)
+            
+            # Determine if there's a space after this token
+            # Check if this is the last token in the sentence
+            is_last_in_sentence = token_idx == len(sent_tokens) - 1
+            is_last_sentence = sent_idx == len(sentences) - 1
+            
+            # Add space if not the last token in the document
+            if not (is_last_in_sentence and is_last_sentence):
+                all_spaces.append(True)
+            else:
+                all_spaces.append(False)
+    
+    # Create the Doc object with tokens and spaces
+    doc = Doc(nlp.vocab, words=all_tokens, spaces=all_spaces)
+    
+    # Add linguistic annotations
+    token_idx = 0
+    for sent_idx, sentence in enumerate(sentences):
+        sent_tokens = sentence.get('tokens', [])
+        
+        for token_data in sent_tokens:
+            if token_idx < len(doc):
+                token = doc[token_idx]
+                
+                # Add POS tag
+                if 'upos' in token_data:
+                    token.pos_ = token_data['upos']
+                
+                # Add detailed POS tag
+                if 'xpos' in token_data:
+                    token.tag_ = token_data['xpos']
+                
+                # Add morphological features
+                if 'feats' in token_data:
+                    # Convert string features to spaCy's MorphAnalysis format
+                    from spacy.tokens import MorphAnalysis
+                    token.morph = MorphAnalysis(token.vocab, token_data['feats'])
+                
+                # Add dependency information
+                if 'head' in token_data and 'deprel' in token_data:
+                    head_idx = token_data['head']
+                    if isinstance(head_idx, int) and head_idx > 0:
+                        # Adjust head index to account for 0-based indexing
+                        adjusted_head = head_idx - 1
+                        if adjusted_head < len(doc):
+                            token.head = doc[adjusted_head]
+                    token.dep_ = token_data['deprel']
+                
+                # Add lemma
+                if 'lemma' in token_data:
+                    token.lemma_ = token_data['lemma']
+                
+                # Add NER tag as custom extension
+                if 'ner' in token_data:
+                    ner_tag = token_data['ner']
+                    token._.ner = ner_tag
+                
+                # Add custom extensions for DadmaTools specific annotations
+                if 'kasreh' in token_data:
+                    token._.kasreh = token_data['kasreh']
+                
+                token_idx += 1
+    
+    # Add custom attributes to the Doc object
+    if 'lang' in dadmatools_output:
+        doc._.lang = dadmatools_output['lang']
+    
+    if 'sentiment' in dadmatools_output:
+        doc._.sentiment = dadmatools_output['sentiment']
+    
+    if 'spellchecker' in dadmatools_output:
+        doc._.spellchecker = dadmatools_output['spellchecker']
+    
+    # Note: Sentence boundaries are not set as spaCy handles this automatically
+    # based on the tokenization and punctuation
+    
+    return doc
+
+def setup_spacy_extensions():
+    """
+    Set up custom spaCy extensions for DadmaTools specific annotations.
+    This should be called once when the module is imported.
+    """
+    # Register custom attributes
+    if not Token.has_extension("kasreh"):
+        Token.set_extension("kasreh", default=None)
+    
+    if not Token.has_extension("ner"):
+        Token.set_extension("ner", default=None)
+    
+    if not Doc.has_extension("lang"):
+        Doc.set_extension("lang", default=None)
+    
+    if not Doc.has_extension("sentiment"):
+        Doc.set_extension("sentiment", default=None)
+    
+    if not Doc.has_extension("spellchecker"):
+        Doc.set_extension("spellchecker", default=None)
+
+# Set up extensions when module is imported
+setup_spacy_extensions()

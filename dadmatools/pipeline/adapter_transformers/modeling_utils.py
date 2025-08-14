@@ -34,6 +34,7 @@ from .file_utils import (
     cached_path,
     hf_bucket_url,
     is_remote_url,
+    modern_cached_path,
 )
 
 
@@ -619,23 +620,36 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin):
                 )
                 archive_file = pretrained_model_name_or_path + ".index"
             else:
-                archive_file = hf_bucket_url(
-                    pretrained_model_name_or_path,
-                    filename=(TF2_WEIGHTS_NAME if from_tf else WEIGHTS_NAME),
-                    use_cdn=use_cdn,
-                )
-                model_name = pretrained_model_name_or_path
-
-            try:
-                # Load from URL or cache if already cached
-                resolved_archive_file = cached_path(
-                    archive_file,
+                # Use modern huggingface_hub approach
+                filename = TF2_WEIGHTS_NAME if from_tf else WEIGHTS_NAME
+                resolved_archive_file = modern_cached_path(
+                    model_id_or_path=pretrained_model_name_or_path,
+                    filename=filename,
                     cache_dir=cache_dir,
                     force_download=force_download,
-                    proxies=proxies,
-                    resume_download=resume_download,
                     local_files_only=local_files_only,
                 )
+                model_name = pretrained_model_name_or_path
+                archive_file = resolved_archive_file  # Set for later use
+                
+                # If modern approach failed, fall back to legacy method
+                if resolved_archive_file is None:
+                    archive_file = hf_bucket_url(
+                        pretrained_model_name_or_path,
+                        filename=filename,
+                        use_cdn=use_cdn,
+                    )
+                    resolved_archive_file = cached_path(
+                        archive_file,
+                        cache_dir=cache_dir,
+                        force_download=force_download,
+                        proxies=proxies,
+                        resume_download=resume_download,
+                        local_files_only=local_files_only,
+                    )
+
+            try:
+                # Validate that we have a file to load
                 if resolved_archive_file is None:
                     raise EnvironmentError
             except EnvironmentError:
