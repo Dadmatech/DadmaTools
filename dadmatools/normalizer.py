@@ -4,7 +4,7 @@ from dadmatools.utils.patterns import *
 import html2text
 
 
-prefix = str(Path(__file__).parent.absolute()).replace('models', '')
+prefix = str(Path(__file__).parent.absolute())
 save_dir = '/utils/'
 
 
